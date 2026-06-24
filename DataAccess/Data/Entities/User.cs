@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using Shared.Enums;
+//using Shared.Enums;
 
 namespace DataAccess.Data.Entities
 {
@@ -10,6 +10,8 @@ namespace DataAccess.Data.Entities
         public string? Country { get; set; }
         public DateOnly CreatedAt { get; set; }
         public DateTime LastOnline { get; set; }
-        public UserVisibility Status { get; set; }
+        //public UserVisibility Status { get; set; }
+        public List<OwnedGame> OwnedGames { get; set; } = [];
+        public List<UserAchievement> UserAchievements { get; set; } = [];
     }
 }
