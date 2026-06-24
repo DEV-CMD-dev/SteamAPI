@@ -11,5 +11,7 @@ namespace DataAccess.Data.Entities
         public DateOnly CreatedAt { get; set; }
         public DateTime LastOnline { get; set; }
         public UserVisibility Status { get; set; }
+        public List<OwnedGame> OwnedGames { get; set; } = [];
+        public List<UserAchievement> UserAchievements { get; set; } = [];
     }
 }

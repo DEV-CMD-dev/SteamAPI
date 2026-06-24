@@ -4,6 +4,7 @@ using DataAccess.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataAccess.Migrations
 {
     [DbContext(typeof(SteamDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260624175412_masd2134")]
+    partial class masd2134
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -71,6 +74,40 @@ namespace DataAccess.Migrations
                         });
                 });
 
+            modelBuilder.Entity("DataAccess.Data.Entities.Developer", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Developer");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "Valve"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Name = "IndieStudio"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Name = "FromSoftware"
+                        });
+                });
+
             modelBuilder.Entity("DataAccess.Data.Entities.Game", b =>
                 {
                     b.Property<int>("Id")
@@ -87,20 +124,14 @@ namespace DataAccess.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("DeveloperId")
+                    b.Property<int>("DeveloperId")
                         .HasColumnType("int");
-
-                    b.Property<string>("DeveloperId1")
-                        .HasColumnType("nvarchar(450)");
 
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<int?>("PublisherId")
+                    b.Property<int>("PublisherId")
                         .HasColumnType("int");
-
-                    b.Property<string>("PublisherId1")
-                        .HasColumnType("nvarchar(450)");
 
                     b.Property<DateOnly>("ReleaseDate")
                         .HasColumnType("date");
@@ -115,9 +146,9 @@ namespace DataAccess.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("DeveloperId1");
+                    b.HasIndex("DeveloperId");
 
-                    b.HasIndex("PublisherId1");
+                    b.HasIndex("PublisherId");
 
                     b.ToTable("Game");
 
@@ -127,7 +158,9 @@ namespace DataAccess.Migrations
                             Id = 1,
                             CoverImage = "https://example.com/covers/cs2.jpg",
                             Description = "Tactical shooter.",
+                            DeveloperId = 1,
                             Price = 0.00m,
+                            PublisherId = 1,
                             ReleaseDate = new DateOnly(2023, 9, 27),
                             SystemRequirements = "Windows 10, 8GB RAM",
                             Title = "Counter-Strike 2"
@@ -137,7 +170,9 @@ namespace DataAccess.Migrations
                             Id = 2,
                             CoverImage = "https://example.com/covers/neon.jpg",
                             Description = "Cyberpunk RPG.",
+                            DeveloperId = 2,
                             Price = 29.99m,
+                            PublisherId = 2,
                             ReleaseDate = new DateOnly(2026, 5, 12),
                             SystemRequirements = "Windows 11, 16GB RAM",
                             Title = "Neon City 2026"
@@ -147,7 +182,9 @@ namespace DataAccess.Migrations
                             Id = 3,
                             CoverImage = "https://example.com/covers/elden.jpg",
                             Description = "Rise, Tarnished.",
+                            DeveloperId = 3,
                             Price = 59.99m,
+                            PublisherId = 3,
                             ReleaseDate = new DateOnly(2022, 2, 25),
                             SystemRequirements = "Windows 10, RTX 2060",
                             Title = "Elden Ring"
@@ -211,6 +248,40 @@ namespace DataAccess.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("OwnedGames");
+                });
+
+            modelBuilder.Entity("DataAccess.Data.Entities.Publisher", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Publisher");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "Valve"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Name = "IndiePublisher"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Name = "Bandai Namco"
+                        });
                 });
 
             modelBuilder.Entity("DataAccess.Data.Entities.Screenshot", b =>
@@ -545,13 +616,17 @@ namespace DataAccess.Migrations
 
             modelBuilder.Entity("DataAccess.Data.Entities.Game", b =>
                 {
-                    b.HasOne("DataAccess.Data.Entities.User", "Developer")
+                    b.HasOne("DataAccess.Data.Entities.Developer", "Developer")
                         .WithMany()
-                        .HasForeignKey("DeveloperId1");
+                        .HasForeignKey("DeveloperId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.HasOne("DataAccess.Data.Entities.User", "Publisher")
+                    b.HasOne("DataAccess.Data.Entities.Publisher", "Publisher")
                         .WithMany()
-                        .HasForeignKey("PublisherId1");
+                        .HasForeignKey("PublisherId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Developer");
 
