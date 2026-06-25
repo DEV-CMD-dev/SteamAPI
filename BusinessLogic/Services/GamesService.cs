@@ -32,20 +32,23 @@ namespace BusinessLogic.Services
             var gameDto = _mapper.Map<GameDto>(gameFromDb);
             return gameDto;
         }
-        public async Task<GameDto> Create(CreateGameDto model)
+        public async Task<GameDto> Create(CreateGameDto model,string url)
         {
             var gameEntity = _mapper.Map<Game>(model);
+            gameEntity.CoverImage = url;
             _context.Game.Add(gameEntity);
             await _context.SaveChangesAsync();
             var gameDto = _mapper.Map<GameDto>(gameEntity);
             return gameDto;
         }
-        public async Task Update(GameDto model)
+        public async Task Update(EditGameDto model, string url)
         {
             var existingGame = await _context.Game.FindAsync(model.Id);
             if (existingGame == null)
                 throw new KeyNotFoundException($"Гра з Id {model.Id} не знайдена.");
-            _mapper.Map(model, existingGame);
+            var mappedgame = _mapper.Map<GameDto>(model);
+            mappedgame.CoverImage = url;
+            _mapper.Map(mappedgame, existingGame);
             await _context.SaveChangesAsync();
 
         }

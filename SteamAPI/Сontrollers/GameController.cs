@@ -1,6 +1,8 @@
 ﻿using BusinessLogic.DTOs.Game;
 using BusinessLogic.Interfaces;
+using BusinessLogic.Services;
 using Microsoft.AspNetCore.Mvc;
+
 
 
 namespace SteamAPI.Сontrollers
@@ -10,10 +12,14 @@ namespace SteamAPI.Сontrollers
     public class GameController : ControllerBase
     {
         private readonly IGamesService gamesService;
-
-        public GameController(IGamesService gamesService)
+        private readonly IBlobService _blobService;
+        private readonly IConfiguration _config;
+        public GameController(IGamesService gamesService , IConfiguration config, IBlobService blobService)
         {
             this.gamesService = gamesService;
+            _config = config;
+            _blobService = blobService;
+
         }
         [HttpGet("GetAllGames")]
         public async Task<IActionResult> GetAllGames()
@@ -32,20 +38,24 @@ namespace SteamAPI.Сontrollers
         }
 
         [HttpPost("AddGame")]
-        public async Task<IActionResult> AddGame(CreateGameDto model)
+        public async Task<IActionResult> AddGame([FromForm] CreateGameDto model)
         {
-            var result = await gamesService.Create(model);
-            if(result == null)
-            {
-                return BadRequest("Failed to create game.");
-            }
+            if (model.CoverImage == null || model.CoverImage.Length == 0)
+                return BadRequest("Файл обкладинки не вибрано.");
+            var imageUrl = await _blobService.UploadBlobAsync(model.CoverImage);
+
+            var result = await gamesService.Create(model, imageUrl);
+
             return Ok(result);
         }
 
         [HttpPut("UpdateGame")]
-        public async Task<IActionResult> UpdateGame(GameDto model)
+        public async Task<IActionResult> UpdateGame([FromForm] EditGameDto model)
         {
-            await gamesService.Update(model);
+            if (model.CoverImage == null || model.CoverImage.Length == 0)
+                return BadRequest("Файл обкладинки не вибрано.");
+            var imageUrl = await _blobService.UploadBlobAsync(model.CoverImage);
+            await gamesService.Update(model, imageUrl);
             return Ok();
         }
 
