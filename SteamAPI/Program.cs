@@ -13,6 +13,10 @@ builder.Services.AddOpenApi();
 builder.Services.AddSwaggerGen();
 builder.Services.AddAutoMapper(cfg => { }, typeof(MapperProfile));
 builder.Services.AddScoped<BusinessLogic.Interfaces.IGamesService, BusinessLogic.Services.GamesService>();
+builder.Services.AddScoped<BusinessLogic.Interfaces.IAchievementService, BusinessLogic.Services.AchievementService>();
+builder.Services.AddScoped<BusinessLogic.Interfaces.ITagService, BusinessLogic.Services.TagService>();
+
+
 
 builder.Services.AddCors(options =>
 {

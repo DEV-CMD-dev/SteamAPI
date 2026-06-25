@@ -1,4 +1,4 @@
-﻿namespace BusinessLogic.DTOs
+﻿namespace BusinessLogic.DTOs.Game
 {
     public class GameDto
     {

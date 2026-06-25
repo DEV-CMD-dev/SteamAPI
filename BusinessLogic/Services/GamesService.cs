@@ -1,8 +1,9 @@
 ﻿using AutoMapper;
 using DataAccess.Data;
 using Microsoft.EntityFrameworkCore;
-using BusinessLogic.DTOs;
 using BusinessLogic.Interfaces;
+using BusinessLogic.DTOs.Game;
+using DataAccess.Data.Entities;
 
 namespace BusinessLogic.Services
 {
@@ -20,6 +21,43 @@ namespace BusinessLogic.Services
             var gamesFromDb = await _context.Game.ToListAsync();
             var gameDtos = _mapper.Map<IList<GameDto>>(gamesFromDb);
             return gameDtos;
+        }
+        public async Task<GameDto?> Get(int id)
+        {
+            var gameFromDb = await _context.Game.FindAsync(id);
+            if (gameFromDb == null)
+            {
+                return null;
+            }
+            var gameDto = _mapper.Map<GameDto>(gameFromDb);
+            return gameDto;
+        }
+        public async Task<GameDto> Create(CreateGameDto model)
+        {
+            var gameEntity = _mapper.Map<Game>(model);
+            _context.Game.Add(gameEntity);
+            await _context.SaveChangesAsync();
+            var gameDto = _mapper.Map<GameDto>(gameEntity);
+            return gameDto;
+        }
+        public async Task Update(GameDto model)
+        {
+            var existingGame = await _context.Game.FindAsync(model.Id);
+            if (existingGame == null)
+                throw new KeyNotFoundException($"Гра з Id {model.Id} не знайдена.");
+            _mapper.Map(model, existingGame);
+            await _context.SaveChangesAsync();
+
+        }
+        public async Task Delete(int id)
+        {
+            var gameFromDb = await _context.Game.FindAsync(id);
+            if (gameFromDb == null)
+            {
+                throw new Exception($"Game with ID {id} not found.");
+            }
+            _context.Game.Remove(gameFromDb);
+            await _context.SaveChangesAsync();
         }
     }
 }
