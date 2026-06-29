@@ -8,7 +8,7 @@ namespace Shared.Entities
         public string? Avatar { get; set; }
         public string? Bio { get; set; }
         public string? Country { get; set; }
-        public DateOnly CreatedAt { get; set; }
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime LastOnline { get; set; }
         public UserVisibility UserVisibility { get; set; }
         public UserRole UserRole { get; set; }
