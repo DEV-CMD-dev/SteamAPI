@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Shared.Enums;
 
-namespace DataAccess.Data.Entities
+namespace Shared.Entities
 {
     public class User : IdentityUser
     {

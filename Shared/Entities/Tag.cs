@@ -1,4 +1,4 @@
-﻿namespace DataAccess.Data.Entities
+﻿namespace Shared.Entities
 {
     public class Tag
     {

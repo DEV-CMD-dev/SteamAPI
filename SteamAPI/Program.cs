@@ -1,48 +1,72 @@
-using DataAccess;
-using Microsoft.EntityFrameworkCore;
+using System.Text;
+using BusinessLogic.Extensions;
+using BusinessLogic.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi;
+using Shared.Classes;
+using Shared.Entities;
+using Shared.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("RemoteDb")));
-
 // Add services to the container.
+builder.Services.AddDataAccessServices(builder.Configuration);
+
+builder.Services.AddIdentityCore<User>(options => 
+    {
+        options.Password.RequiredLength = 6;
+        options.Password.RequireDigit = false;
+    })
+    .AddRoles<IdentityRole>();
+
+builder.Services.AddScoped<IJwtService, JwtService>();
+builder.Services.AddScoped<IAuthService, AuthService>();
 
 builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 builder.Services.AddSwaggerGen();
 
-var app = builder.Build();
 
-using (var scope = app.Services.CreateScope()) // check db connection
+
+builder.Services.AddSingleton(_ => builder.Configuration.GetSection(nameof(JwtOptions)).Get<JwtOptions>()!);
+
+var jwtOpts = builder.Configuration.GetSection(nameof(JwtOptions)).Get<JwtOptions>()!;
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(o =>
+    {
+        o.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = false,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = jwtOpts.Issuer,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOpts.Key)),
+            ClockSkew = TimeSpan.Zero
+        };
+    });
+
+builder.Services.AddSwaggerGen(options =>
 {
-    var services = scope.ServiceProvider;
-    try
+    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme()
     {
-        var context = services.GetRequiredService<AppDbContext>();
+        Name = "Authorization",
+        In = ParameterLocation.Header,
+        Type = SecuritySchemeType.Http,
+        Scheme = "Bearer"
+    });
 
-        if (context.Database.CanConnect())
-        {
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine("Connected to db");
-        }
-        else
-        {
-            Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine("Could not connect to db");
-        }
-    }
-    catch (Exception ex)
+    options.AddSecurityRequirement(document => new OpenApiSecurityRequirement
     {
-        Console.ForegroundColor = ConsoleColor.Red;
-        Console.WriteLine($"{ex.Message}");
-    }
-    finally
-    {
-        Console.ResetColor();
-    }
-}
+        [new OpenApiSecuritySchemeReference("bearer", document)] = new()
+    });
+});
+
+var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

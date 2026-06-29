@@ -1,4 +1,4 @@
-﻿namespace DataAccess.Data.Entities
+﻿namespace Shared.Entities
 {
     public class UserGame
     {
@@ -9,7 +9,7 @@
         public Game Game { get; set; }
 
         public DateTime PurchasedAt { get; set; } = DateTime.UtcNow;
-        public int PlayTimeMinutes { get; set; } = 0;
-        public bool IsInstalled { get; set; } = false;
+        public int PlayTimeMinutes { get; set; }
+        public bool IsInstalled { get; set; }
     }
 }
