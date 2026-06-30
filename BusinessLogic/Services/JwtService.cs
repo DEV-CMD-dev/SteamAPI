@@ -3,9 +3,9 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using Shared.Classes;
+using BusinessLogic.Classes;
 using Shared.Entities;
-using Shared.Interfaces;
+using BusinessLogic.Interfaces;
 
 namespace BusinessLogic.Services;
 

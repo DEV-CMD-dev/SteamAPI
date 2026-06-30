@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Identity;
-using Shared.DTOs.Auth;
+using BusinessLogic.DTOs.Auth;
 using Shared.Entities;
-using Shared.Interfaces;
+using BusinessLogic.Interfaces;
 
 namespace BusinessLogic.Services;
 

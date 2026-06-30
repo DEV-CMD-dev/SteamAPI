@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
-using Shared.DTOs.Auth;
-using Shared.Interfaces;
+using BusinessLogic.DTOs.Auth;
+using BusinessLogic.Interfaces;
 
 namespace SteamAPI.Controllers;
 

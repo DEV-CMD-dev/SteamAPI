@@ -1,4 +1,4 @@
-namespace Shared.DTOs.Auth;
+namespace BusinessLogic.DTOs.Auth;
 
 public class LoginResponseDto
 {

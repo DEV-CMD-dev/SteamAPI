@@ -1,7 +1,7 @@
 using System.Security.Claims;
 using Shared.Entities;
 
-namespace Shared.Interfaces;
+namespace BusinessLogic.Interfaces;
 
 public interface IJwtService
 {

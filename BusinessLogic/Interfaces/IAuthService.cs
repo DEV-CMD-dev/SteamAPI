@@ -1,6 +1,6 @@
-using Shared.DTOs.Auth;
+using BusinessLogic.DTOs.Auth;
 
-namespace Shared.Interfaces;
+namespace BusinessLogic.Interfaces;
 
 public interface IAuthService
 {
