@@ -1,11 +1,11 @@
 using Microsoft.AspNetCore.Identity;
 using Shared.Entities;
-
-namespace BusinessLogic.Extensions;
 using DataAccess;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
+
+namespace BusinessLogic.Extensions;
 
 public static class DataAccessRegistration
 {

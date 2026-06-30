@@ -1,13 +1,13 @@
 using System.Text;
 using BusinessLogic.Extensions;
+using BusinessLogic.Interfaces;
 using BusinessLogic.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
-using Shared.Classes;
+using BusinessLogic.Classes;
 using Shared.Entities;
-using Shared.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
