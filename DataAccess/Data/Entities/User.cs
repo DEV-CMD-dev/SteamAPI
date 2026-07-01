@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using DataAccess.Enums;
+using Microsoft.AspNetCore.Identity;
 
 namespace DataAccess.Data.Entities
 {
@@ -9,8 +10,8 @@ namespace DataAccess.Data.Entities
         public string? Country { get; set; }
         public DateOnly CreatedAt { get; set; }
         public DateTime LastOnline { get; set; }
-        //public UserVisibility UserVisibility { get; set; }
-        //public UserRole UserRole { get; set; }
+        public UserVisibility UserVisibility { get; set; }
+        public UserRole UserRole { get; set; }
         public decimal WalletBalance { get; set; }
 
         public List<UserGame> OwnedGames { get; set; } = new();
