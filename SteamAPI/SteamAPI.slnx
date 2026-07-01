@@ -1,5 +1,5 @@
 <Solution>
+  <Project Path="../BusinessLogic/BusinessLogic.csproj" Id="2e07442b-5646-43d6-9aa6-7d49acc67807" />
   <Project Path="../DataAccess/DataAccess.csproj" Id="521eb17b-2ffb-4e61-84ed-94d13c478725" />
-  <Project Path="../Shared/Shared.csproj" Id="d6ba9726-ecc1-4bae-8fcf-76d575eef0e5" />
   <Project Path="SteamAPI.csproj" />
 </Solution>
