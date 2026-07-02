@@ -65,7 +65,7 @@ if (app.Environment.IsDevelopment())
     app.MapScalarApiReference("",options =>
     {
         options.WithTitle("Steam API");
-});
+    });
 }
 
 app.UseHttpsRedirection();
