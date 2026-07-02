@@ -1,4 +1,4 @@
-﻿namespace Shared.Enums
+﻿namespace DataAccess.Enums
 {
     public enum UserVisibility
     {

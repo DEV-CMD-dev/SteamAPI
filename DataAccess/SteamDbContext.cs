@@ -5,9 +5,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DataAccess
 {
-    public class AppDbContext : IdentityDbContext<User>
+    public class SteamDbContext : IdentityDbContext<User>
     {
-        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
+        public SteamDbContext(DbContextOptions<SteamDbContext> options) : base(options) { }
 
         public DbSet<Game> Games { get; set; }
         public DbSet<Tag> Tags { get; set; }
@@ -17,6 +17,12 @@ namespace DataAccess
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
+
+            //User
+            builder.Entity<User>()
+                .Property(u => u.WalletBalance)
+                .HasPrecision(18, 2);
+
 
             //User - game
             builder.Entity<UserGame>()
@@ -46,6 +52,12 @@ namespace DataAccess
                 .HasOne(gt => gt.Tag)
                 .WithMany(t => t.GameTags)
                 .HasForeignKey(gt => gt.TagId);
+
+
+            // Game
+            builder.Entity<Game>()
+                .Property(g => g.Price)
+                .HasPrecision(18, 2);
 
             builder.Entity<User>().ToTable("Users");
             builder.Entity<IdentityRole>().ToTable("Roles");
