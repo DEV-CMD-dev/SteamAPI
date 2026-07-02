@@ -1,35 +1,76 @@
+using BusinessLogic.Classes;
+using BusinessLogic.Interfaces;
+using BusinessLogic.Services;
 using DataAccess;
+using DataAccess.Data.Entities;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using Scalar.AspNetCore;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
+string connStr = builder.Configuration.GetConnectionString("RemoteDb")
+    ?? throw new Exception("Connection string not found");
+
 builder.Services.AddDbContext<SteamDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("RemoteDb")));
-
-
+    options.UseSqlServer(connStr));
 
 builder.Services.AddControllers();
+
 builder.Services.AddOpenApi();
-builder.Services.AddSwaggerGen();
+
+builder.Services.AddScoped<IJwtService, JwtService>();
+builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddOptions<ScalarOptions>().BindConfiguration("Scalar");
+
+builder.Services.AddIdentityCore<User>(options =>
+{
+    options.Password.RequiredLength = 6;
+    options.Password.RequireDigit = false;
+})
+.AddRoles<IdentityRole>()
+.AddEntityFrameworkStores<SteamDbContext>();
+
+// JWT
+var jwtOpts = builder.Configuration.GetSection(nameof(JwtOptions)).Get<JwtOptions>()
+    ?? throw new Exception("Jwt options not found");
+builder.Services.AddSingleton(jwtOpts);
+
+builder.Services.AddAuthorization();
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(o =>
+    {
+        o.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = false,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = jwtOpts.Issuer,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOpts.Key)),
+            ClockSkew = TimeSpan.Zero
+        };
+    });
 
 var app = builder.Build();
 
-
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
 
-    // Configure swagger ui
-    app.UseSwagger();
-    app.UseSwaggerUI(options => {
-        options.SwaggerEndpoint("/swagger/v1/swagger.json", "SteamAPI");
-        options.RoutePrefix = string.Empty;
-    });
+    app.MapScalarApiReference("",options =>
+    {
+        options.WithTitle("Steam API");
+});
 }
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
