@@ -4,6 +4,6 @@
     {
         public int Id { get; set; }
         public string Name { get; set; } = string.Empty;
-        public List<GameTag> GameTags { get; set; } = new();
+        public List<Game> Games { get; set; } = new();
     }
 }

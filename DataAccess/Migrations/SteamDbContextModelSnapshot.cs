@@ -4,7 +4,6 @@ using DataAccess;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -12,11 +11,9 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataAccess.Migrations
 {
     [DbContext(typeof(SteamDbContext))]
-    [Migration("20260626115830_Initial")]
-    partial class Initial
+    partial class SteamDbContextModelSnapshot : ModelSnapshot
     {
-        /// <inheritdoc />
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -24,6 +21,70 @@ namespace DataAccess.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("AchievementUser", b =>
+                {
+                    b.Property<int>("AchievementsId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UsersId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("AchievementsId", "UsersId");
+
+                    b.HasIndex("UsersId");
+
+                    b.ToTable("AchievementUser");
+                });
+
+            modelBuilder.Entity("DataAccess.Data.Entities.Achievement", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("GameId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("IconUrl")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("GameId");
+
+                    b.ToTable("Achievements");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            GameId = 1,
+                            IconUrl = "https://example.com/icons/first_blood.png",
+                            Name = "First Blood"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            GameId = 2,
+                            IconUrl = "https://example.com/icons/hacker.png",
+                            Name = "Master Hacker"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            GameId = 3,
+                            IconUrl = "https://example.com/icons/elden_lord.png",
+                            Name = "Lord of Frenzied Flame"
+                        });
+                });
 
             modelBuilder.Entity("DataAccess.Data.Entities.Game", b =>
                 {
@@ -33,22 +94,27 @@ namespace DataAccess.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("CoverImage")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("DeveloperId")
-                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("HeaderImage")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<decimal>("Price")
+                        .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<DateTime>("ReleaseDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("SystemRequirements")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Title")
                         .IsRequired()
@@ -59,21 +125,142 @@ namespace DataAccess.Migrations
                     b.HasIndex("DeveloperId");
 
                     b.ToTable("Games");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CoverImage = "https://example.com/covers/cs2.jpg",
+                            Description = "Tactical shooter.",
+                            Price = 0.00m,
+                            ReleaseDate = new DateTime(2023, 9, 27, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            SystemRequirements = "Windows 10, 8GB RAM",
+                            Title = "Counter-Strike 2"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            CoverImage = "https://example.com/covers/neon.jpg",
+                            Description = "Cyberpunk RPG.",
+                            Price = 29.99m,
+                            ReleaseDate = new DateTime(2026, 5, 12, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            SystemRequirements = "Windows 11, 16GB RAM",
+                            Title = "Neon City 2026"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            CoverImage = "https://example.com/covers/elden.jpg",
+                            Description = "Rise, Tarnished.",
+                            Price = 59.99m,
+                            ReleaseDate = new DateTime(2022, 2, 25, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            SystemRequirements = "Windows 10, RTX 2060",
+                            Title = "Elden Ring"
+                        });
                 });
 
-            modelBuilder.Entity("DataAccess.Data.Entities.GameTag", b =>
+            modelBuilder.Entity("DataAccess.Data.Entities.GameVersion", b =>
                 {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
                     b.Property<int>("GameId")
                         .HasColumnType("int");
 
-                    b.Property<int>("TagId")
+                    b.Property<string>("PatchNotes")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Version")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("GameId");
+
+                    b.ToTable("GameVersions");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            GameId = 1,
+                            PatchNotes = "Initial release.",
+                            Version = "v1.0"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            GameId = 1,
+                            PatchNotes = "Fixed smoke grenades.",
+                            Version = "v1.1"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            GameId = 2,
+                            PatchNotes = "Early Access Launch.",
+                            Version = "v0.9"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            GameId = 3,
+                            PatchNotes = "Colosseum update.",
+                            Version = "v1.10"
+                        });
+                });
+
+            modelBuilder.Entity("DataAccess.Data.Entities.Screenshot", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.HasKey("GameId", "TagId");
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.HasIndex("TagId");
+                    b.Property<int>("GameId")
+                        .HasColumnType("int");
 
-                    b.ToTable("GameTags");
+                    b.Property<string>("Url")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("GameId");
+
+                    b.ToTable("Screenshots");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            GameId = 1,
+                            Url = "https://example.com/screenshots/cs2_1.jpg"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            GameId = 1,
+                            Url = "https://example.com/screenshots/cs2_2.jpg"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            GameId = 2,
+                            Url = "https://example.com/screenshots/neon_1.jpg"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            GameId = 3,
+                            Url = "https://example.com/screenshots/elden_1.jpg"
+                        });
                 });
 
             modelBuilder.Entity("DataAccess.Data.Entities.Tag", b =>
@@ -91,6 +278,28 @@ namespace DataAccess.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Tags");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "Action"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Name = "Co-op"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Name = "Cyberpunk"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Name = "Souls-like"
+                        });
                 });
 
             modelBuilder.Entity("DataAccess.Data.Entities.User", b =>
@@ -114,8 +323,8 @@ namespace DataAccess.Migrations
                     b.Property<string>("Country")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateOnly>("CreatedAt")
-                        .HasColumnType("date");
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Email")
                         .HasMaxLength(256)
@@ -167,6 +376,7 @@ namespace DataAccess.Migrations
                         .HasColumnType("int");
 
                     b.Property<decimal>("WalletBalance")
+                        .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
                     b.HasKey("Id");
@@ -204,6 +414,53 @@ namespace DataAccess.Migrations
                     b.HasIndex("GameId");
 
                     b.ToTable("UserGames");
+                });
+
+            modelBuilder.Entity("GameTag", b =>
+                {
+                    b.Property<int>("GamesId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TagsId")
+                        .HasColumnType("int");
+
+                    b.HasKey("GamesId", "TagsId");
+
+                    b.HasIndex("TagsId");
+
+                    b.ToTable("GameTag");
+
+                    b.HasData(
+                        new
+                        {
+                            GamesId = 1,
+                            TagsId = 1
+                        },
+                        new
+                        {
+                            GamesId = 1,
+                            TagsId = 2
+                        },
+                        new
+                        {
+                            GamesId = 2,
+                            TagsId = 1
+                        },
+                        new
+                        {
+                            GamesId = 2,
+                            TagsId = 3
+                        },
+                        new
+                        {
+                            GamesId = 3,
+                            TagsId = 1
+                        },
+                        new
+                        {
+                            GamesId = 3,
+                            TagsId = 4
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -339,34 +596,61 @@ namespace DataAccess.Migrations
                     b.ToTable("UserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("DataAccess.Data.Entities.Game", b =>
+            modelBuilder.Entity("AchievementUser", b =>
                 {
-                    b.HasOne("DataAccess.Data.Entities.User", "Developer")
-                        .WithMany("DevelopedGames")
-                        .HasForeignKey("DeveloperId")
+                    b.HasOne("DataAccess.Data.Entities.Achievement", null)
+                        .WithMany()
+                        .HasForeignKey("AchievementsId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Developer");
+                    b.HasOne("DataAccess.Data.Entities.User", null)
+                        .WithMany()
+                        .HasForeignKey("UsersId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
-            modelBuilder.Entity("DataAccess.Data.Entities.GameTag", b =>
+            modelBuilder.Entity("DataAccess.Data.Entities.Achievement", b =>
                 {
                     b.HasOne("DataAccess.Data.Entities.Game", "Game")
-                        .WithMany("GameTags")
+                        .WithMany("Achievements")
                         .HasForeignKey("GameId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("DataAccess.Data.Entities.Tag", "Tag")
-                        .WithMany("GameTags")
-                        .HasForeignKey("TagId")
+                    b.Navigation("Game");
+                });
+
+            modelBuilder.Entity("DataAccess.Data.Entities.Game", b =>
+                {
+                    b.HasOne("DataAccess.Data.Entities.User", "Developer")
+                        .WithMany("DevelopedGames")
+                        .HasForeignKey("DeveloperId");
+
+                    b.Navigation("Developer");
+                });
+
+            modelBuilder.Entity("DataAccess.Data.Entities.GameVersion", b =>
+                {
+                    b.HasOne("DataAccess.Data.Entities.Game", "Game")
+                        .WithMany("Versions")
+                        .HasForeignKey("GameId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Game");
+                });
 
-                    b.Navigation("Tag");
+            modelBuilder.Entity("DataAccess.Data.Entities.Screenshot", b =>
+                {
+                    b.HasOne("DataAccess.Data.Entities.Game", "Game")
+                        .WithMany("Screenshots")
+                        .HasForeignKey("GameId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Game");
                 });
 
             modelBuilder.Entity("DataAccess.Data.Entities.UserGame", b =>
@@ -378,7 +662,7 @@ namespace DataAccess.Migrations
                         .IsRequired();
 
                     b.HasOne("DataAccess.Data.Entities.User", "User")
-                        .WithMany("OwnedGames")
+                        .WithMany("UserGames")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
@@ -386,6 +670,21 @@ namespace DataAccess.Migrations
                     b.Navigation("Game");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("GameTag", b =>
+                {
+                    b.HasOne("DataAccess.Data.Entities.Game", null)
+                        .WithMany()
+                        .HasForeignKey("GamesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("DataAccess.Data.Entities.Tag", null)
+                        .WithMany()
+                        .HasForeignKey("TagsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -441,21 +740,20 @@ namespace DataAccess.Migrations
 
             modelBuilder.Entity("DataAccess.Data.Entities.Game", b =>
                 {
-                    b.Navigation("GameTags");
+                    b.Navigation("Achievements");
+
+                    b.Navigation("Screenshots");
 
                     b.Navigation("UserGames");
-                });
 
-            modelBuilder.Entity("DataAccess.Data.Entities.Tag", b =>
-                {
-                    b.Navigation("GameTags");
+                    b.Navigation("Versions");
                 });
 
             modelBuilder.Entity("DataAccess.Data.Entities.User", b =>
                 {
                     b.Navigation("DevelopedGames");
 
-                    b.Navigation("OwnedGames");
+                    b.Navigation("UserGames");
                 });
 #pragma warning restore 612, 618
         }

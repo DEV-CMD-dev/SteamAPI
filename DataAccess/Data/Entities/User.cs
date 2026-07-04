@@ -13,8 +13,8 @@ namespace DataAccess.Data.Entities
         public UserVisibility UserVisibility { get; set; }
         public UserRole UserRole { get; set; }
         public decimal WalletBalance { get; set; }
-
-        public List<UserGame> OwnedGames { get; set; } = new();
-        public List<Game> DevelopedGames { get; set; } = new();
+        public List<UserGame> UserGames { get; set; } = [];
+        public List<Achievement> Achievements { get; set; } = [];
+        public List<Game> DevelopedGames { get; set; } = [];
     }
 }
