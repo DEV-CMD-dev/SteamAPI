@@ -1,4 +1,5 @@
 using BusinessLogic.Classes;
+using BusinessLogic.Configurations;
 using BusinessLogic.Interfaces;
 using BusinessLogic.Services;
 using DataAccess;
@@ -21,9 +22,10 @@ builder.Services.AddDbContext<SteamDbContext>(options =>
 builder.Services.AddControllers();
 
 builder.Services.AddOpenApi();
-
+builder.Services.AddAutoMapper(cfg => { }, typeof(MapperProfile));
 builder.Services.AddScoped<IJwtService, JwtService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IGameService, GameService>();
 builder.Services.AddOptions<ScalarOptions>().BindConfiguration("Scalar");
 
 builder.Services.AddIdentityCore<User>(options =>

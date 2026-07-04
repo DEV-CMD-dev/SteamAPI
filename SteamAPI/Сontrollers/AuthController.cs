@@ -1,6 +1,5 @@
 ﻿using BusinessLogic.DTOs;
 using BusinessLogic.Interfaces;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace SteamAPI.Controllers;

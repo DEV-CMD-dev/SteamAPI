@@ -1,4 +1,5 @@
-﻿using DataAccess.Data.Entities;
+﻿using DataAccess.Data;
+using DataAccess.Data.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -12,7 +13,12 @@ namespace DataAccess
         public DbSet<Game> Games { get; set; }
         public DbSet<Tag> Tags { get; set; }
         public DbSet<UserGame> UserGames { get; set; }
-        public DbSet<GameTag> GameTags { get; set; }
+        public DbSet<GameVersion> GameVersions { get; set; }
+        public DbSet<Screenshot> Screenshots { get; set; }
+        public DbSet<Achievement> Achievements { get; set; }
+      
+
+
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -30,7 +36,7 @@ namespace DataAccess
 
             builder.Entity<UserGame>()
                 .HasOne(ug => ug.User)
-                .WithMany(u => u.OwnedGames)
+                .WithMany(u => u.UserGames)
                 .HasForeignKey(ug => ug.UserId)
                 .OnDelete(DeleteBehavior.Restrict);
 
@@ -40,24 +46,15 @@ namespace DataAccess
                 .HasForeignKey(ug => ug.GameId);
 
             // Game - tag
-            builder.Entity<GameTag>()
-                .HasKey(gt => new { gt.GameId, gt.TagId });
-
-            builder.Entity<GameTag>()
-                .HasOne(gt => gt.Game)
-                .WithMany(g => g.GameTags)
-                .HasForeignKey(gt => gt.GameId);
-
-            builder.Entity<GameTag>()
-                .HasOne(gt => gt.Tag)
-                .WithMany(t => t.GameTags)
-                .HasForeignKey(gt => gt.TagId);
+           
 
 
             // Game
             builder.Entity<Game>()
                 .Property(g => g.Price)
+                
                 .HasPrecision(18, 2);
+                
 
             builder.Entity<User>().ToTable("Users");
             builder.Entity<IdentityRole>().ToTable("Roles");
@@ -66,6 +63,8 @@ namespace DataAccess
             builder.Entity<IdentityUserLogin<string>>().ToTable("UserLogins");
             builder.Entity<IdentityRoleClaim<string>>().ToTable("RoleClaims");
             builder.Entity<IdentityUserToken<string>>().ToTable("UserTokens");
+
+            builder.SeedSteamData();
         }
     }
 }
