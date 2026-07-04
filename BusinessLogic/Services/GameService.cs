@@ -25,7 +25,7 @@ namespace BusinessLogic.Services
 
             return gameDtos;
         }
-        public async Task<GameDto?> Get(int id)
+        public async Task<GameDto> Get(int id)
         {
             var game = await _context.Games.FindAsync(id);
 
