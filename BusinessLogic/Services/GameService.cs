@@ -3,8 +3,8 @@ using BusinessLogic.DTOs.Game;
 using BusinessLogic.Interfaces;
 using DataAccess;
 using DataAccess.Data.Entities;
-using Microsoft.EntityFrameworkCore;
 using DataAccess.Enums;
+using Microsoft.EntityFrameworkCore;
 
 namespace BusinessLogic.Services
 {
@@ -12,85 +12,85 @@ namespace BusinessLogic.Services
     {
         private readonly SteamDbContext _context;
         private readonly IMapper _mapper;
+
         public GameService(SteamDbContext context, IMapper mapper)
         {
             _context = context;
             _mapper = mapper;
         }
 
-        public async Task<IList<GameDto>> GetAll()
+        public async Task<IEnumerable<GameDto>> GetAll()
         {
-            var games = await _context.Games.ToListAsync();
-            var gameDtos = _mapper.Map<IList<GameDto>>(games);
-
-            return gameDtos;
+            var games = await _context.Games
+                .AsNoTracking()
+                .ToListAsync();
+            return _mapper.Map<IEnumerable<GameDto>>(games);
         }
-        public async Task<GameDto> Get(int id)
+
+        public async Task<GameDto> GetById(int id)
         {
-            var game = await _context.Games.FindAsync(id);
+            var game = await _context.Games
+                .AsNoTracking()
+                .FirstOrDefaultAsync(x => x.Id == id);
 
-            if (game == null) 
-                throw new Exception($"Game with ID {id} not found.");
+            if (game == null)
+                throw new KeyNotFoundException($"Game with ID {id} not found.");
 
-            var gameDto = _mapper.Map<GameDto>(game);
-
-            return gameDto;
+            return _mapper.Map<GameDto>(game);
         }
-        public async Task<GameDto> Create(CreateGameDto dto)
-        {
-            var develeoper = await _context.Users.AnyAsync(d => d.Id == dto.DeveloperId);
 
-            if (!develeoper)
-                throw new Exception($"Developer with ID {dto.DeveloperId} not found.");
-            if (dto.ReleaseDate.HasValue && dto.ReleaseDate.Value < DateTime.UtcNow)
-                throw new Exception("Release date cannot be in the past.");
-            if (dto.Price < 0)
-                throw new Exception("Price cannot be negative.");
+        public async Task<GameDto> Create(string developerId, CreateGameDto dto)
+        {
+            var developer = await _context.Users.FindAsync(developerId);
+
+            if (developer == null)
+                throw new KeyNotFoundException($"User with ID {developerId} not found.");
+
+            if (developer.UserRole != UserRole.Developer)
+                throw new ArgumentException("Only developers can create games.");
 
             dto.ReleaseDate ??= DateTime.UtcNow;
 
             var newGame = _mapper.Map<Game>(dto);
+            newGame.DeveloperId = developerId;
 
             _context.Games.Add(newGame);
             await _context.SaveChangesAsync();
 
-            var gameDto = _mapper.Map<GameDto>(newGame);
-
-            return gameDto;
+            return _mapper.Map<GameDto>(newGame);
         }
-        public async Task Update(UpdateGameDto dto)
-        {
-            var existingGame = await _context.Games.FindAsync(dto.Id);
 
+        public async Task Update(int id, UpdateGameDto dto)
+        {
+            var existingGame = await _context.Games.FindAsync(id);
             if (existingGame == null)
-                throw new Exception($"Game with Id {dto.Id} not found.");
+                throw new KeyNotFoundException($"Game with Id {id} not found.");
 
             _mapper.Map(dto, existingGame);
             await _context.SaveChangesAsync();
         }
-        public async Task Delete(DeleteGameDto dto)
+
+        public async Task Delete(int gameId, string userId)
         {
-            var user = await _context.Users.FindAsync(dto.UserId);
-            var game = await _context.Games.FindAsync(dto.GameId);
-
+            var game = await _context.Games.FindAsync(gameId);
             if (game == null)
-                throw new Exception($"Game with ID {dto.GameId} not found.");
+                throw new KeyNotFoundException($"Game with ID {gameId} not found.");
 
-            if (user.UserRole == UserRole.Developer || user.UserRole == UserRole.Moderator)
+            var user = await _context.Users.FindAsync(userId);
+            if (user == null)
+                throw new KeyNotFoundException($"User with ID {userId} not found.");
+
+            bool isModerator = user.UserRole == UserRole.Moderator;
+            bool isOwner = game.DeveloperId == userId;
+
+            if (isModerator || isOwner)
             {
-                if (game.DeveloperId == dto.UserId)
-                {
-                    _context.Games.Remove(game);
-                    await _context.SaveChangesAsync();
-                }
-                else
-                {
-                    throw new Exception("You do not have permission to delete this game.");
-                }
+                _context.Games.Remove(game);
+                await _context.SaveChangesAsync();
             }
             else
             {
-                throw new Exception("You do not have permission to delete this game.");
+                throw new UnauthorizedAccessException("You do not have permission to delete this game.");
             }
         }
     }
