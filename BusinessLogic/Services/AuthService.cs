@@ -23,7 +23,8 @@ namespace BusinessLogic.Services
                 UserName = dto.UserName,
                 Email = dto.Email,
                 Country = dto.Country,
-                UserRole = DataAccess.Enums.UserRole.User
+                UserRole = DataAccess.Enums.UserRole.User,
+                UserVisibility = DataAccess.Enums.UserVisibility.Offline
             };
             var result = await _userManager.CreateAsync(newUser, dto.Password);
 
