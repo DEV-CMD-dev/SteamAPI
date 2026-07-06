@@ -26,6 +26,8 @@ builder.Services.AddAutoMapper(cfg => { }, typeof(MapperProfile));
 builder.Services.AddScoped<IJwtService, JwtService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IGameService, GameService>();
+builder.Services.AddScoped<ITagService, TagService>();
+
 builder.Services.AddOptions<ScalarOptions>().BindConfiguration("Scalar");
 
 builder.Services.AddIdentityCore<User>(options =>
