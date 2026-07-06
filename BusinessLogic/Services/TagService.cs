@@ -1,14 +1,9 @@
 ﻿using AutoMapper;
-using BusinessLogic.DTOs.Game;
 using BusinessLogic.DTOs.Tag;
 using BusinessLogic.Interfaces;
 using DataAccess;
 using DataAccess.Data.Entities;
-using DataAccess.Enums;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace BusinessLogic.Services
 {
@@ -23,24 +18,24 @@ namespace BusinessLogic.Services
             _mapper = mapper;
         }
 
-        public async Task<IList<TagDto>> GetAll()
+        public async Task<IEnumerable<TagDto>> GetAll()
         {
-            var tags = await _context.Tags.ToListAsync();
-            var tagsDtos = _mapper.Map<IList<TagDto>>(tags);
-
-            return tagsDtos;
+            var tags = await _context.Tags
+                .AsNoTracking()
+                .ToListAsync();
+            return _mapper.Map<IEnumerable<TagDto>>(tags);
         }
 
-        public async Task<TagDto> Get(int id)
+        public async Task<TagDto> GetById(int id)
         {
-            var tag = await _context.Tags.FindAsync(id);
+            var tag = await _context.Tags
+                .AsNoTracking()
+                .FirstOrDefaultAsync(x => x.Id == id);
 
             if (tag == null)
-                throw new Exception($"Tag with ID {id} not found.");
+                throw new KeyNotFoundException($"Tag with ID {id} not found.");
 
-            var tagDto = _mapper.Map<TagDto>(tag);
-
-            return tagDto;
+            return _mapper.Map<TagDto>(tag);
         }
 
         public async Task Create(CreateTagDto dto)
@@ -51,12 +46,12 @@ namespace BusinessLogic.Services
             await _context.SaveChangesAsync();
         }
 
-        public async Task Update(TagDto dto)
+        public async Task Update(int id, UpdateTagDto dto)
         {
-            var existingTag = await _context.Tags.FindAsync(dto.Id);
+            var existingTag = await _context.Tags.FindAsync(id);
 
             if (existingTag == null)
-                throw new Exception($"Tag with Id {dto.Id} not found.");
+                throw new KeyNotFoundException($"Tag with Id {id} not found.");
 
             _mapper.Map(dto, existingTag);
             await _context.SaveChangesAsync();
@@ -67,7 +62,7 @@ namespace BusinessLogic.Services
             var tag = await _context.Tags.FindAsync(id);
 
             if (tag == null)
-                throw new Exception($"Game with ID {id} not found.");
+                throw new KeyNotFoundException($"Tag with ID {id} not found.");
 
             _context.Tags.Remove(tag);
             await _context.SaveChangesAsync();

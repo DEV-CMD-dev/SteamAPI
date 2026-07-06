@@ -24,6 +24,7 @@ namespace BusinessLogic.Configurations
             // Tag mappings
             CreateMap<TagDto, Tag>().ReverseMap();
             CreateMap<CreateTagDto, Tag>().ReverseMap();
+            CreateMap<UpdateTagDto, Tag>();
 
 
 

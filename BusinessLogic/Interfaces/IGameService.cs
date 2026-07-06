@@ -4,10 +4,10 @@ namespace BusinessLogic.Interfaces
 {
     public interface IGameService
     {
-        Task<IList<GameDto>> GetAll();
-        Task<GameDto> Get(int id);
-        Task<GameDto> Create(CreateGameDto model);
-        Task Update(UpdateGameDto model);
-        Task Delete(DeleteGameDto dto);
+        Task<IEnumerable<GameDto>> GetAll();
+        Task<GameDto> GetById(int id);
+        Task<GameDto> Create(string developerId, CreateGameDto dto);
+        Task Update(int id, UpdateGameDto model);
+        Task Delete(int gameId, string userId);
     }
 }

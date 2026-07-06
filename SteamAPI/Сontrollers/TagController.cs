@@ -1,8 +1,5 @@
-﻿using BusinessLogic.DTOs.Game;
-using BusinessLogic.DTOs.Tag;
+﻿using BusinessLogic.DTOs.Tag;
 using BusinessLogic.Interfaces;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace SteamAPI.Сontrollers
@@ -17,8 +14,8 @@ namespace SteamAPI.Сontrollers
             _tagService = tagService;
         }
 
-        [HttpGet("getTags")]
-        public async Task<IActionResult> GetTags()
+        [HttpGet]
+        public async Task<IActionResult> GetAllTags()
         {
             try
             {
@@ -31,12 +28,12 @@ namespace SteamAPI.Сontrollers
             }
         }
 
-        [HttpGet("getTag")]
-        public async Task<IActionResult> GetTag(int id)
+        [HttpGet("{id}")]
+        public async Task<IActionResult> Get(int id)
         {
             try
             {
-                var result = await _tagService.Get(id);
+                var result = await _tagService.GetById(id);
                 return Ok(result);
             }
             catch (Exception ex)
@@ -45,8 +42,8 @@ namespace SteamAPI.Сontrollers
             }
         }
 
-        [HttpPost("createTag")]
-        public async Task<IActionResult> CreateTag(CreateTagDto dto)
+        [HttpPost]
+        public async Task<IActionResult> Create(CreateTagDto dto)
         {
             try
             {
@@ -59,13 +56,13 @@ namespace SteamAPI.Сontrollers
             }
         }
 
-        [HttpPut("updateTag")]
-        public async Task<IActionResult> UpdateTag(TagDto dto)
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Update(int id, UpdateTagDto dto)
         {
             try
             {
-                await _tagService.Update(dto);
-                return Ok();
+                await _tagService.Update(id, dto);
+                return NoContent();
             }
             catch (Exception ex)
             {
@@ -73,17 +70,21 @@ namespace SteamAPI.Сontrollers
             }
         }
 
-        [HttpDelete("deleteTag")]
-        public async Task<IActionResult> DeleteTag(int id)
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(int id)
         {
             try
             {
                 await _tagService.Delete(id);
-                return Ok();
+                return NoContent();
             }
-            catch (Exception ex)
+            catch (KeyNotFoundException ex)
             {
-                return Unauthorized(ex.Message);
+                return NotFound(ex.Message);
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, "An error occurred while deleting the tag.");
             }
         }
     }

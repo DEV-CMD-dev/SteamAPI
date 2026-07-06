@@ -22,7 +22,8 @@ namespace BusinessLogic.Services
             {
                 UserName = dto.UserName,
                 Email = dto.Email,
-                Country = dto.Country
+                Country = dto.Country,
+                UserRole = DataAccess.Enums.UserRole.User
             };
             var result = await _userManager.CreateAsync(newUser, dto.Password);
 
@@ -55,11 +56,6 @@ namespace BusinessLogic.Services
         public Task Logout()
         {
             return Task.CompletedTask;
-        }
-
-        public async Task<bool> IsUserDeveloper(User user)
-        {
-            return await _userManager.IsInRoleAsync(user, "Developer");
         }
     }
 }

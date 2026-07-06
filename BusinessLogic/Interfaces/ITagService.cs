@@ -1,17 +1,13 @@
-﻿using BusinessLogic.DTOs.Game;
-using BusinessLogic.DTOs.Tag;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using BusinessLogic.DTOs.Tag;
 
 namespace BusinessLogic.Interfaces
 {
     public interface ITagService
     {
-        Task<IList<TagDto>> GetAll();
-        Task<TagDto> Get(int id);
+        Task<IEnumerable<TagDto>> GetAll();
+        Task<TagDto> GetById(int id);
         Task Create(CreateTagDto dto);
-        Task Update(TagDto dto);
+        Task Update(int id ,UpdateTagDto dto);
         Task Delete(int id);
     }
 }
