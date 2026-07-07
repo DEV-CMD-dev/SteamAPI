@@ -16,5 +16,7 @@ namespace DataAccess.Data.Entities
         public List<UserGame> UserGames { get; set; } = [];
         public List<Achievement> Achievements { get; set; } = [];
         public List<Game> DevelopedGames { get; set; } = [];
+        public int? UserProfileId { get; set; }
+        public UserProfile? UserProfile { get; set; }
     }
 }

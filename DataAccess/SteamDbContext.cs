@@ -16,8 +16,7 @@ namespace DataAccess
         public DbSet<GameVersion> GameVersions { get; set; }
         public DbSet<Screenshot> Screenshots { get; set; }
         public DbSet<Achievement> Achievements { get; set; }
-      
-
+        public DbSet<UserProfile> UserProfiles { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder builder)
@@ -29,6 +28,10 @@ namespace DataAccess
                 .Property(u => u.WalletBalance)
                 .HasPrecision(18, 2);
 
+            builder.Entity<User>()
+                .HasOne(u => u.UserProfile)
+                .WithOne(up => up.User)
+                .HasPrincipalKey<UserProfile>(up => up.UserId);
 
             //User - game
             builder.Entity<UserGame>()
