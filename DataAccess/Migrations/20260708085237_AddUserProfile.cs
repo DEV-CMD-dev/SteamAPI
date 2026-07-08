@@ -22,7 +22,7 @@ namespace DataAccess.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    UserId = table.Column<int>(type: "int", nullable: false),
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Level = table.Column<int>(type: "int", nullable: false),
                     XP = table.Column<int>(type: "int", nullable: false),
                     Badges = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -34,34 +34,24 @@ namespace DataAccess.Migrations
                     table.UniqueConstraint("AK_UserProfiles_UserId", x => x.UserId);
                 });
 
-            migrationBuilder.CreateIndex(
-                name: "IX_Users_UserProfileId",
-                table: "Users",
-                column: "UserProfileId",
-                unique: true,
-                filter: "[UserProfileId] IS NOT NULL");
-
             migrationBuilder.AddForeignKey(
-                name: "FK_Users_UserProfiles_UserProfileId",
+                name: "FK_Users_UserProfiles_Id",
                 table: "Users",
-                column: "UserProfileId",
+                column: "Id",
                 principalTable: "UserProfiles",
-                principalColumn: "UserId");
+                principalColumn: "UserId",
+                onDelete: ReferentialAction.Cascade);
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropForeignKey(
-                name: "FK_Users_UserProfiles_UserProfileId",
+                name: "FK_Users_UserProfiles_Id",
                 table: "Users");
 
             migrationBuilder.DropTable(
                 name: "UserProfiles");
-
-            migrationBuilder.DropIndex(
-                name: "IX_Users_UserProfileId",
-                table: "Users");
 
             migrationBuilder.DropColumn(
                 name: "UserProfileId",

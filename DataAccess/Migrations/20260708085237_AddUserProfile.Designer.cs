@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataAccess.Migrations
 {
     [DbContext(typeof(SteamDbContext))]
-    [Migration("20260707230915_AddUserProfile")]
+    [Migration("20260708085237_AddUserProfile")]
     partial class AddUserProfile
     {
         /// <inheritdoc />
@@ -395,10 +395,6 @@ namespace DataAccess.Migrations
                         .HasDatabaseName("UserNameIndex")
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
-                    b.HasIndex("UserProfileId")
-                        .IsUnique()
-                        .HasFilter("[UserProfileId] IS NOT NULL");
-
                     b.ToTable("Users", (string)null);
                 });
 
@@ -445,8 +441,9 @@ namespace DataAccess.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<int>("XP")
                         .HasColumnType("int");
@@ -697,8 +694,10 @@ namespace DataAccess.Migrations
                 {
                     b.HasOne("DataAccess.Data.Entities.UserProfile", "UserProfile")
                         .WithOne("User")
-                        .HasForeignKey("DataAccess.Data.Entities.User", "UserProfileId")
-                        .HasPrincipalKey("DataAccess.Data.Entities.UserProfile", "UserId");
+                        .HasForeignKey("DataAccess.Data.Entities.User", "Id")
+                        .HasPrincipalKey("DataAccess.Data.Entities.UserProfile", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("UserProfile");
                 });
