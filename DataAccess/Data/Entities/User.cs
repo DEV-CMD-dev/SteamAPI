@@ -5,7 +5,6 @@ namespace DataAccess.Data.Entities
 {
     public class User : IdentityUser
     {
-        public string? Avatar { get; set; }
         public string? Bio { get; set; }
         public string? Country { get; set; }
         public DateTime CreatedAt { get; set; }
@@ -13,10 +12,12 @@ namespace DataAccess.Data.Entities
         public UserVisibility UserVisibility { get; set; }
         public UserRole UserRole { get; set; }
         public decimal WalletBalance { get; set; }
-        public List<UserGame> UserGames { get; set; } = [];
-        public List<Achievement> Achievements { get; set; } = [];
-        public List<Game> DevelopedGames { get; set; } = [];
-        public int? UserProfileId { get; set; }
-        public UserProfile? UserProfile { get; set; }
+
+        public List<UserGame> UserGames { get; set; } = new();
+        public List<Achievement> Achievements { get; set; } = new();
+        public List<Game> DevelopedGames { get; set; } = new();
+
+        public virtual Profile? Profile { get; set; }
+
     }
 }
