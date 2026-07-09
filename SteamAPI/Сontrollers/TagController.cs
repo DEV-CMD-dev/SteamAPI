@@ -2,90 +2,50 @@
 using BusinessLogic.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
-namespace SteamAPI.Сontrollers
+[Route("api/[controller]")]
+[ApiController]
+public class TagController : ControllerBase
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class TagController : ControllerBase
+    private readonly ITagService _tagService;
+
+    public TagController(ITagService tagService)
     {
-        private readonly ITagService _tagService;
-        public TagController(ITagService tagService)
-        {
-            _tagService = tagService;
-        }
+        _tagService = tagService;
+    }
 
-        [HttpGet]
-        public async Task<IActionResult> GetAllTags()
-        {
-            try
-            {
-                var result = await _tagService.GetAll();
-                return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
+    [HttpGet]
+    public async Task<IActionResult> GetAllTags()
+    {
+        return Ok(await _tagService.GetAll());
+    }
 
-        [HttpGet("{id}")]
-        public async Task<IActionResult> Get(int id)
-        {
-            try
-            {
-                var result = await _tagService.GetById(id);
-                return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
+    [HttpGet("{id}")]
+    public async Task<IActionResult> Get(int id)
+    {
+        return Ok(await _tagService.GetById(id));
+    }
 
-        [HttpPost]
-        public async Task<IActionResult> Create(CreateTagDto dto)
-        {
-            try
-            {
-                await _tagService.Create(dto);
-                return Ok();
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
+    [HttpPost]
+    public async Task<IActionResult> Create(CreateTagDto dto)
+    {
+        await _tagService.Create(dto);
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, UpdateTagDto dto)
-        {
-            try
-            {
-                await _tagService.Update(id, dto);
-                return NoContent();
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
+        return Ok();
+    }
 
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(int id)
-        {
-            try
-            {
-                await _tagService.Delete(id);
-                return NoContent();
-            }
-            catch (KeyNotFoundException ex)
-            {
-                return NotFound(ex.Message);
-            }
-            catch (Exception)
-            {
-                return StatusCode(500, "An error occurred while deleting the tag.");
-            }
-        }
+    [HttpPut("{id}")]
+    public async Task<IActionResult> Update(int id, UpdateTagDto dto)
+    {
+        await _tagService.Update(id, dto);
+
+        return NoContent();
+    }
+
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> Delete(int id)
+    {
+        await _tagService.Delete(id);
+
+        return NoContent();
     }
 }
