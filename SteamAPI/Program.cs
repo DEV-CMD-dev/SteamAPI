@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Scalar.AspNetCore;
-using Steam_WebApi.Middlewares;
+using SteamApi.Middlewares;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);

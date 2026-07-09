@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 
-namespace Steam_WebApi.Middlewares
+namespace SteamApi.Middlewares
 {
     public class ErrorHandlerMiddleware
     {
