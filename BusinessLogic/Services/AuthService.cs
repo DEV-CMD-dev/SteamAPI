@@ -25,6 +25,7 @@ namespace BusinessLogic.Services
                 Country = dto.Country,
                 UserRole = DataAccess.Enums.UserRole.User,
                 UserVisibility = DataAccess.Enums.UserVisibility.Offline,
+                CreatedAt = DateTime.UtcNow,
                 Profile = new Profile
                 {
                     Level = 1
