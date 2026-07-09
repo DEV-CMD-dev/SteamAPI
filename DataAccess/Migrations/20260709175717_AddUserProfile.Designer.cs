@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataAccess.Migrations
 {
     [DbContext(typeof(SteamDbContext))]
-    [Migration("20260708085237_AddUserProfile")]
+    [Migration("20260709175717_AddUserProfile")]
     partial class AddUserProfile
     {
         /// <inheritdoc />
