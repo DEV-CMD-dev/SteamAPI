@@ -6,7 +6,7 @@ using BusinessLogic.DTOs.Tag;
 
 namespace BusinessLogic.Configurations
 {
-    public class MapperProfile : Profile
+    public class MapperProfile : AutoMapper.Profile
     {
         public MapperProfile()
         {

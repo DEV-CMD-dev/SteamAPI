@@ -1,4 +1,4 @@
-﻿using BusinessLogic.Classes;
+﻿using BusinessLogic.Configurations;
 using BusinessLogic.Interfaces;
 using DataAccess.Data.Entities;
 using Microsoft.AspNetCore.Identity;

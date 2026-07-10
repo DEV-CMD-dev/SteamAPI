@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataAccess.Migrations
 {
     [DbContext(typeof(SteamDbContext))]
-    [Migration("20260704134111_EditEntitty231242312")]
-    partial class EditEntitty231242312
+    [Migration("20260709191623_FixEntities")]
+    partial class FixEntities
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -52,7 +52,6 @@ namespace DataAccess.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("IconUrl")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
@@ -98,7 +97,6 @@ namespace DataAccess.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("CoverImage")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Description")
@@ -174,7 +172,6 @@ namespace DataAccess.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("PatchNotes")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Version")
@@ -216,6 +213,41 @@ namespace DataAccess.Migrations
                             PatchNotes = "Colosseum update.",
                             Version = "v1.10"
                         });
+                });
+
+            modelBuilder.Entity("DataAccess.Data.Entities.Profile", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Avatar")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Badges")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Level")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Showcase")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("XP")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
+                    b.ToTable("Profiles");
                 });
 
             modelBuilder.Entity("DataAccess.Data.Entities.Screenshot", b =>
@@ -278,6 +310,9 @@ namespace DataAccess.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Picture")
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("Id");
 
                     b.ToTable("Tags");
@@ -312,9 +347,6 @@ namespace DataAccess.Migrations
 
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("int");
-
-                    b.Property<string>("Avatar")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Bio")
                         .HasColumnType("nvarchar(max)");
@@ -645,6 +677,17 @@ namespace DataAccess.Migrations
                     b.Navigation("Game");
                 });
 
+            modelBuilder.Entity("DataAccess.Data.Entities.Profile", b =>
+                {
+                    b.HasOne("DataAccess.Data.Entities.User", "User")
+                        .WithOne("Profile")
+                        .HasForeignKey("DataAccess.Data.Entities.Profile", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("DataAccess.Data.Entities.Screenshot", b =>
                 {
                     b.HasOne("DataAccess.Data.Entities.Game", "Game")
@@ -755,6 +798,8 @@ namespace DataAccess.Migrations
             modelBuilder.Entity("DataAccess.Data.Entities.User", b =>
                 {
                     b.Navigation("DevelopedGames");
+
+                    b.Navigation("Profile");
 
                     b.Navigation("UserGames");
                 });

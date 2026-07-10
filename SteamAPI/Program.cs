@@ -1,4 +1,3 @@
-using BusinessLogic.Classes;
 using BusinessLogic.Configurations;
 using BusinessLogic.Interfaces;
 using BusinessLogic.Services;
@@ -32,6 +31,11 @@ builder.Services.AddScoped<ITagService, TagService>();
 
 builder.Services.AddOptions<ScalarOptions>()
     .BindConfiguration("Scalar");
+
+builder.Services.AddOptions<JwtOptions>()
+    .Bind(builder.Configuration.GetSection(nameof(JwtOptions)))
+    .ValidateDataAnnotations()
+    .ValidateOnStart();
 
 builder.Services.AddIdentityCore<User>(options =>
 {
