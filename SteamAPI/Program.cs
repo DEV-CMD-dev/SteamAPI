@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Scalar.AspNetCore;
+using SteamApi.Middlewares;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -22,6 +23,7 @@ builder.Services.AddControllers();
 
 builder.Services.AddOpenApi();
 builder.Services.AddAutoMapper(cfg => { }, typeof(MapperProfile));
+
 builder.Services.AddScoped<IJwtService, JwtService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IGameService, GameService>();
@@ -43,9 +45,11 @@ builder.Services.AddIdentityCore<User>(options =>
 .AddRoles<IdentityRole>()
 .AddEntityFrameworkStores<SteamDbContext>();
 
-// JWT
-var jwtOpts = builder.Configuration.GetSection(nameof(JwtOptions)).Get<JwtOptions>()
+var jwtOpts = builder.Configuration
+    .GetSection(nameof(JwtOptions))
+    .Get<JwtOptions>()
     ?? throw new Exception("Jwt options not found");
+
 builder.Services.AddSingleton(jwtOpts);
 
 builder.Services.AddAuthorization();
@@ -60,20 +64,20 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidateLifetime = true,
             ValidateIssuerSigningKey = true,
             ValidIssuer = jwtOpts.Issuer,
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOpts.Key)),
+            IssuerSigningKey = new SymmetricSecurityKey(
+                Encoding.UTF8.GetBytes(jwtOpts.Key)),
             ClockSkew = TimeSpan.Zero
         };
     });
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowSteamApp",
-        policy =>
-        {
-            policy.AllowAnyOrigin()
-                  .AllowAnyHeader()
-                  .AllowAnyMethod();
-        });
+    options.AddPolicy("AllowSteamApp", policy =>
+    {
+        policy.AllowAnyOrigin()
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
 });
 
 var app = builder.Build();
@@ -82,17 +86,22 @@ if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
 
-    app.MapScalarApiReference("",options =>
+    app.MapScalarApiReference("", options =>
     {
         options.WithTitle("Steam API");
     });
 }
 
 app.UseHttpsRedirection();
+
 app.UseRouting();
+
 app.UseCors("AllowSteamApp");
 
+app.UseErrorHandler();
+
 app.UseAuthentication();
+
 app.UseAuthorization();
 
 app.MapControllers();

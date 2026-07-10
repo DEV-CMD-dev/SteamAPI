@@ -1,7 +1,9 @@
-﻿using BusinessLogic.DTOs;
+﻿using BusinessLogic.Classes;
+using BusinessLogic.DTOs;
 using BusinessLogic.Interfaces;
 using DataAccess.Data.Entities;
 using Microsoft.AspNetCore.Identity;
+using System.Net;
 
 namespace BusinessLogic.Services
 {
@@ -36,7 +38,7 @@ namespace BusinessLogic.Services
             if (!result.Succeeded)
             {
                 var errorMessages = string.Join(", ", result.Errors.Select(e => e.Description));
-                throw new Exception($"User registration failed: {errorMessages}");
+                throw new HttpException($"User registration failed: {errorMessages}", HttpStatusCode.BadRequest);
             }
         }
 
@@ -45,10 +47,13 @@ namespace BusinessLogic.Services
             var user = dto.Identifier.Contains('@')
                 ? await _userManager.FindByEmailAsync(dto.Identifier)
                 : await _userManager.FindByNameAsync(dto.Identifier);
-            if (user == null) return null;
+
+            if (user == null)
+                throw new HttpException("Invalid credentials", HttpStatusCode.BadRequest);
 
             var isPasswordValid = await _userManager.CheckPasswordAsync(user, dto.Password);
-            if (!isPasswordValid) return null;
+            if (!isPasswordValid)
+                throw new HttpException("Invalid credentials", HttpStatusCode.BadRequest);
 
             var claims = await _jwtService.GetClaimsAsync(user);
             var token = await _jwtService.GenerateTokenAsync(claims);
@@ -58,7 +63,7 @@ namespace BusinessLogic.Services
                 AccessToken = token
             };
         }
-       
+
         public Task Logout()
         {
             return Task.CompletedTask;

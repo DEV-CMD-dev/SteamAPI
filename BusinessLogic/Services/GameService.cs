@@ -1,10 +1,12 @@
 ﻿using AutoMapper;
+using BusinessLogic.Classes;
 using BusinessLogic.DTOs.Game;
 using BusinessLogic.Interfaces;
 using DataAccess;
 using DataAccess.Data.Entities;
 using DataAccess.Enums;
 using Microsoft.EntityFrameworkCore;
+using System.Net;
 
 namespace BusinessLogic.Services
 {
@@ -21,20 +23,16 @@ namespace BusinessLogic.Services
 
         public async Task<IEnumerable<GameDto>> GetAll()
         {
-            var games = await _context.Games
-                .AsNoTracking()
-                .ToListAsync();
+            var games = await _context.Games.AsNoTracking().ToListAsync();
             return _mapper.Map<IEnumerable<GameDto>>(games);
         }
 
         public async Task<GameDto> GetById(int id)
         {
-            var game = await _context.Games
-                .AsNoTracking()
-                .FirstOrDefaultAsync(x => x.Id == id);
+            var game = await _context.Games.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
 
             if (game == null)
-                throw new KeyNotFoundException($"Game with ID {id} not found.");
+                throw new HttpException($"Game with ID {id} not found", HttpStatusCode.NotFound);
 
             return _mapper.Map<GameDto>(game);
         }
@@ -44,10 +42,10 @@ namespace BusinessLogic.Services
             var developer = await _context.Users.FindAsync(developerId);
 
             if (developer == null)
-                throw new KeyNotFoundException($"User with ID {developerId} not found.");
+                throw new HttpException($"User with ID {developerId} not found", HttpStatusCode.NotFound);
 
             if (developer.UserRole != UserRole.Developer)
-                throw new ArgumentException("Only developers can create games.");
+                throw new HttpException("Only developers can create games", HttpStatusCode.Forbidden);
 
             dto.ReleaseDate ??= DateTime.UtcNow;
 
@@ -64,7 +62,7 @@ namespace BusinessLogic.Services
         {
             var existingGame = await _context.Games.FindAsync(id);
             if (existingGame == null)
-                throw new KeyNotFoundException($"Game with Id {id} not found.");
+                throw new HttpException($"Game with Id {id} not found", HttpStatusCode.NotFound);
 
             _mapper.Map(dto, existingGame);
             await _context.SaveChangesAsync();
@@ -74,11 +72,11 @@ namespace BusinessLogic.Services
         {
             var game = await _context.Games.FindAsync(gameId);
             if (game == null)
-                throw new KeyNotFoundException($"Game with ID {gameId} not found.");
+                throw new HttpException($"Game with ID {gameId} not found", HttpStatusCode.NotFound);
 
             var user = await _context.Users.FindAsync(userId);
             if (user == null)
-                throw new KeyNotFoundException($"User with ID {userId} not found.");
+                throw new HttpException($"User with ID {userId} not found", HttpStatusCode.NotFound);
 
             bool isModerator = user.UserRole == UserRole.Moderator;
             bool isOwner = game.DeveloperId == userId;
@@ -90,7 +88,7 @@ namespace BusinessLogic.Services
             }
             else
             {
-                throw new UnauthorizedAccessException("You do not have permission to delete this game.");
+                throw new HttpException("You do not have permission to delete this game", HttpStatusCode.Forbidden);
             }
         }
     }

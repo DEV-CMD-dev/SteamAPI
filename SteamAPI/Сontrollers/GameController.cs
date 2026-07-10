@@ -1,106 +1,73 @@
-﻿using BusinessLogic.DTOs.Game;
+﻿using BusinessLogic.Classes;
+using BusinessLogic.DTOs.Game;
 using BusinessLogic.Interfaces;
+using DataAccess.Data.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Net;
 using System.Security.Claims;
 
-namespace SteamAPI.Controllers
+[Route("api/[controller]")]
+[ApiController]
+public class GameController : ControllerBase
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class GameController : ControllerBase
+    private readonly IGameService _gameService;
+
+    public GameController(IGameService gameService)
     {
-        private readonly IGameService _gameService;
+        _gameService = gameService;
+    }
 
-        public GameController(IGameService gameService)
-        {
-            _gameService = gameService;
-        }
+    [HttpGet]
+    public async Task<IActionResult> GetAllGames()
+    {
+        return Ok(await _gameService.GetAll());
+    }
 
-        [HttpGet]
-        public async Task<IActionResult> GetAllGames()
-        {
-            var result = await _gameService.GetAll();
-            return Ok(result);
-        }
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetById(int id)
+    {
+        return Ok(await _gameService.GetById(id));
+    }
 
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetById(int id)
-        {
-            try
-            {
-                var result = await _gameService.GetById(id);
-                return Ok(result);
-            }
-            catch (KeyNotFoundException ex)
-            {
-                return NotFound(ex.Message);
-            }
-            catch (Exception)
-            {
-                return StatusCode(500, "An error occurred while fetching the game.");
-            }
-        }
+    [HttpPost]
+    [Authorize]
+    public async Task<IActionResult> Add(CreateGameDto dto)
+    {
+        var developerId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
-        [HttpPost]
-        [Authorize]
-        public async Task<IActionResult> Add(CreateGameDto dto)
-        {
-            var developerId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (string.IsNullOrEmpty(developerId))
+            throw new HttpException(
+                "User identity could not be verified.",
+                HttpStatusCode.Unauthorized);
 
-            if (string.IsNullOrEmpty(developerId))
-                return Unauthorized("User identity could not be verified.");
+        var result = await _gameService.Create(developerId, dto);
 
-            var result = await _gameService.Create(developerId, dto);
+        return CreatedAtAction(nameof(GetById), new { id = result.Id }, result);
+    }
 
-            return CreatedAtAction(nameof(GetById), new { id = result.Id }, result);
-        }
+    [HttpPut("{id}")]
+    [Authorize]
+    public async Task<IActionResult> Update(int id, UpdateGameDto dto)
+    {
+        await _gameService.Update(id, dto);
 
-        [HttpPut("{id}")]
-        [Authorize]
-        public async Task<IActionResult> Update(int id, UpdateGameDto dto)
-        {
-            try
-            {
-                await _gameService.Update(id, dto);
-                return NoContent();
-            }
-            catch (KeyNotFoundException ex)
-            {
-                return NotFound(ex.Message);
-            }
-            catch (Exception)
-            {
-                return StatusCode(500, "An error occurred while updating the game.");
-            }
-        }
+        return NoContent();
+    }
 
-        [HttpDelete("{id}")]
-        [Authorize]
-        public async Task<IActionResult> Delete(int id)
-        {
-            try
-            {
-                var currentUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+    [HttpDelete("{id}")]
+    [Authorize]
+    public async Task<IActionResult> Delete(int id)
+    {
+        var currentUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
-                if (string.IsNullOrEmpty(currentUserId))
-                    return Unauthorized("User identity could not be verified.");
+        if (string.IsNullOrEmpty(currentUserId))
+            throw new HttpException(
+                "User identity could not be verified.",
+                HttpStatusCode.Unauthorized);
 
-                await _gameService.Delete(id, currentUserId);
-                return NoContent();
-            }
-            catch (KeyNotFoundException ex)
-            {
-                return NotFound(ex.Message);
-            }
-            catch (UnauthorizedAccessException ex)
-            {
-                return Forbid(ex.Message);
-            }
-            catch (Exception)
-            {
-                return StatusCode(500, "An error occurred while deleting the game.");
-            }
-        }
+        await _gameService.Delete(id, currentUserId);
+
+        return NoContent();
     }
 }
