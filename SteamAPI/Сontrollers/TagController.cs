@@ -30,7 +30,7 @@ public class TagController : ControllerBase
     {
         await _tagService.Create(dto);
 
-        return Ok();
+        return Created(string.Empty, new { message = "Tag created successfully." });
     }
 
     [HttpPut("{id}")]

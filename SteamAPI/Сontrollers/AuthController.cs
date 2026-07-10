@@ -18,10 +18,7 @@ public class AuthController : ControllerBase
     {
         await _authService.Register(dto);
 
-        return Created(string.Empty, new
-        {
-            message = "User registered successfully."
-        });
+        return Created(string.Empty, new { message = "User registered successfully." });
     }
 
     [HttpPost("login")]
@@ -36,7 +33,6 @@ public class AuthController : ControllerBase
     public async Task<IActionResult> Logout()
     {
         await _authService.Logout();
-
         return NoContent();
     }
 }

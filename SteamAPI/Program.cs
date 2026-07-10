@@ -94,7 +94,6 @@ app.UseRouting();
 
 app.UseCors("AllowSteamApp");
 
-// Глобальна обробка винятків
 app.UseErrorHandler();
 
 app.UseAuthentication();
