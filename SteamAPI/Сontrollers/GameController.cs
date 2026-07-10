@@ -57,13 +57,13 @@ namespace SteamAPI.Controllers
         }
 
         [HttpPut("{id}")]
-        [Authorize]
+       
         public async Task<IActionResult> Update(int id, UpdateGameDto dto)
         {
             try
             {
-                await _gameService.Update(id, dto);
-                return NoContent();
+                var result = await _gameService.Update(id, dto);
+                return Ok(result);
             }
             catch (KeyNotFoundException ex)
             {

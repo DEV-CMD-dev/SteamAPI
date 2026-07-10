@@ -61,8 +61,8 @@ namespace SteamAPI.Сontrollers
         {
             try
             {
-                await _tagService.Update(id, dto);
-                return NoContent();
+                var result = await _tagService.Update(id, dto);
+                return Ok(result);
             }
             catch (Exception ex)
             {

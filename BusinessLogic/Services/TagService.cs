@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using BusinessLogic.DTOs.Game;
 using BusinessLogic.DTOs.Tag;
 using BusinessLogic.Interfaces;
 using DataAccess;
@@ -46,15 +47,15 @@ namespace BusinessLogic.Services
             await _context.SaveChangesAsync();
         }
 
-        public async Task Update(int id, UpdateTagDto dto)
+        public async Task<TagDto> Update(int id, UpdateTagDto dto)
         {
-            var existingTag = await _context.Tags.FindAsync(id);
+            var entity = _mapper.Map<Tag>(dto);
+            entity.Id = id;
 
-            if (existingTag == null)
-                throw new KeyNotFoundException($"Tag with Id {id} not found.");
-
-            _mapper.Map(dto, existingTag);
+            _context.Entry(entity).State = EntityState.Modified;
             await _context.SaveChangesAsync();
+
+            return _mapper.Map<TagDto>(entity);
         }
 
         public async Task Delete(int id)

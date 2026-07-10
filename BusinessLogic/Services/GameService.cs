@@ -60,14 +60,15 @@ namespace BusinessLogic.Services
             return _mapper.Map<GameDto>(newGame);
         }
 
-        public async Task Update(int id, UpdateGameDto dto)
+        public async Task<GameDto> Update(int id, UpdateGameDto dto)
         {
-            var existingGame = await _context.Games.FindAsync(id);
-            if (existingGame == null)
-                throw new KeyNotFoundException($"Game with Id {id} not found.");
+            var entity = _mapper.Map<Game>(dto);
+            entity.Id = id;
 
-            _mapper.Map(dto, existingGame);
+            _context.Entry(entity).State = EntityState.Modified;
             await _context.SaveChangesAsync();
+
+            return _mapper.Map<GameDto>(entity);
         }
 
         public async Task Delete(int gameId, string userId)

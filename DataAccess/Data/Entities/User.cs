@@ -16,6 +16,8 @@ namespace DataAccess.Data.Entities
         public List<UserGame> UserGames { get; set; } = new();
         public List<Achievement> Achievements { get; set; } = new();
         public List<Game> DevelopedGames { get; set; } = new();
+        public List<Game> Wishlist { get; set; } = new();
+        public List<Game> Cart { get; set; } = new();
 
         public virtual Profile? Profile { get; set; }
 
