@@ -45,12 +45,7 @@ namespace BusinessLogic.Services
             if (user == null)
                 return;
 
-            var result = await _userManager.ResetPasswordAsync(user, dto.Token, dto.NewPassword);
-
-            if (!result.Succeeded)
-            {
-                throw new HttpException(result.Errors.First().Description, HttpStatusCode.BadRequest);
-            }
+            await _userManager.ResetPasswordAsync(user, dto.Token, dto.NewPassword);
         }
 
     }

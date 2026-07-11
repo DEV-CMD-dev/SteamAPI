@@ -1,6 +1,5 @@
 ﻿using BusinessLogic.DTOs.Tag;
 using BusinessLogic.Interfaces;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 [Route("api/[controller]")]
