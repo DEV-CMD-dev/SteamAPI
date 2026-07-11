@@ -6,6 +6,7 @@ using DataAccess.Data.Entities;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Scalar.AspNetCore;
 using SteamApi.Middlewares;
@@ -46,6 +47,10 @@ namespace SteamAPI
                 .Bind(configuration.GetSection(nameof(EmailOptions)))
                 .ValidateDataAnnotations()
                 .ValidateOnStart();
+            services.AddOptions<PasswordResetOptions>()
+                .Bind(configuration.GetSection(nameof(PasswordResetOptions)))
+                .ValidateDataAnnotations()
+                .ValidateOnStart();
 
             // Identity
             services.AddIdentityCore<User>(options =>
@@ -56,11 +61,11 @@ namespace SteamAPI
             .AddEntityFrameworkStores<SteamDbContext>()
             .AddDefaultTokenProviders();
 
-            services.Configure<DataProtectionTokenProviderOptions>(options =>
-            {
-                int tokenLifetimeMinutes = configuration.GetValue<int>("ResetPasswordTokenLifetimeInMinutes");
-                options.TokenLifespan = TimeSpan.FromMinutes(tokenLifetimeMinutes);
-            });
+            services.AddOptions<DataProtectionTokenProviderOptions>()
+                .Configure<IOptions<PasswordResetOptions>>((tokenOptions, passwordOptions) =>
+                {
+                    tokenOptions.TokenLifespan = TimeSpan.FromMinutes(passwordOptions.Value.ExpirationTimeInMinutes);
+                });
 
             // JWT auth
             var jwtOpts = configuration.GetSection(nameof(JwtOptions)).Get<JwtOptions>()
