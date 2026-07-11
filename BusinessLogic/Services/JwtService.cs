@@ -1,7 +1,7 @@
 ﻿using BusinessLogic.Configurations;
 using BusinessLogic.Interfaces;
 using DataAccess.Data.Entities;
-using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -11,32 +11,28 @@ namespace BusinessLogic.Services
 {
     public class JwtService : IJwtService
     {
-        private readonly UserManager<User> _userManager;
         private readonly JwtOptions _jwtOptions;
 
 
-        public JwtService(UserManager<User> userManager, JwtOptions jwtOptions)
+        public JwtService(IOptions<JwtOptions> jwtOptions)
         {
-            _userManager = userManager;
-            _jwtOptions = jwtOptions;
+            _jwtOptions = jwtOptions.Value;
         }
 
-        public async Task<IEnumerable<Claim>> GetClaimsAsync(User user)
+        public IEnumerable<Claim> GetClaims(User user)
         {
             var claims = new List<Claim>
-        {
-            new Claim(ClaimTypes.NameIdentifier, user.Id),
-            new Claim(ClaimTypes.Email, user.Email),
-            new Claim(ClaimTypes.Name, user.UserName)
-        };
-
-            var roles = await _userManager.GetRolesAsync(user);
-            claims.AddRange(roles.Select(role => new Claim(ClaimsIdentity.DefaultRoleClaimType, role)));
+            {
+                new Claim(ClaimTypes.NameIdentifier, user.Id),
+                new Claim(ClaimTypes.Email, user.Email),
+                new Claim(ClaimTypes.Name, user.UserName),
+                new Claim(ClaimTypes.Role, user.UserRole.ToString())
+            };
 
             return claims;
         }
 
-        public Task<string> GenerateTokenAsync(IEnumerable<Claim> claims)
+        public string GenerateToken(IEnumerable<Claim> claims)
         {
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtOptions.Key));
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
@@ -48,7 +44,7 @@ namespace BusinessLogic.Services
                 signingCredentials: credentials);
 
             var tokenString = new JwtSecurityTokenHandler().WriteToken(token);
-            return Task.FromResult(tokenString);
+            return tokenString;
         }
     }
 }
