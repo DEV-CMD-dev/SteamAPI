@@ -18,7 +18,7 @@ public class AuthController : ControllerBase
     {
         await _authService.Register(dto);
 
-        return Created(string.Empty, new { message = "User registered successfully." });
+        return Created(string.Empty, new { message = "User registered successfully check your email to activate your account" });
     }
 
     [HttpPost("login")]

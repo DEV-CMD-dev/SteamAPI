@@ -1,6 +1,6 @@
 ﻿namespace BusinessLogic.Configurations
 {
-    public class PasswordResetOptions
+    public class DataProtectionToken
     {
         public int ExpirationTimeInMinutes { get; set; }
     }
