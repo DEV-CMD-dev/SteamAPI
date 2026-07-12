@@ -54,6 +54,19 @@ namespace DataAccess
                 .Property(g => g.Price)
                 .HasPrecision(18, 2);
 
+            builder.Entity<Game>()
+                .HasOne(g => g.Developer)
+                .WithMany(u => u.DevelopedGames)
+                .HasForeignKey(g => g.DeveloperId);
+
+            builder.Entity<Game>()
+                .HasMany(g => g.UserWishlist)
+                .WithMany(t => t.Wishlist);
+
+            builder.Entity<Game>()
+                .HasMany(g => g.UserCart)
+                .WithMany(t => t.Cart);
+
             builder.Entity<User>().ToTable("Users");
             builder.Entity<IdentityRole>().ToTable("Roles");
             builder.Entity<IdentityUserRole<string>>().ToTable("UserRoles");
