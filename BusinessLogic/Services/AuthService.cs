@@ -55,8 +55,8 @@ namespace BusinessLogic.Services
             if (!isPasswordValid)
                 throw new HttpException("Invalid credentials", HttpStatusCode.BadRequest);
 
-            var claims = await _jwtService.GetClaimsAsync(user);
-            var token = await _jwtService.GenerateTokenAsync(claims);
+            var claims = _jwtService.GetClaims(user);
+            var token = _jwtService.GenerateToken(claims);
 
             return new LoginResponseDto
             {
