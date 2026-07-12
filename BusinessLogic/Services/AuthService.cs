@@ -1,8 +1,10 @@
 ﻿using BusinessLogic.Classes;
+using BusinessLogic.Configurations;
 using BusinessLogic.DTOs;
 using BusinessLogic.Interfaces;
 using DataAccess.Data.Entities;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Options;
 using System.Net;
 
 namespace BusinessLogic.Services
@@ -11,11 +13,16 @@ namespace BusinessLogic.Services
     {
         private readonly UserManager<User> _userManager;
         private readonly IJwtService _jwtService;
+        private readonly IUserHelperService _userHelperService;
 
-        public AuthService(UserManager<User> userManager, IJwtService jwtService)
+        public AuthService(
+            UserManager<User> userManager,
+            IJwtService jwtService,
+            IUserHelperService userHelperService)
         {
             _userManager = userManager;
             _jwtService = jwtService;
+            _userHelperService = userHelperService;
         }
 
         public async Task Register(RegisterRequestDto dto)
@@ -33,6 +40,7 @@ namespace BusinessLogic.Services
                     Level = 1
                 }
             };
+
             var result = await _userManager.CreateAsync(newUser, dto.Password);
 
             if (!result.Succeeded)
@@ -40,6 +48,8 @@ namespace BusinessLogic.Services
                 var errorMessages = string.Join(", ", result.Errors.Select(e => e.Description));
                 throw new HttpException($"User registration failed: {errorMessages}", HttpStatusCode.BadRequest);
             }
+
+            await _userHelperService.RequestEmailConfirmationAsync(newUser);
         }
 
         public async Task<LoginResponseDto> Login(LoginRequestDto dto)
@@ -48,12 +58,12 @@ namespace BusinessLogic.Services
                 ? await _userManager.FindByEmailAsync(dto.Identifier)
                 : await _userManager.FindByNameAsync(dto.Identifier);
 
-            if (user == null)
-                throw new HttpException("Invalid credentials", HttpStatusCode.BadRequest);
+            if (user == null || !await _userManager.IsEmailConfirmedAsync(user))
+                throw new HttpException("Invalid credentials or email is not confirmed", HttpStatusCode.Unauthorized);
 
             var isPasswordValid = await _userManager.CheckPasswordAsync(user, dto.Password);
             if (!isPasswordValid)
-                throw new HttpException("Invalid credentials", HttpStatusCode.BadRequest);
+                throw new HttpException("Invalid credentials or email is not confirmed", HttpStatusCode.Unauthorized);
 
             var claims = _jwtService.GetClaims(user);
             var token = _jwtService.GenerateToken(claims);

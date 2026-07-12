@@ -19,6 +19,8 @@ namespace SteamAPI
     {
         public static IServiceCollection AddWebApiServices(this IServiceCollection services, IConfiguration configuration)
         {
+            var allowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_.";
+
             string connStr = configuration.GetConnectionString("RemoteDb")
                 ?? throw new Exception("Connection string not found");
 
@@ -35,7 +37,7 @@ namespace SteamAPI
             services.AddScoped<IGameService, GameService>();
             services.AddScoped<ITagService, TagService>();
             services.AddScoped<IEmailService, EmailService>();
-            services.AddScoped<IPasswordService, PasswordService>();
+            services.AddScoped<IUserHelperService, UserHelperService>();
 
             // Configurations
             services.AddOptions<ScalarOptions>().BindConfiguration("Scalar");
@@ -47,8 +49,8 @@ namespace SteamAPI
                 .Bind(configuration.GetSection(nameof(EmailOptions)))
                 .ValidateDataAnnotations()
                 .ValidateOnStart();
-            services.AddOptions<PasswordResetOptions>()
-                .Bind(configuration.GetSection(nameof(PasswordResetOptions)))
+            services.AddOptions<DataProtectionToken>()
+                .Bind(configuration.GetSection(nameof(DataProtectionToken)))
                 .ValidateDataAnnotations()
                 .ValidateOnStart();
 
@@ -57,12 +59,14 @@ namespace SteamAPI
             {
                 options.Password.RequiredLength = 6;
                 options.Password.RequireDigit = false;
+                options.User.RequireUniqueEmail = true;
+                options.User.AllowedUserNameCharacters = allowedUserNameCharacters;
             })
             .AddEntityFrameworkStores<SteamDbContext>()
             .AddDefaultTokenProviders();
 
             services.AddOptions<DataProtectionTokenProviderOptions>()
-                .Configure<IOptions<PasswordResetOptions>>((tokenOptions, passwordOptions) =>
+                .Configure<IOptions<DataProtectionToken>>((tokenOptions, passwordOptions) =>
                 {
                     tokenOptions.TokenLifespan = TimeSpan.FromMinutes(passwordOptions.Value.ExpirationTimeInMinutes);
                 });
