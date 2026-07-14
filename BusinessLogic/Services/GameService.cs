@@ -41,11 +41,11 @@ namespace BusinessLogic.Services
         {
             var developer = await _context.Users.FindAsync(developerId);
 
-            //if (developer == null)
-            //    throw new HttpException($"User with ID {developerId} not found", HttpStatusCode.NotFound);
+            if (developer == null)
+                throw new HttpException($"User with ID {developerId} not found", HttpStatusCode.NotFound);
 
-            //if (developer.UserRole != UserRole.Developer)
-            //    throw new HttpException("Only developers can create games", HttpStatusCode.Forbidden);
+            if (developer.UserRole != UserRole.Developer)
+                throw new HttpException("Only developers can create games", HttpStatusCode.Forbidden);
 
             dto.ReleaseDate ??= DateTime.UtcNow;
 
