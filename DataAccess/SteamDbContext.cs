@@ -13,6 +13,8 @@ namespace DataAccess
         public DbSet<Game> Games { get; set; }
         public DbSet<Tag> Tags { get; set; }
         public DbSet<UserGame> UserGames { get; set; }
+        public DbSet<Wishlist> Wishlists { get; set; }
+        public DbSet<Cart> Carts { get; set; }
         public DbSet<GameVersion> GameVersions { get; set; }
         public DbSet<Screenshot> Screenshots { get; set; }
         public DbSet<Achievement> Achievements { get; set; }
@@ -59,13 +61,35 @@ namespace DataAccess
                 .WithMany(u => u.DevelopedGames)
                 .HasForeignKey(g => g.DeveloperId);
 
-            builder.Entity<Game>()
-                .HasMany(g => g.UserWishlist)
-                .WithMany(t => t.Wishlist);
+            // Wishlist
+            builder.Entity<Wishlist>()
+                .HasKey(w => new { w.UserId, w.GameId });
 
-            builder.Entity<Game>()
-                .HasMany(g => g.UserCart)
-                .WithMany(t => t.Cart);
+            builder.Entity<Wishlist>()
+                .HasOne(w => w.User)
+                .WithMany(u => u.Wishlists) 
+                .HasForeignKey(w => w.UserId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.Entity<Wishlist>()
+                .HasOne(w => w.Game)
+                .WithMany(g => g.Wishlists) 
+                .HasForeignKey(w => w.GameId);
+
+            // Cart
+            builder.Entity<Cart>()
+                .HasKey(w => new { w.UserId, w.GameId });
+
+            builder.Entity<Cart>()
+                .HasOne(w => w.User)
+                .WithMany(u => u.Carts)
+                .HasForeignKey(w => w.UserId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.Entity<Cart>()
+                .HasOne(w => w.Game)
+                .WithMany(g => g.Carts)
+                .HasForeignKey(w => w.GameId);
 
             builder.Entity<User>().ToTable("Users");
             builder.Entity<IdentityRole>().ToTable("Roles");
