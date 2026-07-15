@@ -17,5 +17,7 @@
         public List<GameVersion>? Versions { get; set; }
         public List<Achievement>? Achievements { get; set; }
         public List<UserGame>? UserGames { get; set; }
+        public List<Wishlist> Wishlists { get; set; } = new();
+        public List<Cart> Carts { get; set; } = new();
     }
 }

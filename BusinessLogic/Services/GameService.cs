@@ -61,6 +61,7 @@ namespace BusinessLogic.Services
         public async Task Update(int id, UpdateGameDto dto)
         {
             var existingGame = await _context.Games.FindAsync(id);
+
             if (existingGame == null)
                 throw new HttpException($"Game with Id {id} not found", HttpStatusCode.NotFound);
 

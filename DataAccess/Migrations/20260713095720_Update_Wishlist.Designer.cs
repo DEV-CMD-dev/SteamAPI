@@ -4,6 +4,7 @@ using DataAccess;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataAccess.Migrations
 {
     [DbContext(typeof(SteamDbContext))]
-    partial class SteamDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260713095720_Update_Wishlist")]
+    partial class Update_Wishlist
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -83,21 +86,6 @@ namespace DataAccess.Migrations
                             IconUrl = "https://example.com/icons/elden_lord.png",
                             Name = "Lord of Frenzied Flame"
                         });
-                });
-
-            modelBuilder.Entity("DataAccess.Data.Entities.Cart", b =>
-                {
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<int>("GameId")
-                        .HasColumnType("int");
-
-                    b.HasKey("UserId", "GameId");
-
-                    b.HasIndex("GameId");
-
-                    b.ToTable("Carts");
                 });
 
             modelBuilder.Entity("DataAccess.Data.Entities.Game", b =>
@@ -525,6 +513,21 @@ namespace DataAccess.Migrations
                         });
                 });
 
+            modelBuilder.Entity("GameUser", b =>
+                {
+                    b.Property<int>("CartId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserCartId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("CartId", "UserCartId");
+
+                    b.HasIndex("UserCartId");
+
+                    b.ToTable("GameUser");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
                     b.Property<string>("Id")
@@ -684,25 +687,6 @@ namespace DataAccess.Migrations
                     b.Navigation("Game");
                 });
 
-            modelBuilder.Entity("DataAccess.Data.Entities.Cart", b =>
-                {
-                    b.HasOne("DataAccess.Data.Entities.Game", "Game")
-                        .WithMany("Carts")
-                        .HasForeignKey("GameId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("DataAccess.Data.Entities.User", "User")
-                        .WithMany("Carts")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Game");
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("DataAccess.Data.Entities.Game", b =>
                 {
                     b.HasOne("DataAccess.Data.Entities.User", "Developer")
@@ -798,6 +782,21 @@ namespace DataAccess.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("GameUser", b =>
+                {
+                    b.HasOne("DataAccess.Data.Entities.Game", null)
+                        .WithMany()
+                        .HasForeignKey("CartId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("DataAccess.Data.Entities.User", null)
+                        .WithMany()
+                        .HasForeignKey("UserCartId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -853,8 +852,6 @@ namespace DataAccess.Migrations
                 {
                     b.Navigation("Achievements");
 
-                    b.Navigation("Carts");
-
                     b.Navigation("Screenshots");
 
                     b.Navigation("UserGames");
@@ -866,8 +863,6 @@ namespace DataAccess.Migrations
 
             modelBuilder.Entity("DataAccess.Data.Entities.User", b =>
                 {
-                    b.Navigation("Carts");
-
                     b.Navigation("DevelopedGames");
 
                     b.Navigation("Profile");

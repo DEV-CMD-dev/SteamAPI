@@ -15,19 +15,12 @@ namespace BusinessLogic.Configurations
             CreateMap<CreateGameDto, Game>().ReverseMap();
             CreateMap<CreateGameDto, GameDto>().ReverseMap();
             CreateMap<UpdateGameDto, GameDto>().ReverseMap();
-            CreateMap<UpdateGameDto, Game>().ForAllMembers(opts => opts.Condition((src,dest,srcMember) =>
-            {
-                if (srcMember == null) return false;
-                return true;
-            }));
+            CreateMap<UpdateGameDto, Game>().ReverseMap();
 
             // Tag mappings
             CreateMap<TagDto, Tag>().ReverseMap();
             CreateMap<CreateTagDto, Tag>().ReverseMap();
             CreateMap<UpdateTagDto, Tag>();
-
-
-
         }
     }
 }
