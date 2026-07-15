@@ -58,31 +58,14 @@ namespace BusinessLogic.Services
             return _mapper.Map<GameDto>(newGame);
         }
 
-        public async Task Put(int id, PutGameDto dto)
-        {
-            var existingGame = await _context.Games.AnyAsync(g => g.Id == id);
-
-            if (!existingGame)
-                throw new HttpException($"Game with Id {id} not found", HttpStatusCode.NotFound);
-
-            var entity = _mapper.Map<Game>(dto);
-            entity.Id = id;
-
-            _context.Entry(entity).State = EntityState.Modified;
-            await _context.SaveChangesAsync();
-        }
-
         public async Task Patch(int id, PatchGameDto dto)
         {
-            var existingGame = await _context.Games.FindAsync(id);
+            await Update(id, dto);
+        }
 
-            if (existingGame == null)
-                throw new HttpException($"Game with Id {id} not found", HttpStatusCode.NotFound);
-
-            _mapper.Map(dto, existingGame);
-
-            if (_context.Entry(existingGame).State == EntityState.Modified)
-                await _context.SaveChangesAsync();
+        public async Task Put(int id, PutGameDto dto)
+        {
+            await Update(id, dto);
         }
 
         public async Task Delete(int gameId, string userId)
@@ -107,6 +90,18 @@ namespace BusinessLogic.Services
             {
                 throw new HttpException("You do not have permission to delete this game", HttpStatusCode.Forbidden);
             }
+        }
+
+        private async Task Update<TDto>(int id, TDto dto)
+        {
+            var existingGame = await _context.Games.FindAsync(id);
+
+            if (existingGame == null)
+                throw new HttpException($"Game with Id {id} not found", HttpStatusCode.NotFound);
+
+            _mapper.Map(dto, existingGame);
+
+            await _context.SaveChangesAsync();
         }
     }
 }

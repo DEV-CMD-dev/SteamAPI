@@ -1,7 +1,7 @@
-﻿using DataAccess.Data.Entities;
+﻿
 using BusinessLogic.DTOs.Game;
 using BusinessLogic.DTOs.Tag;
-
+using DataAccess.Data.Entities;
 
 namespace BusinessLogic.Configurations
 {
@@ -10,29 +10,32 @@ namespace BusinessLogic.Configurations
         public MapperProfile()
         {
             // Game mappings
-            CreateMap<GameDto, Game>().ReverseMap();
-            CreateMap<CreateGameDto, Game>().ReverseMap();
-            CreateMap<CreateGameDto, GameDto>().ReverseMap();
-
-            CreateMap<PatchGameDto, GameDto>().ReverseMap();
+            CreateMap<Game, GameDto>().ReverseMap();
+            CreateMap<CreateGameDto, Game>();
+            CreateMap<PutGameDto, Game>();
             CreateMap<PatchGameDto, Game>()
-             .ForAllMembers(opts => opts.Condition((src, dest, srcMember) =>
-             {
-                 if (srcMember == null) 
-                     return false;
-                 if (srcMember is DateTime dateTime && dateTime == default(DateTime)) 
-                     return false;
+                .ForAllMembers(opts => opts.Condition((src, dest, srcMember) =>
+                {
+                    if (srcMember == null)
+                        return false;
+                    if (srcMember is DateTime dt && dt == default)
+                        return false;
 
-                 return true;
-             }));
-
-            CreateMap<PutGameDto, GameDto>().ReverseMap();
-            CreateMap<PutGameDto, Game>().ReverseMap();
+                    return true;
+                }));
 
             // Tag mappings
-            CreateMap<TagDto, Tag>().ReverseMap();
-            CreateMap<CreateTagDto, Tag>().ReverseMap();
-            CreateMap<UpdateTagDto, Tag>();
+            CreateMap<Tag, TagDto>().ReverseMap();
+            CreateMap<CreateTagDto, Tag>();
+            CreateMap<PutTagDto, Tag>();
+            CreateMap<PatchTagDto, Tag>()
+                .ForAllMembers(opts => opts.Condition((src, dest, srcMember) =>
+                {
+                    if (srcMember == null)
+                        return false;
+
+                    return true;
+                }));
         }
     }
 }
