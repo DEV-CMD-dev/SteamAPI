@@ -48,9 +48,18 @@ public class GameController : ControllerBase
 
     [HttpPut("{id}")]
     [Authorize]
-    public async Task<IActionResult> Update(int id, UpdateGameDto dto)
+    public async Task<IActionResult> Put(int id, PutGameDto dto)
     {
-        await _gameService.Update(id, dto);
+        await _gameService.Put(id, dto);
+
+        return NoContent();
+    }
+
+    [HttpPatch("{id}")]
+    [Authorize]
+    public async Task<IActionResult> Patch(int id, PatchGameDto dto)
+    {
+        await _gameService.Patch(id, dto);
 
         return NoContent();
     }
