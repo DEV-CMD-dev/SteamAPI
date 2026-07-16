@@ -43,15 +43,14 @@ namespace BusinessLogic.Services
             await _context.SaveChangesAsync();
         }
 
-        public async Task Update(int id, UpdateTagDto dto)
+        public async Task Patch(int id, PatchTagDto dto)
         {
-            var existingTag = await _context.Tags.FindAsync(id);
+            await Update(id, dto);
+        }
 
-            if (existingTag == null)
-                throw new HttpException($"Tag with Id {id} not found", HttpStatusCode.NotFound);
-
-            _mapper.Map(dto, existingTag);
-            await _context.SaveChangesAsync();
+        public async Task Put(int id, PutTagDto dto)
+        {
+            await Update(id, dto);
         }
 
         public async Task Delete(int id)
@@ -62,6 +61,18 @@ namespace BusinessLogic.Services
                 throw new HttpException($"Tag with ID {id} not found", HttpStatusCode.NotFound);
 
             _context.Tags.Remove(tag);
+            await _context.SaveChangesAsync();
+        }
+
+        private async Task Update<TDto>(int id, TDto dto)
+        {
+            var existingTag = await _context.Tags.FindAsync(id);
+
+            if (existingTag == null)
+                throw new HttpException($"Tag with ID {id} not found", HttpStatusCode.NotFound);
+
+            _mapper.Map(dto, existingTag);
+
             await _context.SaveChangesAsync();
         }
     }

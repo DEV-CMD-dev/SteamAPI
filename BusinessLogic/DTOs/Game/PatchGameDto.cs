@@ -1,6 +1,6 @@
 ﻿namespace BusinessLogic.DTOs.Game
 {
-    public class UpdateGameDto
+    public class PatchGameDto
     {
         public string? Title { get; set; } 
         public string? Description { get; set; }
