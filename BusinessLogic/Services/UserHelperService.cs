@@ -14,15 +14,18 @@ namespace BusinessLogic.Services
         private readonly UserManager<User> _userManager;
         private readonly IEmailService _emailService;
         private readonly DataProtectionToken _dataProtectionToken;
+        private readonly FrontendOptions _frontendOptions;
 
         public UserHelperService(
             UserManager<User> userManager,
             IEmailService emailService,
-            IOptions<DataProtectionToken> dataProtectionTokenOptions)
+            IOptions<DataProtectionToken> dataProtectionTokenOptions,
+            IOptions<FrontendOptions> frontendOptions)
         {
             _userManager = userManager;
             _emailService = emailService;
             _dataProtectionToken = dataProtectionTokenOptions.Value;
+            _frontendOptions = frontendOptions.Value;
         }
 
         public async Task RequestPasswordResetAsync(RequestPasswordResetTokenDto dto)
@@ -40,8 +43,11 @@ namespace BusinessLogic.Services
             var token = await _userManager.GeneratePasswordResetTokenAsync(user);
 
             var encodedToken = WebUtility.UrlEncode(token);
+            var encodedEmail = WebUtility.UrlEncode(user.Email);
 
-            var link = $"http://localhost:5173/reset-password?identifier={user}&token={encodedToken}";
+            var link = $"{_frontendOptions.BaseUrl}/reset-password" +
+                $"?identifier={encodedEmail}" +
+                $"&token={encodedToken}";
             
             await _emailService.SendEmailAsync(user.Email, "Password Reset", $@"
                 <p>Your password reset link:</p>
@@ -68,14 +74,21 @@ namespace BusinessLogic.Services
             }
         }
 
-        public async Task RequestEmailConfirmationAsync(User user)
+        public async Task SendEmailConfirmationAsync(User user)
         {
             var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
 
-            await _emailService.SendEmailAsync(user.Email, "Email Confirmation", $@"
+            var encodedToken = WebUtility.UrlEncode(token);
+            var encodedEmail = WebUtility.UrlEncode(user.Email);
+
+            var link = $"{_frontendOptions.BaseUrl}/confirm-email" +
+                $"?identifier={encodedEmail}" +
+                $"&token={encodedToken}";
+
+            await _emailService.SendEmailAsync(user.Email, "Email Confirmation link", $@"
                 <p>Your confirmation token:</p>
-                <strong>{token}</strong>
-                <p>This token will expire in {_dataProtectionToken.ExpirationTimeInMinutes} minutes.</p>
+                <strong>{link}</strong>
+                <p>This link will expire in {_dataProtectionToken.ExpirationTimeInMinutes} minutes.</p>
             ");
         }
 

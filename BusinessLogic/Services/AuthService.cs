@@ -1,6 +1,6 @@
 ﻿using BusinessLogic.Classes;
 using BusinessLogic.Configurations;
-using BusinessLogic.DTOs;
+using BusinessLogic.DTOs.Auth;
 using BusinessLogic.Interfaces;
 using DataAccess.Data.Entities;
 using Microsoft.AspNetCore.Identity;
@@ -49,7 +49,7 @@ namespace BusinessLogic.Services
                 throw new HttpException($"User registration failed: {errorMessages}", HttpStatusCode.BadRequest);
             }
 
-            await _userHelperService.RequestEmailConfirmationAsync(newUser);
+            await _userHelperService.SendEmailConfirmationAsync(newUser);
         }
 
         public async Task<LoginResponseDto> Login(LoginRequestDto dto)
