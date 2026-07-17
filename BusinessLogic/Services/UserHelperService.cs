@@ -39,10 +39,14 @@ namespace BusinessLogic.Services
 
             var token = await _userManager.GeneratePasswordResetTokenAsync(user);
 
+            var encodedToken = WebUtility.UrlEncode(token);
+
+            var link = $"http://localhost:5173/reset-password?identifier={user}&token={encodedToken}";
+            
             await _emailService.SendEmailAsync(user.Email, "Password Reset", $@"
-                <p>Your reset password token:</p>
-                <strong>{token}</strong>
-                <p>This token will expire in {_dataProtectionToken.ExpirationTimeInMinutes} minutes.</p>
+                <p>Your password reset link:</p>
+                <strong>{link}</strong>
+                <p>This link will expire in {_dataProtectionToken.ExpirationTimeInMinutes} minutes.</p>
             ");
         }
 
@@ -59,7 +63,8 @@ namespace BusinessLogic.Services
 
             if (!result.Succeeded)
             {
-                throw new HttpException("Invalid or expired token", HttpStatusCode.BadRequest);
+                var errors = string.Join("\n", result.Errors.Select(e => e.Description));
+                throw new HttpException(errors, HttpStatusCode.BadRequest);
             }
         }
 
