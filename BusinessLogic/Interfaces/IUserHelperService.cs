@@ -7,7 +7,7 @@ namespace BusinessLogic.Interfaces
     {
         Task RequestPasswordResetAsync(RequestPasswordResetTokenDto dto);
         Task ResetPasswordAsync(PasswordResetDto dto);
-        Task RequestEmailConfirmationAsync(User user);
+        Task SendEmailConfirmationAsync(User user);
         Task ConfirmEmailAsync(ConfirmEmailDto dto);
     }
 }
