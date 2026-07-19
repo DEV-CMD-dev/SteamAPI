@@ -1,5 +1,6 @@
 ﻿
 using BusinessLogic.DTOs.Game;
+using BusinessLogic.DTOs.Profile;
 using BusinessLogic.DTOs.Tag;
 using DataAccess.Data.Entities;
 
@@ -11,6 +12,7 @@ namespace BusinessLogic.Configurations
         {
             // Game mappings
             CreateMap<Game, GameDto>().ReverseMap();
+            CreateMap<Profile, ProfileDto>().ReverseMap();
             CreateMap<CreateGameDto, Game>();
             CreateMap<PutGameDto, Game>();
             CreateMap<PatchGameDto, Game>()
