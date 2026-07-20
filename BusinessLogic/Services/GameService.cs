@@ -21,9 +21,18 @@ namespace BusinessLogic.Services
             _mapper = mapper;
         }
 
-        public async Task<IEnumerable<GameDto>> GetAll()
+        public async Task<IEnumerable<GameDto>> GetAll(int? pageNumber, int? pageSize)
         {
-            var games = await _context.Games.AsNoTracking().ToListAsync();
+            int page = pageNumber ?? 1;
+            int size = pageSize ?? 10;
+
+            var query = _context.Games.AsNoTracking().AsQueryable();
+
+            var games = await query
+                .Skip((page - 1) * size)
+                .Take(size)
+                .ToListAsync();
+
             return _mapper.Map<IEnumerable<GameDto>>(games);
         }
 

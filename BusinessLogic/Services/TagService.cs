@@ -20,9 +20,18 @@ namespace BusinessLogic.Services
             _mapper = mapper;
         }
 
-        public async Task<IEnumerable<TagDto>> GetAll()
+        public async Task<IEnumerable<TagDto>> GetAll(int? pageNumber, int? pageSize)
         {
-            var tags = await _context.Tags.AsNoTracking().ToListAsync();
+            var query = _context.Tags.AsNoTracking().AsQueryable();
+
+            int page = pageNumber ?? 1;
+            int size = pageSize ?? 10;
+
+            var tags = await query
+                .Skip((page - 1) * size)
+                .Take(size)
+                .ToListAsync();
+
             return _mapper.Map<IEnumerable<TagDto>>(tags);
         }
 

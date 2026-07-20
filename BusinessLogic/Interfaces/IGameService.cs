@@ -4,7 +4,7 @@ namespace BusinessLogic.Interfaces
 {
     public interface IGameService
     {
-        Task<IEnumerable<GameDto>> GetAll();
+        Task<IEnumerable<GameDto>> GetAll(int? pageNumber, int? pageSize);
         Task<GameDto> GetById(int id);
         Task<GameDto> Create(string developerId, CreateGameDto dto);
         Task Patch(int id, PatchGameDto model);

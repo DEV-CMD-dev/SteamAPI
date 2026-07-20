@@ -4,7 +4,7 @@ namespace BusinessLogic.Interfaces
 {
     public interface ITagService
     {
-        Task<IEnumerable<TagDto>> GetAll();
+        Task<IEnumerable<TagDto>> GetAll(int? pageNumber, int? pageSize);
         Task<TagDto> GetById(int id);
         Task Create(CreateTagDto dto);
         Task Patch(int id, PatchTagDto dto);

@@ -19,9 +19,9 @@ public class GameController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetAllGames()
+    public async Task<IActionResult> GetAllGames([FromQuery] int pageNumber, [FromQuery]int pageSize)
     {
-        return Ok(await _gameService.GetAll());
+        return Ok(await _gameService.GetAll(pageNumber, pageSize));
     }
 
     [HttpGet("{id}")]
