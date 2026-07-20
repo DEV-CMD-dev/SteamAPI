@@ -27,11 +27,18 @@ namespace SteamAPI.Controllers
             return Ok(await profilesService.GetById(id));
         }
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateProfile(ProfileDto profile)
+        [HttpPatch("{id}")]
+        public async Task<IActionResult> Patch(int id, PatchProfileDto dto)
         {
-            await profilesService.Update(profile.Id, profile);
-            return NoContent();
+            await profilesService.Patch(id, dto);
+            return Ok();
+        }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Put(int id, PutProfileDto dto)
+        {
+            await profilesService.Put(id, dto);
+            return Ok();
         }
 
         [HttpPost]

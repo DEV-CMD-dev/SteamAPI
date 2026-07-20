@@ -1,5 +1,4 @@
-﻿
-using BusinessLogic.DTOs.Game;
+﻿using BusinessLogic.DTOs.Game;
 using BusinessLogic.DTOs.Profile;
 using BusinessLogic.DTOs.Tag;
 using DataAccess.Data.Entities;
@@ -10,9 +9,22 @@ namespace BusinessLogic.Configurations
     {
         public MapperProfile()
         {
+            // Profile mappings
+            CreateMap<Profile, ProfileDto>().ReverseMap();
+            CreateMap<Profile, PutProfileDto>().ReverseMap();
+            CreateMap<PatchProfileDto, Profile>()
+                .ForAllMembers(opts => opts.Condition((src, dest, srcMember) =>
+                {
+                    if (srcMember == null)
+                        return false;
+                    if (srcMember is DateTime dt && dt == default)
+                        return false;
+
+                    return true;
+                }));
+
             // Game mappings
             CreateMap<Game, GameDto>().ReverseMap();
-            CreateMap<Profile, ProfileDto>().ReverseMap();
             CreateMap<CreateGameDto, Game>();
             CreateMap<PutGameDto, Game>();
             CreateMap<PatchGameDto, Game>()

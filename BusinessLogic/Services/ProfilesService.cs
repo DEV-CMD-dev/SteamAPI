@@ -1,10 +1,10 @@
-﻿using AutoMapper;
+﻿using System.Net;
+using AutoMapper;
 using BusinessLogic.Classes;
 using BusinessLogic.DTOs.Profile;
 using BusinessLogic.Interfaces;
 using DataAccess;
 using Microsoft.EntityFrameworkCore;
-using System.Net;
 using Profile = DataAccess.Data.Entities.Profile;
 
 namespace BusinessLogic.Services
@@ -22,8 +22,8 @@ namespace BusinessLogic.Services
 
         public async Task<IEnumerable<ProfileDto>> GetAll()
         {
-            var tags = await _context.Profiles.AsNoTracking().ToListAsync();
-            return _mapper.Map<IEnumerable<ProfileDto>>(tags);
+            var profiles = await _context.Profiles.AsNoTracking().ToListAsync();
+            return _mapper.Map<IEnumerable<ProfileDto>>(profiles);
         }
 
         public async Task<ProfileDto> GetById(int id)
@@ -43,7 +43,17 @@ namespace BusinessLogic.Services
             await _context.SaveChangesAsync();
         }
 
-        public async Task Update(int id, ProfileDto dto)
+        public async Task Patch(int id, PatchProfileDto dto)
+        {
+            await Update(id, dto);
+        }
+
+        public async Task Put(int id, PutProfileDto dto)
+        {
+            await Update(id, dto);
+        }
+
+        private async Task Update<TDto>(int id, TDto dto)
         {
             var existingProfile = await _context.Profiles.FindAsync(id);
 
