@@ -6,6 +6,7 @@ using DataAccess.Data.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using System.Net;
+using BusinessLogic.Extensions;
 
 namespace BusinessLogic.Services
 {
@@ -30,9 +31,7 @@ namespace BusinessLogic.Services
 
         public async Task RequestPasswordResetAsync(RequestPasswordResetTokenDto dto)
         {
-            var user = dto.Identifier.Contains('@')
-                ? await _userManager.FindByEmailAsync(dto.Identifier)
-                : await _userManager.FindByNameAsync(dto.Identifier);
+            var user = await _userManager.FindByIdentifierAsync(dto.Identifier);
 
             if (user == null)
                 return;
@@ -58,9 +57,7 @@ namespace BusinessLogic.Services
 
         public async Task ResetPasswordAsync(PasswordResetDto dto)
         {
-            var user = dto.Identifier.Contains('@')
-                ? await _userManager.FindByEmailAsync(dto.Identifier)
-                : await _userManager.FindByNameAsync(dto.Identifier);
+            var user = await _userManager.FindByIdentifierAsync(dto.Identifier);
 
             if (user == null)
                 return;
@@ -94,9 +91,7 @@ namespace BusinessLogic.Services
 
         public async Task ConfirmEmailAsync(ConfirmEmailDto dto)
         {
-            var user = dto.Identifier.Contains('@')
-                ? await _userManager.FindByEmailAsync(dto.Identifier)
-                : await _userManager.FindByNameAsync(dto.Identifier);
+            var user = await _userManager.FindByIdentifierAsync(dto.Identifier);
 
             if (user == null)
                 return;

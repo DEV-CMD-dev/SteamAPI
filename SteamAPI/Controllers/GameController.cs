@@ -11,6 +11,8 @@ using System.Security.Claims;
 [ApiController]
 public class GameController : ControllerBase
 {
+    // TODO: remove duplication in UserIdentity verification
+    
     private readonly IGameService _gameService;
 
     public GameController(IGameService gameService)
@@ -50,7 +52,14 @@ public class GameController : ControllerBase
     [Authorize]
     public async Task<IActionResult> Put(int id, PutGameDto dto)
     {
-        await _gameService.Put(id, dto);
+        var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        
+        if (string.IsNullOrEmpty(userId))
+            throw new HttpException(
+                "User identity could not be verified.",
+                HttpStatusCode.Unauthorized);
+        
+        await _gameService.Put(id, userId, dto);
 
         return NoContent();
     }
@@ -59,7 +68,14 @@ public class GameController : ControllerBase
     [Authorize]
     public async Task<IActionResult> Patch(int id, PatchGameDto dto)
     {
-        await _gameService.Patch(id, dto);
+        var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        
+        if (string.IsNullOrEmpty(userId))
+            throw new HttpException(
+                "User identity could not be verified.",
+                HttpStatusCode.Unauthorized);
+        
+        await _gameService.Patch(id, userId, dto);
 
         return NoContent();
     }
