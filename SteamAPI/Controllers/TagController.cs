@@ -33,10 +33,18 @@ public class TagController : ControllerBase
         return Created(string.Empty, new { message = "Tag created successfully." });
     }
 
-    [HttpPut("{id}")]
-    public async Task<IActionResult> Update(int id, UpdateTagDto dto)
+    [HttpPatch("{id}")]
+    public async Task<IActionResult> Patch(int id, PatchTagDto dto)
     {
-        await _tagService.Update(id, dto);
+        await _tagService.Patch(id, dto);
+
+        return NoContent();
+    }
+
+    [HttpPut("{id}")]
+    public async Task<IActionResult> Put(int id, PutTagDto dto)
+    {
+        await _tagService.Put(id, dto);
 
         return NoContent();
     }

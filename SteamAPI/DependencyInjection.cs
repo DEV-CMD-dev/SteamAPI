@@ -62,6 +62,11 @@ namespace SteamAPI
                 .Bind(configuration.GetSection(nameof(DataProtectionToken)))
                 .ValidateDataAnnotations()
                 .ValidateOnStart();
+            services.AddOptions<FrontendOptions>()
+                .Bind(configuration.GetSection(nameof(FrontendOptions)))
+                .ValidateDataAnnotations()
+                .ValidateOnStart();
+            
 
             // Identity
             services.AddIdentityCore<User>(options =>
