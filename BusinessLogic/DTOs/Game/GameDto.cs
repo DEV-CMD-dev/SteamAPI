@@ -1,4 +1,6 @@
-﻿namespace BusinessLogic.DTOs.Game
+﻿using DataAccess.Enums;
+
+namespace BusinessLogic.DTOs.Game
 {
     public class GameDto
     {
@@ -9,6 +11,13 @@
         public DateTime ReleaseDate { get; set; }
         public decimal Price { get; set; }
         public string SystemRequirements { get; set; } = string.Empty;
-        public string CoverImage { get; set; } = string.Empty;   
+        public string CoverImage { get; set; } = string.Empty;
+
+        public int TotalReviews { get; set; }
+        public int RecommendedReviews { get; set; }
+        public decimal RecommendationPercentage { get; set; }
+        public GameRating Rating { get; set; }
+
+        public bool HasRating => TotalReviews >= 10;
     }
 }

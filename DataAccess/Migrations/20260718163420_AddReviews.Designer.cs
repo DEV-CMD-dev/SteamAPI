@@ -4,6 +4,7 @@ using DataAccess;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataAccess.Migrations
 {
     [DbContext(typeof(SteamDbContext))]
-    partial class SteamDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260718163420_AddReviews")]
+    partial class AddReviews
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -160,16 +163,6 @@ namespace DataAccess.Migrations
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<int>("Rating")
-                        .HasColumnType("int");
-
-                    b.Property<decimal>("RecommendationPercentage")
-                        .HasPrecision(5, 2)
-                        .HasColumnType("decimal(5,2)");
-
-                    b.Property<int>("RecommendedReviews")
-                        .HasColumnType("int");
-
                     b.Property<DateTime>("ReleaseDate")
                         .HasColumnType("datetime2");
 
@@ -180,9 +173,6 @@ namespace DataAccess.Migrations
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("TotalReviews")
-                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -197,13 +187,9 @@ namespace DataAccess.Migrations
                             CoverImage = "https://example.com/covers/cs2.jpg",
                             Description = "Tactical shooter.",
                             Price = 0.00m,
-                            Rating = 0,
-                            RecommendationPercentage = 0m,
-                            RecommendedReviews = 0,
                             ReleaseDate = new DateTime(2023, 9, 27, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             SystemRequirements = "Windows 10, 8GB RAM",
-                            Title = "Counter-Strike 2",
-                            TotalReviews = 0
+                            Title = "Counter-Strike 2"
                         },
                         new
                         {
@@ -211,13 +197,9 @@ namespace DataAccess.Migrations
                             CoverImage = "https://example.com/covers/neon.jpg",
                             Description = "Cyberpunk RPG.",
                             Price = 29.99m,
-                            Rating = 0,
-                            RecommendationPercentage = 0m,
-                            RecommendedReviews = 0,
                             ReleaseDate = new DateTime(2026, 5, 12, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             SystemRequirements = "Windows 11, 16GB RAM",
-                            Title = "Neon City 2026",
-                            TotalReviews = 0
+                            Title = "Neon City 2026"
                         },
                         new
                         {
@@ -225,13 +207,9 @@ namespace DataAccess.Migrations
                             CoverImage = "https://example.com/covers/elden.jpg",
                             Description = "Rise, Tarnished.",
                             Price = 59.99m,
-                            Rating = 0,
-                            RecommendationPercentage = 0m,
-                            RecommendedReviews = 0,
                             ReleaseDate = new DateTime(2022, 2, 25, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             SystemRequirements = "Windows 10, RTX 2060",
-                            Title = "Elden Ring",
-                            TotalReviews = 0
+                            Title = "Elden Ring"
                         });
                 });
 

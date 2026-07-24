@@ -1,4 +1,5 @@
-﻿using DataAccess.Enums;
+﻿using DataAccess.Data.Entities.DataAccess.Data.Entities;
+using DataAccess.Enums;
 using Microsoft.AspNetCore.Identity;
 
 namespace DataAccess.Data.Entities
@@ -18,6 +19,7 @@ namespace DataAccess.Data.Entities
         public List<Game> DevelopedGames { get; set; } = new();
         public List<Wishlist> Wishlists { get; set; } = new();
         public List<Cart> Carts { get; set; } = new();
+        public List<Review> Reviews { get; set; } = new();
 
         public virtual Profile? Profile { get; set; }
     }

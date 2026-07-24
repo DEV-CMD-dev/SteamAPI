@@ -1,4 +1,7 @@
-﻿namespace DataAccess.Data.Entities
+﻿using DataAccess.Data.Entities.DataAccess.Data.Entities;
+using DataAccess.Enums;
+
+namespace DataAccess.Data.Entities
 {
     public class Game
     {
@@ -12,6 +15,12 @@
         public string SystemRequirements { get; set; }
         public string? CoverImage { get; set; }
 
+        public int TotalReviews { get; set; }
+        public int RecommendedReviews { get; set; }
+        public decimal RecommendationPercentage { get; set; }
+
+        public GameRating Rating { get; set; } = GameRating.None;
+
         public List<Tag>? Tags { get; set; }
         public List<Screenshot>? Screenshots { get; set; }
         public List<GameVersion>? Versions { get; set; }
@@ -19,5 +28,6 @@
         public List<UserGame>? UserGames { get; set; }
         public List<Wishlist> Wishlists { get; set; } = new();
         public List<Cart> Carts { get; set; } = new();
+        public List<Review> Reviews { get; set; } = new();
     }
 }

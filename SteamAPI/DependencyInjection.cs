@@ -31,6 +31,13 @@ namespace SteamAPI
             services.AddOpenApi();
             services.AddAutoMapper(cfg => { }, typeof(MapperProfile));
 
+            services.AddControllers()
+                .AddJsonOptions(options =>
+                {
+                    options.JsonSerializerOptions.Converters.Add(
+                        new System.Text.Json.Serialization.JsonStringEnumConverter());
+                });
+
             // BLL services
             services.AddScoped<IJwtService, JwtService>();
             services.AddScoped<IAuthService, AuthService>();
@@ -38,6 +45,8 @@ namespace SteamAPI
             services.AddScoped<ITagService, TagService>();
             services.AddScoped<IEmailService, EmailService>();
             services.AddScoped<IUserHelperService, UserHelperService>();
+            services.AddScoped<IReviewService, ReviewService>();
+            services.AddScoped<IGameRatingService, GameRatingService>();
 
             // Configurations
             services.AddOptions<ScalarOptions>().BindConfiguration("Scalar");
@@ -111,7 +120,7 @@ namespace SteamAPI
                 app.MapScalarApiReference("", options => options.WithTitle("Steam API"));
             }
 
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
             app.UseRouting();
             app.UseCors("AllowSteamApp");
             app.UseErrorHandler();

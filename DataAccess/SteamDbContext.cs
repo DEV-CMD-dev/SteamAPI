@@ -1,5 +1,6 @@
 ﻿using DataAccess.Data;
 using DataAccess.Data.Entities;
+using DataAccess.Data.Entities.DataAccess.Data.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -19,6 +20,7 @@ namespace DataAccess
         public DbSet<Screenshot> Screenshots { get; set; }
         public DbSet<Achievement> Achievements { get; set; }
         public DbSet<Profile> Profiles { get; set; }
+        public DbSet<Review> Reviews { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder builder)
@@ -57,6 +59,10 @@ namespace DataAccess
                 .HasPrecision(18, 2);
 
             builder.Entity<Game>()
+                .Property(g => g.RecommendationPercentage)
+                .HasPrecision(5, 2);
+
+            builder.Entity<Game>()
                 .HasOne(g => g.Developer)
                 .WithMany(u => u.DevelopedGames)
                 .HasForeignKey(g => g.DeveloperId);
@@ -90,6 +96,22 @@ namespace DataAccess
                 .HasOne(w => w.Game)
                 .WithMany(g => g.Carts)
                 .HasForeignKey(w => w.GameId);
+
+            // Review
+            builder.Entity<Review>()
+                .HasOne(r => r.User)
+                .WithMany(u => u.Reviews)
+                .HasForeignKey(r => r.UserId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.Entity<Review>()
+                .HasOne(r => r.Game)
+                .WithMany(g => g.Reviews)
+                .HasForeignKey(r => r.GameId);
+
+            builder.Entity<Review>()
+                .HasIndex(r => new { r.UserId, r.GameId })
+                .IsUnique();
 
             builder.Entity<User>().ToTable("Users");
             builder.Entity<IdentityRole>().ToTable("Roles");
