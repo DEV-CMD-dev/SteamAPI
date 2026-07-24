@@ -7,6 +7,7 @@ using DataAccess.Data.Entities;
 using DataAccess.Enums;
 using Microsoft.EntityFrameworkCore;
 using System.Net;
+using BusinessLogic.Extensions;
 
 namespace BusinessLogic.Services
 {
@@ -44,8 +45,11 @@ namespace BusinessLogic.Services
             if (developer == null)
                 throw new HttpException($"User with ID {developerId} not found", HttpStatusCode.NotFound);
 
-            if (developer.UserRole == UserRole.User)
+            if (developer.UserRole != UserRole.Developer)
                 throw new HttpException("Only developers can create games", HttpStatusCode.Forbidden);
+
+            if (string.IsNullOrWhiteSpace(dto.Title) || string.IsNullOrWhiteSpace(dto.Description))
+                throw new HttpException("Title and description can not be empty", HttpStatusCode.BadRequest);
 
             dto.ReleaseDate ??= DateTime.UtcNow;
 
@@ -58,14 +62,14 @@ namespace BusinessLogic.Services
             return _mapper.Map<GameDto>(newGame);
         }
 
-        public async Task Patch(int id, PatchGameDto dto)
+        public async Task Patch(int id, string userId, PatchGameDto dto)
         {
-            await Update(id, dto);
+            await Update(id, userId, dto);
         }
 
-        public async Task Put(int id, PutGameDto dto)
+        public async Task Put(int id, string userId, PutGameDto dto)
         {
-            await Update(id, dto);
+            await Update(id, userId, dto);
         }
 
         public async Task Delete(int gameId, string userId)
@@ -78,10 +82,7 @@ namespace BusinessLogic.Services
             if (user == null)
                 throw new HttpException($"User with ID {userId} not found", HttpStatusCode.NotFound);
 
-            bool isModerator = user.UserRole == UserRole.Moderator;
-            bool isOwner = game.DeveloperId == userId;
-
-            if (isModerator || isOwner)
+            if (user.CanManageGame(gameId))
             {
                 _context.Games.Remove(game);
                 await _context.SaveChangesAsync();
@@ -92,13 +93,12 @@ namespace BusinessLogic.Services
             }
         }
 
-        private async Task Update<TDto>(int id, TDto dto)
+        private async Task Update<TDto>(int id, string userId, TDto dto)
         {
             var existingGame = await _context.Games.FindAsync(id);
 
             if (existingGame == null)
                 throw new HttpException($"Game with Id {id} not found", HttpStatusCode.NotFound);
-
             _mapper.Map(dto, existingGame);
 
             await _context.SaveChangesAsync();

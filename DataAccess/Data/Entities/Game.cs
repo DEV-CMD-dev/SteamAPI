@@ -9,7 +9,7 @@
         public User? Developer { get; set; }
         public DateTime ReleaseDate { get; set; }
         public decimal Price { get; set; }
-        public string SystemRequirements { get; set; }
+        public string? SystemRequirements { get; set; }
         public string? CoverImage { get; set; }
 
         public List<Tag>? Tags { get; set; }
