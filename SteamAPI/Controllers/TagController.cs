@@ -1,6 +1,10 @@
-﻿using BusinessLogic.DTOs.Tag;
+﻿using BusinessLogic;
+using BusinessLogic.DTOs.Tag;
 using BusinessLogic.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Net;
+using System.Security.Claims;
 
 [Route("api/[controller]")]
 [ApiController]
@@ -28,33 +32,65 @@ public class TagController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize]
     public async Task<IActionResult> Create(CreateTagDto dto)
     {
-        await _tagService.Create(dto);
+        var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+        if (string.IsNullOrEmpty(userId))
+            throw new HttpException(
+                "User identity could not be verified.",
+                HttpStatusCode.Unauthorized);
+
+        await _tagService.Create(userId,dto);
 
         return Created(string.Empty, new { message = "Tag created successfully." });
     }
 
     [HttpPatch("{id}")]
+    [Authorize]
     public async Task<IActionResult> Patch(int id, PatchTagDto dto)
     {
-        await _tagService.Patch(id, dto);
+        var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+        if (string.IsNullOrEmpty(userId))
+            throw new HttpException(
+                "User identity could not be verified.",
+                HttpStatusCode.Unauthorized);
+
+        await _tagService.Patch(userId, id, dto);
 
         return NoContent();
     }
 
     [HttpPut("{id}")]
+    [Authorize]
     public async Task<IActionResult> Put(int id, PutTagDto dto)
     {
-        await _tagService.Put(id, dto);
+        var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+        if (string.IsNullOrEmpty(userId))
+            throw new HttpException(
+                "User identity could not be verified.",
+                HttpStatusCode.Unauthorized);
+
+        await _tagService.Put(userId, id, dto);
 
         return NoContent();
     }
 
     [HttpDelete("{id}")]
+    [Authorize]
     public async Task<IActionResult> Delete(int id)
     {
-        await _tagService.Delete(id);
+        var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+        if (string.IsNullOrEmpty(userId))
+            throw new HttpException(
+                "User identity could not be verified.",
+                HttpStatusCode.Unauthorized);
+
+        await _tagService.Delete(userId,id);
 
         return NoContent();
     }
