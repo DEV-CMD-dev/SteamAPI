@@ -34,6 +34,7 @@ namespace BusinessLogic.Services
         {
             var query = _context.Games
                 .AsNoTracking()
+                .OrderBy(g => g.Id)
                 .ProjectTo<GameDto>(_mapper.ConfigurationProvider);
 
             return await PaginatedList<GameDto>.CreateAsync(query, pageNumber, pageSize, _frontendOptions.MaxPaginationPageSize);

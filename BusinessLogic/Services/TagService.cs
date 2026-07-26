@@ -32,6 +32,7 @@ namespace BusinessLogic.Services
         {
             var query = _context.Tags
                 .AsNoTracking()
+                .OrderBy(t => t.Id)
                 .ProjectTo<TagDto>(_mapper.ConfigurationProvider);
             return await PaginatedList<TagDto>.CreateAsync(query, pageNumber, pageSize, _frontendOptions.MaxPaginationPageSize);
         }
