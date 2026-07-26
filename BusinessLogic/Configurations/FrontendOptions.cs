@@ -6,5 +6,6 @@ namespace BusinessLogic.Configurations
     {
         [Required]
         public required string BaseUrl { get; set; }
+        public int MaxPaginationPageSize { get; set; } = 50;
     }
 }

@@ -6,6 +6,10 @@ using DataAccess;
 using DataAccess.Data.Entities;
 using Microsoft.EntityFrameworkCore;
 using System.Net;
+using AutoMapper.QueryableExtensions;
+using BusinessLogic.Classes.Helpers;
+using BusinessLogic.Configurations;
+using Microsoft.Extensions.Options;
 
 namespace BusinessLogic.Services
 {
@@ -13,17 +17,24 @@ namespace BusinessLogic.Services
     {
         private readonly SteamDbContext _context;
         private readonly IMapper _mapper;
-
-        public TagService(SteamDbContext context, IMapper mapper)
+        private readonly FrontendOptions _frontendOptions;
+        
+        public TagService(
+            SteamDbContext context,
+            IMapper mapper,
+            IOptions<FrontendOptions> frontendOptions)
         {
             _context = context;
             _mapper = mapper;
+            _frontendOptions = frontendOptions.Value;
         }
 
-        public async Task<IEnumerable<TagDto>> GetAll()
+        public async Task<PaginatedList<TagDto>> GetAll(int pageNumber, int pageSize)
         {
-            var tags = await _context.Tags.AsNoTracking().ToListAsync();
-            return _mapper.Map<IEnumerable<TagDto>>(tags);
+            var query = _context.Tags
+                .AsNoTracking()
+                .ProjectTo<TagDto>(_mapper.ConfigurationProvider);
+            return await PaginatedList<TagDto>.CreateAsync(query, pageNumber, pageSize, _frontendOptions.MaxPaginationPageSize);
         }
 
         public async Task<TagDto> GetById(int id)

@@ -1,7 +1,6 @@
 ﻿using BusinessLogic.Classes;
 using BusinessLogic.DTOs.Game;
 using BusinessLogic.Interfaces;
-using DataAccess.Data.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
@@ -21,9 +20,11 @@ public class GameController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetAllGames()
+    public async Task<IActionResult> GetAllGames(
+        [FromQuery] int pageNumber = 1,
+        [FromQuery] int pageSize = 10)
     {
-        return Ok(await _gameService.GetAll());
+        return Ok(await _gameService.GetAll(pageNumber, pageSize));
     }
 
     [HttpGet("{id}")]

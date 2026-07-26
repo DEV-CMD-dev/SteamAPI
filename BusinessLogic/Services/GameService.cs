@@ -7,7 +7,11 @@ using DataAccess.Data.Entities;
 using DataAccess.Enums;
 using Microsoft.EntityFrameworkCore;
 using System.Net;
+using AutoMapper.QueryableExtensions;
+using BusinessLogic.Classes.Helpers;
+using BusinessLogic.Configurations;
 using BusinessLogic.Extensions;
+using Microsoft.Extensions.Options;
 
 namespace BusinessLogic.Services
 {
@@ -15,17 +19,25 @@ namespace BusinessLogic.Services
     {
         private readonly SteamDbContext _context;
         private readonly IMapper _mapper;
+        private readonly FrontendOptions _frontendOptions;
 
-        public GameService(SteamDbContext context, IMapper mapper)
+        public GameService(
+            SteamDbContext context,
+            IMapper mapper,
+            IOptions<FrontendOptions> frontendOptions)
         {
             _context = context;
             _mapper = mapper;
+            _frontendOptions = frontendOptions.Value;
         }
 
-        public async Task<IEnumerable<GameDto>> GetAll()
+        public async Task<PaginatedList<GameDto>> GetAll(int pageNumber, int pageSize)
         {
-            var games = await _context.Games.AsNoTracking().ToListAsync();
-            return _mapper.Map<IEnumerable<GameDto>>(games);
+            var query = _context.Games
+                .AsNoTracking()
+                .ProjectTo<GameDto>(_mapper.ConfigurationProvider);
+
+            return await PaginatedList<GameDto>.CreateAsync(query, pageNumber, pageSize, _frontendOptions.MaxPaginationPageSize);
         }
 
         public async Task<GameDto> GetById(int id)
