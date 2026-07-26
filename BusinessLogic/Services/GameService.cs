@@ -1,16 +1,15 @@
-﻿using AutoMapper;
-using BusinessLogic.Classes;
+﻿using System.Net;
+using AutoMapper;
+using AutoMapper.QueryableExtensions;
+using BusinessLogic.Configurations;
 using BusinessLogic.DTOs.Game;
+using BusinessLogic.Extensions;
+using BusinessLogic.Helpers;
 using BusinessLogic.Interfaces;
 using DataAccess;
 using DataAccess.Data.Entities;
 using DataAccess.Enums;
 using Microsoft.EntityFrameworkCore;
-using System.Net;
-using AutoMapper.QueryableExtensions;
-using BusinessLogic.Classes.Helpers;
-using BusinessLogic.Configurations;
-using BusinessLogic.Extensions;
 using Microsoft.Extensions.Options;
 
 namespace BusinessLogic.Services

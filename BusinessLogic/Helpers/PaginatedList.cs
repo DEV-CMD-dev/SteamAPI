@@ -1,7 +1,7 @@
 using System.Net;
 using Microsoft.EntityFrameworkCore;
 
-namespace BusinessLogic.Classes.Helpers;
+namespace BusinessLogic.Helpers;
 
 public class PaginatedList<T>
 {

@@ -1,4 +1,4 @@
-﻿using BusinessLogic.Classes.Helpers;
+﻿using BusinessLogic.Helpers;
 using BusinessLogic.DTOs.Game;
 
 namespace BusinessLogic.Interfaces

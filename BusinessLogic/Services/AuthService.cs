@@ -1,5 +1,4 @@
-﻿using BusinessLogic.Classes;
-using BusinessLogic.DTOs.Auth;
+﻿using BusinessLogic.DTOs.Auth;
 using BusinessLogic.Interfaces;
 using DataAccess.Data.Entities;
 using Microsoft.AspNetCore.Identity;

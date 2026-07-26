@@ -1,10 +1,10 @@
-﻿using BusinessLogic.Classes;
-using BusinessLogic.DTOs.Game;
+﻿using BusinessLogic.DTOs.Game;
 using BusinessLogic.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 using System.Security.Claims;
+using BusinessLogic;
 
 [Route("api/[controller]")]
 [ApiController]

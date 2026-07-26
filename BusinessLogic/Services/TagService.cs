@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using BusinessLogic.Classes;
 using BusinessLogic.DTOs.Tag;
 using BusinessLogic.Interfaces;
 using DataAccess;
@@ -7,7 +6,7 @@ using DataAccess.Data.Entities;
 using Microsoft.EntityFrameworkCore;
 using System.Net;
 using AutoMapper.QueryableExtensions;
-using BusinessLogic.Classes.Helpers;
+using BusinessLogic.Helpers;
 using BusinessLogic.Configurations;
 using Microsoft.Extensions.Options;
 
