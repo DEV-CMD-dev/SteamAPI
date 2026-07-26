@@ -1,5 +1,4 @@
-﻿using BusinessLogic.Classes;
-using BusinessLogic.Configurations;
+﻿using BusinessLogic.Configurations;
 using BusinessLogic.DTOs.PasswordReset;
 using BusinessLogic.Interfaces;
 using DataAccess.Data.Entities;

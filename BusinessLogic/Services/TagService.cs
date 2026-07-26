@@ -1,10 +1,15 @@
 ﻿using AutoMapper;
-using BusinessLogic.Classes;
+using AutoMapper.QueryableExtensions;
+using BusinessLogic.Configurations;
 using BusinessLogic.DTOs.Tag;
+using BusinessLogic.Extensions;
+using BusinessLogic.Helpers;
 using BusinessLogic.Interfaces;
 using DataAccess;
 using DataAccess.Data.Entities;
+using DataAccess.Enums;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using System.Net;
 
 namespace BusinessLogic.Services
@@ -13,17 +18,25 @@ namespace BusinessLogic.Services
     {
         private readonly SteamDbContext _context;
         private readonly IMapper _mapper;
-
-        public TagService(SteamDbContext context, IMapper mapper)
+        private readonly FrontendOptions _frontendOptions;
+        
+        public TagService(
+            SteamDbContext context,
+            IMapper mapper,
+            IOptions<FrontendOptions> frontendOptions)
         {
             _context = context;
             _mapper = mapper;
+            _frontendOptions = frontendOptions.Value;
         }
 
-        public async Task<IEnumerable<TagDto>> GetAll()
+        public async Task<PaginatedList<TagDto>> GetAll(int pageNumber, int pageSize)
         {
-            var tags = await _context.Tags.AsNoTracking().ToListAsync();
-            return _mapper.Map<IEnumerable<TagDto>>(tags);
+            var query = _context.Tags
+                .AsNoTracking()
+                .OrderBy(t => t.Id)
+                .ProjectTo<TagDto>(_mapper.ConfigurationProvider);
+            return await PaginatedList<TagDto>.CreateAsync(query, pageNumber, pageSize, _frontendOptions.MaxPaginationPageSize);
         }
 
         public async Task<TagDto> GetById(int id)
@@ -36,25 +49,50 @@ namespace BusinessLogic.Services
             return _mapper.Map<TagDto>(tag);
         }
 
-        public async Task Create(CreateTagDto dto)
+        public async Task Create(string userId,CreateTagDto dto)
         {
+            var user = await _context.Users.FindAsync(userId);
+
+            if (user == null)
+                throw new HttpException($"User with ID {userId} not found", HttpStatusCode.NotFound);
+
+            if (!user.IsModerator())
+                throw new HttpException("Only moderators can create tags", HttpStatusCode.Forbidden);
+
+            if (string.IsNullOrWhiteSpace(dto.Name))
+                throw new HttpException("Tag name can not be empty", HttpStatusCode.BadRequest);
+
             var newTag = _mapper.Map<Tag>(dto);
             _context.Tags.Add(newTag);
             await _context.SaveChangesAsync();
         }
 
-        public async Task Patch(int id, PatchTagDto dto)
+        public async Task Patch(string userId, int id, PatchTagDto dto)
         {
-            await Update(id, dto);
+            if (string.IsNullOrWhiteSpace(dto.Name) && string.IsNullOrWhiteSpace(dto.Picture))
+                throw new HttpException("Tag name can not be empty", HttpStatusCode.BadRequest);
+
+            await Update(userId,id, dto);
         }
 
-        public async Task Put(int id, PutTagDto dto)
+        public async Task Put(string userId, int id, PutTagDto dto)
         {
-            await Update(id, dto);
+            if (string.IsNullOrWhiteSpace(dto.Name))
+                throw new HttpException("Tag name can not be empty", HttpStatusCode.BadRequest);
+
+            await Update(userId,id, dto);
         }
 
-        public async Task Delete(int id)
+        public async Task Delete(string userId, int id)
         {
+            var user = await _context.Users.FindAsync(userId);
+
+            if (user == null)
+                throw new HttpException($"User with ID {userId} not found", HttpStatusCode.NotFound);
+
+            if (!user.IsModerator())
+                throw new HttpException("Only moderators can create tags", HttpStatusCode.Forbidden);
+
             var tag = await _context.Tags.FindAsync(id);
 
             if (tag == null)
@@ -64,8 +102,17 @@ namespace BusinessLogic.Services
             await _context.SaveChangesAsync();
         }
 
-        private async Task Update<TDto>(int id, TDto dto)
+        private async Task Update<TDto>(string userId,int id, TDto dto)
         {
+
+            var user = await _context.Users.FindAsync(userId);
+
+            if (user == null)
+                throw new HttpException($"User with ID {userId} not found", HttpStatusCode.NotFound);
+
+            if (!user.IsModerator())
+                throw new HttpException("Only moderators can create tags", HttpStatusCode.Forbidden);
+
             var existingTag = await _context.Tags.FindAsync(id);
 
             if (existingTag == null)
@@ -75,5 +122,8 @@ namespace BusinessLogic.Services
 
             await _context.SaveChangesAsync();
         }
+
+
+
     }
 }
