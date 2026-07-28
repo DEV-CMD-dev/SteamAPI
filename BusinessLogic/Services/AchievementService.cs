@@ -53,11 +53,13 @@ namespace BusinessLogic.Services
 
         public async Task Create(string userId, CreateAchievementDto dto)
         {
-            var user = await _context.Users.FindAsync(userId);
-            user.UserExists(userId).IsUserDeveloper();
-
             if (string.IsNullOrWhiteSpace(dto.Name))
                 throw new HttpException("Achievements name can not be empty", HttpStatusCode.BadRequest);
+
+            var user = await _context.Users
+                .Include(u => u.DevelopedGames)
+                .FirstOrDefaultAsync(u => u.Id == userId);
+            user.EnsureExists(userId).EnsureHasAccessToGame(dto.GameId);
 
             var newAchievement = _mapper.Map<Achievement>(dto);
             _context.Achievements.Add(newAchievement);
@@ -88,7 +90,7 @@ namespace BusinessLogic.Services
                 throw new HttpException($"Achievement with ID {id} not found", HttpStatusCode.NotFound);
 
             var user = await _context.Users.Include(u => u.DevelopedGames).FirstOrDefaultAsync(u => u.Id == userId);
-            user.UserExists(userId).VerifyCanManageGame(achievement.GameId);
+            user.EnsureExists(userId).EnsureHasAccessToGame(achievement.GameId);
 
             _context.Achievements.Remove(achievement);
             await _context.SaveChangesAsync();
@@ -102,7 +104,7 @@ namespace BusinessLogic.Services
                 throw new HttpException($"Achievement with ID {id} not found", HttpStatusCode.NotFound);
 
             var user = await _context.Users.Include(u => u.DevelopedGames).FirstOrDefaultAsync(u => u.Id == userId);
-            user.UserExists(userId).VerifyCanManageGame(existingAchievement.GameId);
+            user.EnsureExists(userId).EnsureHasAccessToGame(existingAchievement.GameId);
 
             _mapper.Map(dto, existingAchievement);
 
