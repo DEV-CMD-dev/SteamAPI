@@ -7,7 +7,6 @@ using BusinessLogic.Helpers;
 using BusinessLogic.Interfaces;
 using DataAccess;
 using DataAccess.Data.Entities;
-using DataAccess.Enums;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using System.Net;
