@@ -35,14 +35,6 @@ namespace BusinessLogic.Services
 
             return _mapper.Map<ProfileDto>(profile);
         }
-
-        public async Task Create(ProfileDto dto)
-        {
-            var newProfile = _mapper.Map<Profile>(dto);
-            _context.Profiles.Add(newProfile);
-            await _context.SaveChangesAsync();
-        }
-
         public async Task Patch(int id, PatchProfileDto dto)
         {
             await Update(id, dto);
@@ -62,17 +54,6 @@ namespace BusinessLogic.Services
 
             _mapper.Map(dto, existingProfile);
 
-            await _context.SaveChangesAsync();
-        }
-
-        public async Task Delete(int id)
-        {
-            var profile = await _context.Profiles.FindAsync(id);
-
-            if (profile == null)
-                throw new HttpException($"Profile with ID {id} not found", HttpStatusCode.NotFound);
-
-            _context.Profiles.Remove(profile);
             await _context.SaveChangesAsync();
         }
     }

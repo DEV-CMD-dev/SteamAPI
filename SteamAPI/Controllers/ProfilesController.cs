@@ -40,19 +40,5 @@ namespace SteamAPI.Controllers
             await profilesService.Put(id, dto);
             return Ok();
         }
-
-        [HttpPost]
-        public async Task<ActionResult<ProfileDto>> Create(ProfileDto profile)
-        {
-            await profilesService.Create(profile);
-            return Ok();
-        }
-
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteProfile(int id)
-        {
-            await profilesService.Delete(id);
-            return NoContent();
-        }
     }
 }
