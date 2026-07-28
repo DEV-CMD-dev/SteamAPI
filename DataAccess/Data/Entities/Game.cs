@@ -11,6 +11,7 @@
         public decimal Price { get; set; }
         public string? SystemRequirements { get; set; }
         public string? CoverImage { get; set; }
+        public int? Discount { get; set; }
 
         public List<Tag>? Tags { get; set; }
         public List<Screenshot>? Screenshots { get; set; }

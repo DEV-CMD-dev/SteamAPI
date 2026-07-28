@@ -18,6 +18,7 @@ namespace DataAccess
         public DbSet<GameVersion> GameVersions { get; set; }
         public DbSet<Screenshot> Screenshots { get; set; }
         public DbSet<Achievement> Achievements { get; set; }
+        public DbSet<UserAchievement> UserAchievements { get; set; }
         public DbSet<Profile> Profiles { get; set; }
 
 
@@ -90,6 +91,13 @@ namespace DataAccess
                 .HasOne(w => w.Game)
                 .WithMany(g => g.Carts)
                 .HasForeignKey(w => w.GameId);
+
+            // User - Ahievement
+            builder.Entity<User>()
+                .HasMany(w => w.Achievements)
+                .WithMany(w => w.Users)
+                .UsingEntity<UserAchievement>();
+
 
             builder.Entity<User>().ToTable("Users");
             builder.Entity<IdentityRole>().ToTable("Roles");

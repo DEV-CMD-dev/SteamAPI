@@ -1,4 +1,5 @@
 ﻿
+using BusinessLogic.DTOs.Achievement;
 using BusinessLogic.DTOs.Game;
 using BusinessLogic.DTOs.Tag;
 using DataAccess.Data.Entities;
@@ -29,6 +30,19 @@ namespace BusinessLogic.Configurations
             CreateMap<CreateTagDto, Tag>();
             CreateMap<PutTagDto, Tag>();
             CreateMap<PatchTagDto, Tag>()
+                .ForAllMembers(opts => opts.Condition((src, dest, srcMember) =>
+                {
+                    if (srcMember == null)
+                        return false;
+
+                    return true;
+                }));
+
+            // Tag mappings
+            CreateMap<Achievement, AchievementDto>().ReverseMap();
+            CreateMap<CreateAchievementDto, Achievement>();
+            CreateMap<PutAchievementDto, Achievement>();
+            CreateMap<PatchAchievementDto, Achievement>()
                 .ForAllMembers(opts => opts.Condition((src, dest, srcMember) =>
                 {
                     if (srcMember == null)
