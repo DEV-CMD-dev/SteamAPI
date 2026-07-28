@@ -69,7 +69,7 @@ namespace BusinessLogic.Services
         public async Task Patch(string userId, int id, PatchTagDto dto)
         {
             if (string.IsNullOrWhiteSpace(dto.Name) && string.IsNullOrWhiteSpace(dto.Picture))
-                throw new HttpException("Tag name can not be empty", HttpStatusCode.BadRequest);
+                throw new HttpException("Tag name and picture can not be empty", HttpStatusCode.BadRequest);
 
             await Update(userId,id, dto);
         }
@@ -90,7 +90,7 @@ namespace BusinessLogic.Services
                 throw new HttpException($"User with ID {userId} not found", HttpStatusCode.NotFound);
 
             if (!user.IsModerator())
-                throw new HttpException("Only moderators can create tags", HttpStatusCode.Forbidden);
+                throw new HttpException("Only moderators can delete tags", HttpStatusCode.Forbidden);
 
             var tag = await _context.Tags.FindAsync(id);
 
@@ -110,7 +110,7 @@ namespace BusinessLogic.Services
                 throw new HttpException($"User with ID {userId} not found", HttpStatusCode.NotFound);
 
             if (!user.IsModerator())
-                throw new HttpException("Only moderators can create tags", HttpStatusCode.Forbidden);
+                throw new HttpException("Only moderators can update tags", HttpStatusCode.Forbidden);
 
             var existingTag = await _context.Tags.FindAsync(id);
 
@@ -121,8 +121,5 @@ namespace BusinessLogic.Services
 
             await _context.SaveChangesAsync();
         }
-
-
-
     }
 }
