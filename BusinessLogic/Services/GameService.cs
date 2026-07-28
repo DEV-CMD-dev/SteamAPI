@@ -50,14 +50,14 @@ namespace BusinessLogic.Services
             return _mapper.Map<GameDto>(game);
         }
 
-        public async Task<GameDto> Create(string developerId, CreateGameDto dto)
+        public async Task<GameDto> Create(string userId, CreateGameDto dto)
         {
-            var developer = await _context.Users.FindAsync(developerId);
+            var user = await _context.Users.FindAsync(userId);
 
-            if (developer == null)
-                throw new HttpException($"User with ID {developerId} not found", HttpStatusCode.NotFound);
+            if (user == null)
+                throw new HttpException($"User with ID {userId} not found", HttpStatusCode.NotFound);
 
-            if (developer.UserRole != UserRole.Developer)
+            if (!user.IsDeveloper())
                 throw new HttpException("Only developers can create games", HttpStatusCode.Forbidden);
 
             if (string.IsNullOrWhiteSpace(dto.Title) || string.IsNullOrWhiteSpace(dto.Description))
@@ -66,7 +66,7 @@ namespace BusinessLogic.Services
             dto.ReleaseDate ??= DateTime.UtcNow;
 
             var newGame = _mapper.Map<Game>(dto);
-            newGame.DeveloperId = developerId;
+            newGame.DeveloperId = userId;
 
             _context.Games.Add(newGame);
             await _context.SaveChangesAsync();
@@ -90,29 +90,37 @@ namespace BusinessLogic.Services
             if (game == null)
                 throw new HttpException($"Game with ID {gameId} not found", HttpStatusCode.NotFound);
 
-            var user = await _context.Users.FindAsync(userId);
+            var user = await _context.Users
+                .Include(u => u.DevelopedGames)
+                .FirstOrDefaultAsync(u => u.Id == userId);
+
             if (user == null)
                 throw new HttpException($"User with ID {userId} not found", HttpStatusCode.NotFound);
 
-            if (user.CanManageGame(gameId))
-            {
-                _context.Games.Remove(game);
-                await _context.SaveChangesAsync();
-            }
-            else
-            {
+            if (!user.CanManageGame(gameId))
                 throw new HttpException("You do not have permission to delete this game", HttpStatusCode.Forbidden);
-            }
+
+            _context.Games.Remove(game);
+            await _context.SaveChangesAsync();
         }
 
         private async Task Update<TDto>(int id, string userId, TDto dto)
         {
-            var existingGame = await _context.Games.FindAsync(id);
+            var game = await _context.Games.FindAsync(id);
+            if (game == null)
+                throw new HttpException($"Game with ID {id} not found", HttpStatusCode.NotFound);
 
-            if (existingGame == null)
-                throw new HttpException($"Game with Id {id} not found", HttpStatusCode.NotFound);
-            _mapper.Map(dto, existingGame);
+            var user = await _context.Users
+                .Include(u => u.DevelopedGames)
+                .FirstOrDefaultAsync(u => u.Id == userId);
 
+            if (user == null)
+                throw new HttpException($"User with ID {userId} not found", HttpStatusCode.NotFound);
+
+            if (!user.IsGameDeveloper(id))
+                throw new HttpException("You do not have permission to update this game", HttpStatusCode.Forbidden);
+
+            _mapper.Map(dto, game);
             await _context.SaveChangesAsync();
         }
     }
