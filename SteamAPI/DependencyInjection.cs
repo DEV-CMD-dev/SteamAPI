@@ -38,6 +38,8 @@ namespace SteamAPI
             services.AddScoped<ITagService, TagService>();
             services.AddScoped<IEmailService, EmailService>();
             services.AddScoped<IUserHelperService, UserHelperService>();
+            services.AddScoped<IAchievementService, AchievementService>();
+
 
             // Configurations
             services.AddOptions<ScalarOptions>().BindConfiguration("Scalar");
