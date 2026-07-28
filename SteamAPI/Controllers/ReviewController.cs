@@ -1,4 +1,5 @@
 ﻿using BusinessLogic.DTOs.Review;
+using BusinessLogic.Helpers;
 using BusinessLogic.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -29,14 +30,17 @@ namespace SteamAPI.Controllers
         }
 
         [HttpGet("game/{gameId:int}")]
-        public async Task<ActionResult<PagedReviewsDto>> GetByGame(
+        public async Task<ActionResult<PaginatedList<ReviewDto>>> GetByGame(
             int gameId,
-            [FromQuery] int pageNumber = 1,
-            [FromQuery] int pageSize = 10)
+            int pageNumber = 1,
+            int pageSize = 10)
         {
-            var reviews = await _reviewService.GetByGameAsync(gameId, pageNumber, pageSize);
+            var result = await _reviewService.GetByGameAsync(
+                gameId,
+                pageNumber,
+                pageSize);
 
-            return Ok(reviews);
+            return Ok(result);
         }
         [Authorize]
         [HttpPost]

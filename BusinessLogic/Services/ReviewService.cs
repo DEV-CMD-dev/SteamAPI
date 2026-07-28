@@ -1,4 +1,4 @@
-﻿using BusinessLogic.Classes;
+﻿using BusinessLogic.Helpers;
 using BusinessLogic.DTOs.Review;
 using BusinessLogic.Interfaces;
 using DataAccess;
@@ -45,6 +45,16 @@ namespace BusinessLogic.Services
 
         public async Task<ReviewDto> CreateAsync(CreateReviewDto dto, string userId)
         {
+            if (string.IsNullOrWhiteSpace(userId))
+                throw new HttpException(
+                    "User identity could not be verified",
+                    HttpStatusCode.Unauthorized);
+
+            if (!await _context.Users.AnyAsync(u => u.Id == userId))
+                throw new HttpException(
+                    "User not found",
+                    HttpStatusCode.NotFound);
+
             if (!await _context.Games.AnyAsync(g => g.Id == dto.GameId))
                 throw new HttpException("Game not found", HttpStatusCode.NotFound);
 
@@ -90,36 +100,30 @@ namespace BusinessLogic.Services
                 .FirstOrDefaultAsync(r => r.Id == reviewId);
         }
 
-        public async Task<PagedReviewsDto> GetByGameAsync(
+        public async Task<PaginatedList<ReviewDto>> GetByGameAsync(
             int gameId,
             int pageNumber = 1,
             int pageSize = 10)
         {
-            if (!await _context.Games.AnyAsync(g => g.Id == gameId))
-                throw new HttpException("Game not found", HttpStatusCode.NotFound);
+            var gameExists = await _context.Games
+                 .AnyAsync(g => g.Id == gameId);
 
-            pageNumber = Math.Max(pageNumber, 1);
-            pageSize = Math.Clamp(pageSize, 1, 50);
+            if (!gameExists)
+                throw new HttpException(
+                   "Game not found",
+                   HttpStatusCode.NotFound);
 
             var query = MapToDto()
                 .Where(r => r.GameId == gameId)
                 .OrderByDescending(r => r.CreatedAt);
 
-            var totalCount = await query.CountAsync();
-
-            var reviews = await query
-                .Skip((pageNumber - 1) * pageSize)
-                .Take(pageSize)
-                .ToListAsync();
-
-            return new PagedReviewsDto
-            {
-                Reviews = reviews,
-                TotalCount = totalCount,
-                PageNumber = pageNumber,
-                PageSize = pageSize
-            };
-        }
+            return await PaginatedList<ReviewDto>.CreateAsync(
+                query,
+                pageNumber,
+                pageSize,
+                 50);
+            }
+        
 
         public async Task<ReviewDto> UpdateAsync(
             int reviewId,
@@ -128,6 +132,16 @@ namespace BusinessLogic.Services
         {
             var review = await _context.Reviews
                 .FirstOrDefaultAsync(r => r.Id == reviewId);
+
+            if (string.IsNullOrWhiteSpace(userId))
+                throw new HttpException(
+                    "User identity could not be verified",
+                    HttpStatusCode.Unauthorized);
+
+            if (!await _context.Users.AnyAsync(u => u.Id == userId))
+                throw new HttpException(
+                    "User not found",
+                    HttpStatusCode.NotFound);
 
             if (review == null)
                 throw new HttpException(
@@ -165,6 +179,16 @@ namespace BusinessLogic.Services
         {
             var review = await _context.Reviews
                 .FirstOrDefaultAsync(r => r.Id == reviewId);
+
+            if (string.IsNullOrWhiteSpace(userId))
+                throw new HttpException(
+                    "User identity could not be verified",
+                    HttpStatusCode.Unauthorized);
+
+            if (!await _context.Users.AnyAsync(u => u.Id == userId))
+                throw new HttpException(
+                    "User not found",
+                    HttpStatusCode.NotFound);
 
             if (review == null)
                 throw new HttpException(

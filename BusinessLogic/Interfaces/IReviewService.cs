@@ -1,4 +1,5 @@
 ﻿using BusinessLogic.DTOs.Review;
+using BusinessLogic.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -11,7 +12,7 @@ namespace BusinessLogic.Interfaces
 
         Task<ReviewDto?> GetByIdAsync(int id);
 
-        Task<PagedReviewsDto> GetByGameAsync(int gameId, int pageNumber = 1, int pageSize = 10);
+        Task<PaginatedList<ReviewDto>> GetByGameAsync(int gameId, int pageNumber = 1, int pageSize = 10);
 
         Task<ReviewDto> UpdateAsync(int reviewId, UpdateReviewDto dto, string userId);
 

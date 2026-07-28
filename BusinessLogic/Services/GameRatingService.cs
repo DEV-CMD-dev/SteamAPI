@@ -1,5 +1,4 @@
-﻿using BusinessLogic.Classes;
-using BusinessLogic.Interfaces;
+﻿using BusinessLogic.Interfaces;
 using DataAccess;
 using DataAccess.Enums;
 using Microsoft.EntityFrameworkCore;
