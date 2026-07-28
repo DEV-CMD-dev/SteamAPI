@@ -19,6 +19,7 @@ namespace DataAccess
         public DbSet<GameVersion> GameVersions { get; set; }
         public DbSet<Screenshot> Screenshots { get; set; }
         public DbSet<Achievement> Achievements { get; set; }
+        public DbSet<UserAchievement> UserAchievements { get; set; }
         public DbSet<Profile> Profiles { get; set; }
         public DbSet<Review> Reviews { get; set; }
 

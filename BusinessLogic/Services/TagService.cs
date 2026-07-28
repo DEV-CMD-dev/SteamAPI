@@ -51,12 +51,7 @@ namespace BusinessLogic.Services
         public async Task Create(string userId,CreateTagDto dto)
         {
             var user = await _context.Users.FindAsync(userId);
-
-            if (user == null)
-                throw new HttpException($"User with ID {userId} not found", HttpStatusCode.NotFound);
-
-            if (!user.IsModerator())
-                throw new HttpException("Only moderators can create tags", HttpStatusCode.Forbidden);
+            user.EnsureExists(userId).EnsureModerator();
 
             if (string.IsNullOrWhiteSpace(dto.Name))
                 throw new HttpException("Tag name can not be empty", HttpStatusCode.BadRequest);
@@ -85,12 +80,7 @@ namespace BusinessLogic.Services
         public async Task Delete(string userId, int id)
         {
             var user = await _context.Users.FindAsync(userId);
-
-            if (user == null)
-                throw new HttpException($"User with ID {userId} not found", HttpStatusCode.NotFound);
-
-            if (!user.IsModerator())
-                throw new HttpException("Only moderators can delete tags", HttpStatusCode.Forbidden);
+            user.EnsureExists(userId).EnsureModerator();
 
             var tag = await _context.Tags.FindAsync(id);
 
@@ -103,14 +93,8 @@ namespace BusinessLogic.Services
 
         private async Task Update<TDto>(string userId,int id, TDto dto)
         {
-
             var user = await _context.Users.FindAsync(userId);
-
-            if (user == null)
-                throw new HttpException($"User with ID {userId} not found", HttpStatusCode.NotFound);
-
-            if (!user.IsModerator())
-                throw new HttpException("Only moderators can update tags", HttpStatusCode.Forbidden);
+            user.EnsureExists(userId).EnsureModerator();
 
             var existingTag = await _context.Tags.FindAsync(id);
 
