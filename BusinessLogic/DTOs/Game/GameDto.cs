@@ -8,6 +8,7 @@
         public string DeveloperId { get; set; } = string.Empty;
         public DateTime ReleaseDate { get; set; }
         public decimal Price { get; set; }
+        public int Discount { get; set; }
         public string SystemRequirements { get; set; } = string.Empty;
         public string CoverImage { get; set; } = string.Empty;   
     }

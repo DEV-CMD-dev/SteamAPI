@@ -1,5 +1,7 @@
 ﻿using BusinessLogic.DTOs.Tag;
+using BusinessLogic.Extensions;
 using BusinessLogic.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 [Route("api/[controller]")]
@@ -14,9 +16,11 @@ public class TagController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetAllTags()
+    public async Task<IActionResult> GetAllTags(
+        [FromQuery] int pageNumber = 1,
+        [FromQuery] int pageSize = 10)
     {
-        return Ok(await _tagService.GetAll());
+        return Ok(await _tagService.GetAll(pageNumber, pageSize));
     }
 
     [HttpGet("{id}")]
@@ -26,33 +30,45 @@ public class TagController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize]
     public async Task<IActionResult> Create(CreateTagDto dto)
     {
-        await _tagService.Create(dto);
+        var userId = User.GetRequiredUserId();
+
+        await _tagService.Create(userId,dto);
 
         return Created(string.Empty, new { message = "Tag created successfully." });
     }
 
     [HttpPatch("{id}")]
+    [Authorize]
     public async Task<IActionResult> Patch(int id, PatchTagDto dto)
     {
-        await _tagService.Patch(id, dto);
+        var userId = User.GetRequiredUserId();
+
+        await _tagService.Patch(userId, id, dto);
 
         return NoContent();
     }
 
     [HttpPut("{id}")]
+    [Authorize]
     public async Task<IActionResult> Put(int id, PutTagDto dto)
     {
-        await _tagService.Put(id, dto);
+        var userId = User.GetRequiredUserId();
+
+        await _tagService.Put(userId, id, dto);
 
         return NoContent();
     }
 
     [HttpDelete("{id}")]
+    [Authorize]
     public async Task<IActionResult> Delete(int id)
     {
-        await _tagService.Delete(id);
+        var userId = User.GetRequiredUserId();
+
+        await _tagService.Delete(userId,id);
 
         return NoContent();
     }

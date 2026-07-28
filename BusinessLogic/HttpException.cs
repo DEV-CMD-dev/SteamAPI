@@ -1,6 +1,6 @@
 ﻿using System.Net;
 
-namespace BusinessLogic.Classes
+namespace BusinessLogic
 {
     public class HttpException : Exception
     {

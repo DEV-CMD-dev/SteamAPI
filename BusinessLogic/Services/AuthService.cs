@@ -1,11 +1,9 @@
-﻿using BusinessLogic.Classes;
-using BusinessLogic.Configurations;
-using BusinessLogic.DTOs.Auth;
+﻿using BusinessLogic.DTOs.Auth;
 using BusinessLogic.Interfaces;
 using DataAccess.Data.Entities;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Options;
 using System.Net;
+using BusinessLogic.Extensions;
 
 namespace BusinessLogic.Services
 {
@@ -54,9 +52,7 @@ namespace BusinessLogic.Services
 
         public async Task<LoginResponseDto> Login(LoginRequestDto dto)
         {
-            var user = dto.Identifier.Contains('@')
-                ? await _userManager.FindByEmailAsync(dto.Identifier)
-                : await _userManager.FindByNameAsync(dto.Identifier);
+            var user = await _userManager.FindByIdentifierAsync(dto.Identifier);
 
             if (user == null || !await _userManager.IsEmailConfirmedAsync(user))
                 throw new HttpException("Invalid credentials or email is not confirmed", HttpStatusCode.Unauthorized);
