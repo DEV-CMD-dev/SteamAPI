@@ -1,4 +1,5 @@
 ﻿using BusinessLogic.DTOs.Profile;
+using BusinessLogic.Extensions;
 using BusinessLogic.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -30,14 +31,18 @@ namespace SteamAPI.Controllers
         [HttpPatch("{id}")]
         public async Task<IActionResult> Patch(int id, PatchProfileDto dto)
         {
-            await profilesService.Patch(id, dto);
+            var userId = User.GetRequiredUserId();
+
+            await profilesService.Patch(id, userId, dto);
             return Ok();
         }
 
         [HttpPut("{id}")]
         public async Task<IActionResult> Put(int id, PutProfileDto dto)
         {
-            await profilesService.Put(id, dto);
+            var userId = User.GetRequiredUserId();
+
+            await profilesService.Put(id, userId, dto);
             return Ok();
         }
     }

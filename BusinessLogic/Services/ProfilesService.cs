@@ -1,11 +1,9 @@
 ﻿using System.Net;
 using AutoMapper;
-using BusinessLogic.Classes;
 using BusinessLogic.DTOs.Profile;
 using BusinessLogic.Interfaces;
 using DataAccess;
 using Microsoft.EntityFrameworkCore;
-using Profile = DataAccess.Data.Entities.Profile;
 
 namespace BusinessLogic.Services
 {
@@ -35,22 +33,25 @@ namespace BusinessLogic.Services
 
             return _mapper.Map<ProfileDto>(profile);
         }
-        public async Task Patch(int id, PatchProfileDto dto)
+        public async Task Patch(int id, string userId, PatchProfileDto dto)
         {
-            await Update(id, dto);
+            await Update(id, userId, dto);
         }
 
-        public async Task Put(int id, PutProfileDto dto)
+        public async Task Put(int id, string userId, PutProfileDto dto)
         {
-            await Update(id, dto);
+            await Update(id, userId, dto);
         }
 
-        private async Task Update<TDto>(int id, TDto dto)
+        private async Task Update<TDto>(int id, string userId, TDto dto)
         {
             var existingProfile = await _context.Profiles.FindAsync(id);
 
             if (existingProfile == null)
                 throw new HttpException($"Profile with ID {id} not found", HttpStatusCode.NotFound);
+
+            if (existingProfile.UserId != userId)
+                throw new HttpException("You are not authorized to update this profile", HttpStatusCode.Forbidden);
 
             _mapper.Map(dto, existingProfile);
 

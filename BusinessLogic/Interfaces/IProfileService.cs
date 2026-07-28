@@ -6,7 +6,7 @@ namespace BusinessLogic.Interfaces
     {
         Task<IEnumerable<ProfileDto>> GetAll();
         Task<ProfileDto> GetById(int id);
-        Task Patch(int id, PatchProfileDto dto);
-        Task Put(int id, PutProfileDto dto); 
+        Task Patch(int id, string userId, PatchProfileDto dto);
+        Task Put(int id, string userId, PutProfileDto dto); 
     }
 }
