@@ -1,6 +1,6 @@
-﻿using BusinessLogic.Classes;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using System.Net;
+using BusinessLogic;
 
 namespace SteamApi.Middlewares
 {

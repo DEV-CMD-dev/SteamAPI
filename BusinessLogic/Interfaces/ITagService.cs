@@ -1,14 +1,15 @@
-﻿using BusinessLogic.DTOs.Tag;
+﻿using BusinessLogic.Helpers;
+using BusinessLogic.DTOs.Tag;
 
 namespace BusinessLogic.Interfaces
 {
     public interface ITagService
     {
-        Task<IEnumerable<TagDto>> GetAll();
+        Task<PaginatedList<TagDto>> GetAll(int pageNumber, int pageSize);
         Task<TagDto> GetById(int id);
-        Task Create(CreateTagDto dto);
-        Task Patch(int id, PatchTagDto dto);
-        Task Put(int id, PutTagDto dto);
-        Task Delete(int id);
+        Task Create(string userId,CreateTagDto dto);
+        Task Patch(string userId, int id, PatchTagDto dto);
+        Task Put(string userId, int id, PutTagDto dto);
+        Task Delete(string userId, int id);
     }
 }

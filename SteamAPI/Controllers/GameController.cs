@@ -1,11 +1,8 @@
-﻿using BusinessLogic.Classes;
-using BusinessLogic.DTOs.Game;
+﻿using BusinessLogic.DTOs.Game;
 using BusinessLogic.Interfaces;
-using DataAccess.Data.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Net;
-using System.Security.Claims;
+using BusinessLogic.Extensions;
 
 [Route("api/[controller]")]
 [ApiController]
@@ -19,9 +16,11 @@ public class GameController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetAllGames()
+    public async Task<IActionResult> GetAllGames(
+        [FromQuery] int pageNumber = 1,
+        [FromQuery] int pageSize = 10)
     {
-        return Ok(await _gameService.GetAll());
+        return Ok(await _gameService.GetAll(pageNumber, pageSize));
     }
 
     [HttpGet("{id}")]
@@ -34,14 +33,9 @@ public class GameController : ControllerBase
     [Authorize]
     public async Task<IActionResult> Add(CreateGameDto dto)
     {
-        var developerId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        var userId = User.GetRequiredUserId();
 
-        if (string.IsNullOrEmpty(developerId))
-            throw new HttpException(
-                "User identity could not be verified.",
-                HttpStatusCode.Unauthorized);
-
-        var result = await _gameService.Create(developerId, dto);
+        var result = await _gameService.Create(userId, dto);
 
         return CreatedAtAction(nameof(GetById), new { id = result.Id }, result);
     }
@@ -50,7 +44,9 @@ public class GameController : ControllerBase
     [Authorize]
     public async Task<IActionResult> Put(int id, PutGameDto dto)
     {
-        await _gameService.Put(id, dto);
+        var userId = User.GetRequiredUserId();
+
+        await _gameService.Put(id, userId, dto);
 
         return NoContent();
     }
@@ -59,7 +55,9 @@ public class GameController : ControllerBase
     [Authorize]
     public async Task<IActionResult> Patch(int id, PatchGameDto dto)
     {
-        await _gameService.Patch(id, dto);
+        var userId = User.GetRequiredUserId();
+
+        await _gameService.Patch(id, userId, dto);
 
         return NoContent();
     }
@@ -68,14 +66,9 @@ public class GameController : ControllerBase
     [Authorize]
     public async Task<IActionResult> Delete(int id)
     {
-        var currentUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        var userId = User.GetRequiredUserId();
 
-        if (string.IsNullOrEmpty(currentUserId))
-            throw new HttpException(
-                "User identity could not be verified.",
-                HttpStatusCode.Unauthorized);
-
-        await _gameService.Delete(id, currentUserId);
+        await _gameService.Delete(id, userId);
 
         return NoContent();
     }
