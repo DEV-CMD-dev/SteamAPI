@@ -1,4 +1,5 @@
 ﻿
+using BusinessLogic.DTOs.Achievement;
 using BusinessLogic.DTOs.Game;
 using BusinessLogic.DTOs.Review;
 using BusinessLogic.DTOs.Tag;
@@ -41,9 +42,24 @@ namespace BusinessLogic.Configurations
                     return true;
                 }));
 
-           CreateMap<Review, ReviewDto>()
+            // Review mappings
+            CreateMap<Review, ReviewDto>()
                 .ForMember(dest => dest.UserName,
                     opt => opt.MapFrom(src => src.User!.UserName));
+
+
+            // Achievement mappings
+            CreateMap<Achievement, AchievementDto>().ReverseMap();
+            CreateMap<CreateAchievementDto, Achievement>();
+            CreateMap<PutAchievementDto, Achievement>();
+            CreateMap<PatchAchievementDto, Achievement>()
+                .ForAllMembers(opts => opts.Condition((src, dest, srcMember) =>
+                {
+                    if (srcMember == null)
+                        return false;
+
+                    return true;
+                }));
         }
     }
 }

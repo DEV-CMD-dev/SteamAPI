@@ -52,12 +52,7 @@ namespace BusinessLogic.Services
         public async Task<GameDto> Create(string userId, CreateGameDto dto)
         {
             var user = await _context.Users.FindAsync(userId);
-
-            if (user == null)
-                throw new HttpException($"User with ID {userId} not found", HttpStatusCode.NotFound);
-
-            if (!user.IsDeveloper())
-                throw new HttpException("Only developers can create games", HttpStatusCode.Forbidden);
+            user.EnsureExists(userId).EnsureDeveloper();
 
             if (string.IsNullOrWhiteSpace(dto.Title) || string.IsNullOrWhiteSpace(dto.Description))
                 throw new HttpException("Title and description can not be empty", HttpStatusCode.BadRequest);
@@ -92,12 +87,7 @@ namespace BusinessLogic.Services
             var user = await _context.Users
                 .Include(u => u.DevelopedGames)
                 .FirstOrDefaultAsync(u => u.Id == userId);
-
-            if (user == null)
-                throw new HttpException($"User with ID {userId} not found", HttpStatusCode.NotFound);
-
-            if (!user.CanManageGame(gameId))
-                throw new HttpException("You do not have permission to delete this game", HttpStatusCode.Forbidden);
+            user.EnsureExists(userId).EnsureHasAccessToGame(gameId);
 
             _context.Games.Remove(game);
             await _context.SaveChangesAsync();
@@ -113,12 +103,8 @@ namespace BusinessLogic.Services
                 .Include(u => u.DevelopedGames)
                 .FirstOrDefaultAsync(u => u.Id == userId);
 
-            if (user == null)
-                throw new HttpException($"User with ID {userId} not found", HttpStatusCode.NotFound);
-
-            if (!user.IsGameDeveloper(id))
-                throw new HttpException("You do not have permission to update this game", HttpStatusCode.Forbidden);
-
+            user.EnsureExists(userId).EnsureHasAccessToGame(id);
+            
             _mapper.Map(dto, game);
             await _context.SaveChangesAsync();
         }

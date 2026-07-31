@@ -40,6 +40,8 @@ namespace SteamAPI
             services.AddScoped<IUserHelperService, UserHelperService>();
             services.AddScoped<IReviewService, ReviewService>();
             services.AddScoped<IGameRatingService, GameRatingService>();
+            services.AddScoped<IAchievementService, AchievementService>();
+
 
             // Configurations
             services.AddOptions<ScalarOptions>().BindConfiguration("Scalar");

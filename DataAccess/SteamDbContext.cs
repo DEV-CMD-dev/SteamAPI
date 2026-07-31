@@ -19,6 +19,7 @@ namespace DataAccess
         public DbSet<GameVersion> GameVersions { get; set; }
         public DbSet<Screenshot> Screenshots { get; set; }
         public DbSet<Achievement> Achievements { get; set; }
+        public DbSet<UserAchievement> UserAchievements { get; set; }
         public DbSet<Profile> Profiles { get; set; }
         public DbSet<Review> Reviews { get; set; }
 
@@ -112,6 +113,13 @@ namespace DataAccess
             builder.Entity<Review>()
                 .HasIndex(r => new { r.UserId, r.GameId })
                 .IsUnique();
+
+            // User - Achievement
+            builder.Entity<User>()
+                .HasMany(w => w.Achievements)
+                .WithMany(w => w.Users)
+                .UsingEntity<UserAchievement>();
+
 
             builder.Entity<User>().ToTable("Users");
             builder.Entity<IdentityRole>().ToTable("Roles");

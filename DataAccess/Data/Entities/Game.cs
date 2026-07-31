@@ -14,6 +14,7 @@ namespace DataAccess.Data.Entities
         public decimal Price { get; set; }
         public string? SystemRequirements { get; set; }
         public string? CoverImage { get; set; }
+        public int? Discount { get; set; }
 
         public int TotalReviews { get; set; }
         public int RecommendedReviews { get; set; }
