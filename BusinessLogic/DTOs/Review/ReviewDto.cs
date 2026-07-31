@@ -15,7 +15,7 @@ namespace BusinessLogic.DTOs.Review
 
         public int GameId { get; set; }
 
-        public ReviewRecommendation Recommendation { get; set; }
+        public bool IsRecommended { get; set; }
 
         public string Content { get; set; } = string.Empty;
 

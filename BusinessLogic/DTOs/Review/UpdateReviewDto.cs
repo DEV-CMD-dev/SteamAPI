@@ -1,18 +1,13 @@
-﻿using DataAccess.Enums;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Text;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace BusinessLogic.DTOs.Review
 {
     public class UpdateReviewDto
     {
-        [Required]
-        public ReviewRecommendation Recommendation { get; set; }
+        public bool IsRecommended { get; set; }
 
-        [Required]
-        [MaxLength(8000)]
+        [Required(ErrorMessage = "Review content cannot be empty")]
+        [MaxLength(2000, ErrorMessage = "Review content cannot exceed 2000 characters")]
         public string Content { get; set; } = string.Empty;
     }
 }

@@ -1,9 +1,14 @@
-﻿using BusinessLogic.Helpers;
+﻿using AutoMapper;
+using AutoMapper.QueryableExtensions;
+using BusinessLogic.Configurations;
 using BusinessLogic.DTOs.Review;
+using BusinessLogic.Helpers;
 using BusinessLogic.Interfaces;
 using DataAccess;
+using DataAccess.Data.Entities;
 using DataAccess.Data.Entities.DataAccess.Data.Entities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using System.Net;
 
 namespace BusinessLogic.Services
@@ -12,35 +17,32 @@ namespace BusinessLogic.Services
     {
         private readonly SteamDbContext _context;
         private readonly IGameRatingService _gameRatingService;
+        private readonly IMapper _mapper;
+        private readonly FrontendOptions _frontendOptions;
 
         public ReviewService(
             SteamDbContext context,
-            IGameRatingService gameRatingService)
+            IGameRatingService gameRatingService,
+            IMapper mapper,
+            IOptions<FrontendOptions> frontendOptions)
         {
             _context = context;
             _gameRatingService = gameRatingService;
+            _mapper = mapper;
+            _frontendOptions = frontendOptions.Value;
         }
 
-        private IQueryable<ReviewDto> MapToDto()
+        private async Task<ReviewDto> MapReviewAsync(Review review)
         {
-            return _context.Reviews
-                .AsNoTracking()
-                .Select(r => new ReviewDto
-                {
-                    Id = r.Id,
-                    UserId = r.UserId,
-                    UserName = r.User != null ? r.User.UserName ?? string.Empty : string.Empty,
-                    GameId = r.GameId,
-                    Recommendation = r.Recommendation,
-                    Content = r.Content,
-                    CreatedAt = r.CreatedAt,
-                    UpdatedAt = r.UpdatedAt,
+            var dto = _mapper.Map<ReviewDto>(review);
 
-                    HoursPlayed = _context.UserGames
-                        .Where(ug => ug.UserId == r.UserId && ug.GameId == r.GameId)
-                        .Select(ug => (double?)Math.Round(ug.PlayTimeMinutes / 60.0, 1))
-                        .FirstOrDefault() ?? 0
-                });
+            dto.HoursPlayed = await _context.UserGames
+                .Where(x => x.UserId == review.UserId &&
+                            x.GameId == review.GameId)
+                .Select(x => Math.Round(x.PlayTimeMinutes / 60.0, 1))
+                .FirstOrDefaultAsync();
+
+            return dto;
         }
 
         public async Task<ReviewDto> CreateAsync(CreateReviewDto dto, string userId)
@@ -67,21 +69,11 @@ namespace BusinessLogic.Services
                     HttpStatusCode.BadRequest);
             }
 
-            if (string.IsNullOrWhiteSpace(dto.Content))
-                throw new HttpException(
-                    "Review content cannot be empty",
-                    HttpStatusCode.BadRequest);
-
-            if (dto.Content.Length > 8000)
-                throw new HttpException(
-                    "Review content cannot exceed 8000 characters",
-                    HttpStatusCode.BadRequest);
-
             var review = new Review
             {
                 UserId = userId,
                 GameId = dto.GameId,
-                Recommendation = dto.Recommendation,
+                IsRecommended = dto.IsRecommended,
                 Content = dto.Content.Trim()
             };
 
@@ -90,14 +82,28 @@ namespace BusinessLogic.Services
             await _context.SaveChangesAsync();
             await _gameRatingService.UpdateGameRatingAsync(review.GameId);
 
-            return await MapToDto()
-                .FirstAsync(r => r.Id == review.Id);
+            await _context.Entry(review).Reference(x => x.User).LoadAsync();
+
+            return await MapReviewAsync(review);
         }
 
-        public async Task<ReviewDto?> GetByIdAsync(int reviewId)
+        public async Task<ReviewDto> GetByIdAsync(int reviewId)
         {
-            return await MapToDto()
+            if (reviewId <= 0)
+                throw new HttpException(
+                    "Invalid review ID",
+                    HttpStatusCode.BadRequest);
+
+            var review = await _context.Reviews
+                .Include(r => r.User)
                 .FirstOrDefaultAsync(r => r.Id == reviewId);
+
+            if (review == null)
+                throw new HttpException(
+                    "Review not found",
+                    HttpStatusCode.NotFound);
+
+            return await MapReviewAsync(review);
         }
 
         public async Task<PaginatedList<ReviewDto>> GetByGameAsync(
@@ -105,6 +111,11 @@ namespace BusinessLogic.Services
             int pageNumber = 1,
             int pageSize = 10)
         {
+            if (gameId <= 0)
+                throw new HttpException(
+                    "Invalid game ID",
+                    HttpStatusCode.BadRequest);
+
             var gameExists = await _context.Games
                  .AnyAsync(g => g.Id == gameId);
 
@@ -113,17 +124,18 @@ namespace BusinessLogic.Services
                    "Game not found",
                    HttpStatusCode.NotFound);
 
-            var query = MapToDto()
+            var query = _context.Reviews
+                .AsNoTracking()
                 .Where(r => r.GameId == gameId)
-                .OrderByDescending(r => r.CreatedAt);
+                .OrderByDescending(r => r.CreatedAt)
+                .ProjectTo<ReviewDto>(_mapper.ConfigurationProvider);
 
             return await PaginatedList<ReviewDto>.CreateAsync(
                 query,
                 pageNumber,
                 pageSize,
-                 50);
-            }
-        
+                _frontendOptions.MaxPaginationPageSize);
+        }
 
         public async Task<ReviewDto> UpdateAsync(
             int reviewId,
@@ -131,6 +143,7 @@ namespace BusinessLogic.Services
             string userId)
         {
             var review = await _context.Reviews
+                .Include(r => r.User)
                 .FirstOrDefaultAsync(r => r.Id == reviewId);
 
             if (string.IsNullOrWhiteSpace(userId))
@@ -153,17 +166,7 @@ namespace BusinessLogic.Services
                     "You can edit only your own review",
                     HttpStatusCode.Forbidden);
 
-            if (string.IsNullOrWhiteSpace(dto.Content))
-                throw new HttpException(
-                    "Review content cannot be empty",
-                    HttpStatusCode.BadRequest);
-
-            if (dto.Content.Length > 8000)
-                throw new HttpException(
-                    "Review content cannot exceed 8000 characters",
-                    HttpStatusCode.BadRequest);
-
-            review.Recommendation = dto.Recommendation;
+            review.IsRecommended = dto.IsRecommended;
             review.Content = dto.Content.Trim();
             review.UpdatedAt = DateTime.UtcNow;
 
@@ -171,8 +174,7 @@ namespace BusinessLogic.Services
 
             await _gameRatingService.UpdateGameRatingAsync(review.GameId);
 
-            return await MapToDto()
-                .FirstAsync(r => r.Id == review.Id);
+            return await MapReviewAsync(review);
         }
 
         public async Task DeleteAsync(int reviewId, string userId)

@@ -31,13 +31,6 @@ namespace SteamAPI
             services.AddOpenApi();
             services.AddAutoMapper(cfg => { }, typeof(MapperProfile));
 
-            services.AddControllers()
-                .AddJsonOptions(options =>
-                {
-                    options.JsonSerializerOptions.Converters.Add(
-                        new System.Text.Json.Serialization.JsonStringEnumConverter());
-                });
-
             // BLL services
             services.AddScoped<IJwtService, JwtService>();
             services.AddScoped<IAuthService, AuthService>();
@@ -125,7 +118,7 @@ namespace SteamAPI
                 app.MapScalarApiReference("", options => options.WithTitle("Steam API"));
             }
 
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
             app.UseRouting();
             app.UseCors("AllowSteamApp");
             app.UseErrorHandler();

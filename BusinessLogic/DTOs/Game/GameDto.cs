@@ -18,6 +18,6 @@ namespace BusinessLogic.DTOs.Game
         public decimal RecommendationPercentage { get; set; }
         public GameRating Rating { get; set; }
 
-        public bool HasRating => TotalReviews >= 10;
+        public bool HasRating { get; set; }
     }
 }

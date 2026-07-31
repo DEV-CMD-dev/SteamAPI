@@ -29,7 +29,7 @@ namespace BusinessLogic.Services
             var recommendedReviews = await _context.Reviews
                 .CountAsync(r =>
                     r.GameId == gameId &&
-                    r.Recommendation == ReviewRecommendation.Recommended);
+                    r.IsRecommended);
 
             decimal recommendationPercentage = 0;
 
@@ -60,16 +60,19 @@ namespace BusinessLogic.Services
             if (recommendationPercentage >= 80)
                 return GameRating.VeryPositive;
 
+            if (recommendationPercentage >= 80)
+                return GameRating.Positive;
+
             if (recommendationPercentage >= 70)
                 return GameRating.MostlyPositive;
 
             if (recommendationPercentage >= 40)
                 return GameRating.Mixed;
 
-            if (recommendationPercentage >= 30)
+            if (recommendationPercentage >= 20)
                 return GameRating.MostlyNegative;
 
-            if (recommendationPercentage >= 20)
+            if (recommendationPercentage >= 15)
                 return GameRating.Negative;
 
             return GameRating.OverwhelminglyNegative;

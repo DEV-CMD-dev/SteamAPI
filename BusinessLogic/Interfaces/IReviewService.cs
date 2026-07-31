@@ -10,7 +10,7 @@ namespace BusinessLogic.Interfaces
     {
         Task<ReviewDto> CreateAsync(CreateReviewDto dto, string userId);
 
-        Task<ReviewDto?> GetByIdAsync(int id);
+        Task<ReviewDto> GetByIdAsync(int reviewId);
 
         Task<PaginatedList<ReviewDto>> GetByGameAsync(int gameId, int pageNumber = 1, int pageSize = 10);
 

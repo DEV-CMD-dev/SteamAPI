@@ -16,7 +16,7 @@ namespace DataAccess.Data.Entities
 
             public int GameId { get; set; }
             public Game? Game { get; set; }
-            public ReviewRecommendation Recommendation { get; set; }
+            public bool IsRecommended { get; set; }
             public string Content { get; set; } = string.Empty;
             public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
             public DateTime? UpdatedAt { get; set; }

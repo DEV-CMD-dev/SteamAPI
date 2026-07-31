@@ -1,4 +1,5 @@
 ﻿using BusinessLogic.DTOs.Review;
+using BusinessLogic.Extensions;
 using BusinessLogic.Helpers;
 using BusinessLogic.Interfaces;
 using Microsoft.AspNetCore.Authorization;
@@ -18,15 +19,24 @@ namespace SteamAPI.Controllers
             _reviewService = reviewService;
         }
 
+        [HttpPost]
+        [Authorize]
+        public async Task<ActionResult<ReviewDto>> Create(CreateReviewDto dto)
+        {
+            var userId = User.GetRequiredUserId();
+
+            var review = await _reviewService.CreateAsync(dto, userId);
+
+            return CreatedAtAction(
+                nameof(GetById),
+                new { reviewId = review.Id },
+                review);
+        }
+
         [HttpGet("{reviewId:int}")]
         public async Task<ActionResult<ReviewDto>> GetById(int reviewId)
         {
-            var review = await _reviewService.GetByIdAsync(reviewId);
-
-            if (review == null)
-                return NotFound();
-
-            return Ok(review);
+            return Ok(await _reviewService.GetByIdAsync(reviewId));
         }
 
         [HttpGet("game/{gameId:int}")]
@@ -35,43 +45,25 @@ namespace SteamAPI.Controllers
             int pageNumber = 1,
             int pageSize = 10)
         {
-            var result = await _reviewService.GetByGameAsync(
-                gameId,
-                pageNumber,
-                pageSize);
-
-            return Ok(result);
-        }
-        [Authorize]
-        [HttpPost]
-        public async Task<ActionResult<ReviewDto>> Create(CreateReviewDto dto)
-        {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
-
-            var review = await _reviewService.CreateAsync(dto, userId);
-
-            return CreatedAtAction(nameof(GetById), new { reviewId = review.Id }, review);
+            return Ok(await _reviewService.GetByGameAsync(gameId, pageNumber, pageSize));
         }
 
-
-        [Authorize]
         [HttpPut("{reviewId:int}")]
+        [Authorize]
         public async Task<ActionResult<ReviewDto>> Update(
             int reviewId,
             UpdateReviewDto dto)
         {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
+            var userId = User.GetRequiredUserId();
 
-            var review = await _reviewService.UpdateAsync(reviewId, dto, userId);
-
-            return Ok(review);
+            return Ok(await _reviewService.UpdateAsync(reviewId, dto, userId));
         }
 
-        [Authorize]
         [HttpDelete("{reviewId:int}")]
+        [Authorize]
         public async Task<IActionResult> Delete(int reviewId)
         {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
+            var userId = User.GetRequiredUserId();
 
             await _reviewService.DeleteAsync(reviewId, userId);
 
