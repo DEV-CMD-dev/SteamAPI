@@ -62,6 +62,24 @@ namespace DataAccess
                 .WithMany(u => u.DevelopedGames)
                 .HasForeignKey(g => g.DeveloperId);
 
+            // Game - Tag (many-to-many) mapping: use explicit join table name and column names
+            builder.Entity<Game>()
+                .HasMany(g => g.Tags)
+                .WithMany(t => t.Games)
+                .UsingEntity<Dictionary<string, object>>(
+                    "GameTags",
+                    j => j.HasOne<Tag>().WithMany().HasForeignKey("TagId").OnDelete(DeleteBehavior.Cascade),
+                    j => j.HasOne<Game>().WithMany().HasForeignKey("GameId").OnDelete(DeleteBehavior.Cascade),
+                    je =>
+                    {
+                        je.HasKey("GameId", "TagId");
+                        je.ToTable("GameTags");
+                        je.HasIndex(new[] { "TagId" }).HasDatabaseName("IX_GameTags_TagId");
+                        je.IndexerProperty<int>("GameId");
+                        je.IndexerProperty<int>("TagId");
+                    }
+                );
+
             // Wishlist
             builder.Entity<Wishlist>()
                 .HasKey(w => new { w.UserId, w.GameId });

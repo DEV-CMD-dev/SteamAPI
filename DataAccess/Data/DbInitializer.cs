@@ -51,13 +51,13 @@ namespace DataAccess.Data
                 }
             });
 
-            modelBuilder.Entity("GameTag").HasData(
-                new { GamesId = 1, TagsId = 1 }, // CS2 -> Action
-                new { GamesId = 1, TagsId = 2 }, // CS2 -> Co-op
-                new { GamesId = 2, TagsId = 1 }, // Neon City -> Action
-                new { GamesId = 2, TagsId = 3 }, // Neon City -> Cyberpunk
-                new { GamesId = 3, TagsId = 1 }, // Elden Ring -> Action
-                new { GamesId = 3, TagsId = 4 }  // Elden Ring -> Souls-like
+            modelBuilder.Entity("GameTags").HasData(
+                new { GameId = 1, TagId = 1 }, // CS2 -> Action
+                new { GameId = 1, TagId = 2 }, // CS2 -> Co-op
+                new { GameId = 2, TagId = 1 }, // Neon City -> Action
+                new { GameId = 2, TagId = 3 }, // Neon City -> Cyberpunk
+                new { GameId = 3, TagId = 1 }, // Elden Ring -> Action
+                new { GameId = 3, TagId = 4 }  // Elden Ring -> Souls-like
             );
 
             // 4. Сід досягнень
