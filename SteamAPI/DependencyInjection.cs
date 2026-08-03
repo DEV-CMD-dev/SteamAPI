@@ -39,6 +39,8 @@ namespace SteamAPI
             services.AddScoped<IEmailService, EmailService>();
             services.AddScoped<IUserHelperService, UserHelperService>();
             services.AddScoped<IAchievementService, AchievementService>();
+            services.AddScoped<IScreenshotService, ScreenshotService>();
+            services.AddScoped<IGameVersionService, GameVersionService>();
 
 
             // Configurations

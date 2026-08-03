@@ -1,7 +1,10 @@
 ﻿
 using BusinessLogic.DTOs.Achievement;
 using BusinessLogic.DTOs.Game;
+using BusinessLogic.DTOs.GameVersion;
+using BusinessLogic.DTOs.Screenshot;
 using BusinessLogic.DTOs.Tag;
+using BusinessLogic.Extensions;
 using DataAccess.Data.Entities;
 
 namespace BusinessLogic.Configurations
@@ -14,42 +17,31 @@ namespace BusinessLogic.Configurations
             CreateMap<Game, GameDto>().ReverseMap();
             CreateMap<CreateGameDto, Game>();
             CreateMap<PutGameDto, Game>();
-            CreateMap<PatchGameDto, Game>()
-                .ForAllMembers(opts => opts.Condition((src, dest, srcMember) =>
-                {
-                    if (srcMember == null)
-                        return false;
-                    if (srcMember is DateTime dt && dt == default)
-                        return false;
-
-                    return true;
-                }));
-
+            CreateMap<PatchGameDto, Game>().IgnoreNull();
+               
             // Tag mappings
             CreateMap<Tag, TagDto>().ReverseMap();
             CreateMap<CreateTagDto, Tag>();
             CreateMap<PutTagDto, Tag>();
-            CreateMap<PatchTagDto, Tag>()
-                .ForAllMembers(opts => opts.Condition((src, dest, srcMember) =>
-                {
-                    if (srcMember == null)
-                        return false;
-
-                    return true;
-                }));
+            CreateMap<PatchTagDto, Tag>().IgnoreNull();
 
             // Tag mappings
             CreateMap<Achievement, AchievementDto>().ReverseMap();
             CreateMap<CreateAchievementDto, Achievement>();
             CreateMap<PutAchievementDto, Achievement>();
-            CreateMap<PatchAchievementDto, Achievement>()
-                .ForAllMembers(opts => opts.Condition((src, dest, srcMember) =>
-                {
-                    if (srcMember == null)
-                        return false;
+            CreateMap<PatchAchievementDto, Achievement>().IgnoreNull();
 
-                    return true;
-                }));
+            // Screenshot mappings
+            CreateMap<Screenshot, ScreenshotDto>().ReverseMap();
+            CreateMap<CreateScreenshotDto, Screenshot>();
+            CreateMap<PutScreenshotDto, Screenshot>();
+            CreateMap<PatchScreenshotDto, Screenshot>().IgnoreNull();
+
+            // GameVersion mappings
+            CreateMap<GameVersion, GameVersionDto>().ReverseMap();
+            CreateMap<CreateGameVersionDto, GameVersion>();
+            CreateMap<PutGameVersionDto, GameVersion>();
+            CreateMap<PatchGameVersionDto, GameVersion>().IgnoreNull();
         }
     }
 }
