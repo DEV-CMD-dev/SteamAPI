@@ -1,6 +1,7 @@
 ﻿using BusinessLogic.DTOs.Profile;
 using BusinessLogic.Extensions;
 using BusinessLogic.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace SteamAPI.Controllers
@@ -17,9 +18,11 @@ namespace SteamAPI.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ProfileDto>>> GetProfiles()
+        public async Task<ActionResult<IEnumerable<ProfileDto>>> GetProfiles(
+            [FromQuery] int pageNumber = 1,
+            [FromQuery] int pageSize = 10)
         {
-            return Ok(await profilesService.GetAll());
+            return Ok(await profilesService.GetAll(pageNumber, pageSize));
         }
 
         [HttpGet("{id}")]
@@ -29,6 +32,7 @@ namespace SteamAPI.Controllers
         }
 
         [HttpPatch("{id}")]
+        [Authorize]
         public async Task<IActionResult> Patch(int id, PatchProfileDto dto)
         {
             var userId = User.GetRequiredUserId();
@@ -38,6 +42,7 @@ namespace SteamAPI.Controllers
         }
 
         [HttpPut("{id}")]
+        [Authorize]
         public async Task<IActionResult> Put(int id, PutProfileDto dto)
         {
             var userId = User.GetRequiredUserId();
