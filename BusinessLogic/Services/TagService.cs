@@ -63,18 +63,24 @@ namespace BusinessLogic.Services
 
         public async Task Patch(string userId, int id, PatchTagDto dto)
         {
-            if (string.IsNullOrWhiteSpace(dto.Name) && string.IsNullOrWhiteSpace(dto.Picture))
-                throw new HttpException("Tag name and picture can not be empty", HttpStatusCode.BadRequest);
+            var tag = await GetTagForUpdate(userId, id);
 
-            await Update(userId,id, dto);
+            if (dto.Name != null)
+                tag.Name = dto.Name;
+
+            if (dto.Picture != null)
+                tag.Picture = dto.Picture;
+
+            await _context.SaveChangesAsync();
         }
 
         public async Task Put(string userId, int id, PutTagDto dto)
         {
-            if (string.IsNullOrWhiteSpace(dto.Name))
-                throw new HttpException("Tag name can not be empty", HttpStatusCode.BadRequest);
+            var tag = await GetTagForUpdate(userId, id);
 
-            await Update(userId,id, dto);
+            _mapper.Map(dto, tag);
+
+            await _context.SaveChangesAsync();
         }
 
         public async Task Delete(string userId, int id)
@@ -91,19 +97,17 @@ namespace BusinessLogic.Services
             await _context.SaveChangesAsync();
         }
 
-        private async Task Update<TDto>(string userId,int id, TDto dto)
+        private async Task<Tag> GetTagForUpdate(string userId, int id)
         {
             var user = await _context.Users.FindAsync(userId);
             user.EnsureExists(userId).EnsureModerator();
 
-            var existingTag = await _context.Tags.FindAsync(id);
+            var tag = await _context.Tags.FindAsync(id);
 
-            if (existingTag == null)
+            if (tag == null)
                 throw new HttpException($"Tag with ID {id} not found", HttpStatusCode.NotFound);
 
-            _mapper.Map(dto, existingTag);
-
-            await _context.SaveChangesAsync();
+            return tag;
         }
     }
 }

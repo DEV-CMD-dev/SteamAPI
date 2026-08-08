@@ -71,12 +71,39 @@ namespace BusinessLogic.Services
 
         public async Task Patch(int id, string userId, PatchGameDto dto)
         {
-            await Update(id, userId, dto);
+            var game = await GetGameForUpdate(id, userId);
+
+            if (dto.Title != null)
+                game.Title = dto.Title;
+
+            if (dto.Description != null)
+                game.Description = dto.Description;
+
+            if (dto.ReleaseDate.HasValue)
+                game.ReleaseDate = dto.ReleaseDate.Value;
+
+            if (dto.Price.HasValue)
+                game.Price = dto.Price.Value;
+
+            if (dto.Discount.HasValue)
+                game.Discount = dto.Discount.Value;
+
+            if (dto.SystemRequirements != null)
+                game.SystemRequirements = dto.SystemRequirements;
+
+            if (dto.CoverImage != null)
+                game.CoverImage = dto.CoverImage;
+
+            await _context.SaveChangesAsync();
         }
 
         public async Task Put(int id, string userId, PutGameDto dto)
         {
-            await Update(id, userId, dto);
+            var game = await GetGameForUpdate(id, userId);
+
+            _mapper.Map(dto, game);
+
+            await _context.SaveChangesAsync();
         }
 
         public async Task Delete(int gameId, string userId)
@@ -94,7 +121,7 @@ namespace BusinessLogic.Services
             await _context.SaveChangesAsync();
         }
 
-        private async Task Update<TDto>(int id, string userId, TDto dto)
+        private async Task<Game> GetGameForUpdate(int id, string userId)
         {
             var game = await _context.Games.FindAsync(id);
             if (game == null)
@@ -105,9 +132,8 @@ namespace BusinessLogic.Services
                 .FirstOrDefaultAsync(u => u.Id == userId);
 
             user.EnsureExists(userId).EnsureHasAccessToGame(id);
-            
-            _mapper.Map(dto, game);
-            await _context.SaveChangesAsync();
+
+            return game;
         }
     }
 }
