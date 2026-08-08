@@ -91,8 +91,11 @@ namespace BusinessLogic.Services
             if (dto.SystemRequirements != null)
                 game.SystemRequirements = dto.SystemRequirements;
 
-            if (dto.CoverImage != null)
-                game.CoverImage = dto.CoverImage;
+            if (dto.CoverImageHorizontal != null)
+                game.CoverImageHorizontal = dto.CoverImageHorizontal;
+
+            if (dto.CoverImageVertical != null)
+                game.CoverImageVertical = dto.CoverImageVertical;
 
             await _context.SaveChangesAsync();
         }

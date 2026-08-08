@@ -10,7 +10,8 @@
         public DateTime ReleaseDate { get; set; }
         public decimal Price { get; set; }
         public string? SystemRequirements { get; set; }
-        public string? CoverImage { get; set; }
+        public string? CoverImageVertical { get; set; }
+        public string? CoverImageHorizontal { get; set; }
         public int? Discount { get; set; }
 
         public List<Tag>? Tags { get; set; }

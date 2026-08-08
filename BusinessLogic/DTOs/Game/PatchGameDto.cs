@@ -10,7 +10,8 @@ namespace BusinessLogic.DTOs.Game
         [Range(0, double.MaxValue)]
         public decimal? Price { get; set; } = 5;
         public int? Discount { get; set; }
-        public string? SystemRequirements { get; set; } 
-        public string? CoverImage { get; set; }
+        public string? SystemRequirements { get; set; }
+        public string? CoverImageVertical { get; set; }
+        public string? CoverImageHorizontal { get; set; }
     }
 }
