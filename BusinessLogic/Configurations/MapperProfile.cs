@@ -13,13 +13,11 @@ namespace BusinessLogic.Configurations
             CreateMap<Game, GameDto>().ReverseMap();
             CreateMap<CreateGameDto, Game>();
             CreateMap<PutGameDto, Game>();
-            CreateMap<PatchGameDto, Game>();
 
             // Tag mappings
             CreateMap<Tag, TagDto>().ReverseMap();
             CreateMap<CreateTagDto, Tag>();
             CreateMap<PutTagDto, Tag>();
-            CreateMap<PatchTagDto, Tag>();
 
             // Achievement mappings
             CreateMap<Achievement, AchievementDto>().ReverseMap();
