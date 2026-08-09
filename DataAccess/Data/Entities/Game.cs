@@ -1,5 +1,10 @@
-﻿namespace DataAccess.Data.Entities
+﻿using Microsoft.EntityFrameworkCore;
+
+namespace DataAccess.Data.Entities
 {
+    [Index(nameof(Price))]
+    [Index(nameof(Discount))]
+    [Index(nameof(Title))]
     public class Game
     {
         public int Id { get; set; }
@@ -12,7 +17,7 @@
         public string? SystemRequirements { get; set; }
         public string? CoverImageVertical { get; set; }
         public string? CoverImageHorizontal { get; set; }
-        public int? Discount { get; set; }
+        public int Discount { get; set; }
 
         public List<Tag>? Tags { get; set; }
         public List<Screenshot>? Screenshots { get; set; }
