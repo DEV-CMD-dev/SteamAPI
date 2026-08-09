@@ -28,7 +28,7 @@ namespace BusinessLogic.Extensions
             {
                 var trimmedTerm = gameParams.SearchTerm.Trim();
                 if (trimmedTerm.Length < 3)
-                    throw new HttpException("Search term length must be at least 3 cahracters", HttpStatusCode.BadRequest);
+                    throw new HttpException("Search term length must be at least 3 characters", HttpStatusCode.BadRequest);
 
                 var searchTerms = gameParams.SearchTerm.Split(' ',StringSplitOptions.RemoveEmptyEntries);
                 

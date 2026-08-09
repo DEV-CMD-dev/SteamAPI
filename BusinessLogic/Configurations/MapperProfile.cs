@@ -11,6 +11,7 @@ namespace BusinessLogic.Configurations
         {
             // Game mappings
             CreateMap<Game, GameDto>().ReverseMap();
+            CreateMap<CreateGameDto, Game>();
             CreateMap<Game, GameDto>()
                 .ForMember(
                     dest => dest.TagIds,
