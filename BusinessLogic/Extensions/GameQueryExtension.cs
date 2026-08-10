@@ -11,10 +11,10 @@ namespace BusinessLogic.Extensions
             GameParameters gameParams)
         {
             if (gameParams.MinPrice.HasValue)
-                query = query.Where(g => g.Price >= gameParams.MinPrice.Value);
+                query = query.Where(g => g.Price * (1 - g.Discount / 100m) >= gameParams.MinPrice.Value);
 
             if (gameParams.MaxPrice.HasValue)
-                query = query.Where(g => g.Price <= gameParams.MaxPrice.Value);
+                query = query.Where(g => g.Price * (1 - g.Discount / 100m) <= gameParams.MaxPrice.Value);
 
             if (gameParams.OnSaleOnly == true)
                 query = query.Where(g => g.Discount > 0);
