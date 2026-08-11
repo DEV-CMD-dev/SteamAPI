@@ -8,9 +8,11 @@ namespace BusinessLogic.DTOs.Game
         public string? Description { get; set; }
         public DateTime? ReleaseDate { get; set; }
         [Range(0, double.MaxValue)]
-        public decimal? Price { get; set; } = 5;
+        public decimal? Price { get; set; }
         public int? Discount { get; set; }
-        public string? SystemRequirements { get; set; } 
-        public string? CoverImage { get; set; }
+        public string? SystemRequirements { get; set; }
+        public string? CoverImageVertical { get; set; }
+        public string? CoverImageHorizontal { get; set; }
+        public List<int>? TagIds { get; set; }
     }
 }

@@ -3,6 +3,7 @@ using BusinessLogic.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using BusinessLogic.Extensions;
+using BusinessLogic.Extensions.SearchFilters;
 
 [Route("api/[controller]")]
 [ApiController]
@@ -17,10 +18,11 @@ public class GameController : ControllerBase
 
     [HttpGet]
     public async Task<IActionResult> GetAllGames(
+        [FromQuery] GameParameters gameParams,
         [FromQuery] int pageNumber = 1,
         [FromQuery] int pageSize = 10)
     {
-        return Ok(await _gameService.GetAll(pageNumber, pageSize));
+        return Ok(await _gameService.GetAll(pageNumber, pageSize, gameParams));
     }
 
     [HttpGet("{id}")]

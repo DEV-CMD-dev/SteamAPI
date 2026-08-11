@@ -4,11 +4,11 @@ using AutoMapper.QueryableExtensions;
 using BusinessLogic.Configurations;
 using BusinessLogic.DTOs.Game;
 using BusinessLogic.Extensions;
+using BusinessLogic.Extensions.SearchFilters;
 using BusinessLogic.Helpers;
 using BusinessLogic.Interfaces;
 using DataAccess;
 using DataAccess.Data.Entities;
-using DataAccess.Enums;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 
@@ -30,19 +30,25 @@ namespace BusinessLogic.Services
             _frontendOptions = frontendOptions.Value;
         }
 
-        public async Task<PaginatedList<GameDto>> GetAll(int pageNumber, int pageSize)
+        public async Task<PaginatedList<GameDto>> GetAll(int pageNumber, int pageSize, GameParameters gameParams)
         {
             var query = _context.Games
+                .ApplyFilters(gameParams);
+
+            var games = query
                 .AsNoTracking()
-                .OrderBy(g => g.Id)
+                .OrderBy(g => g.Title)
                 .ProjectTo<GameDto>(_mapper.ConfigurationProvider);
 
-            return await PaginatedList<GameDto>.CreateAsync(query, pageNumber, pageSize, _frontendOptions.MaxPaginationPageSize);
+            return await PaginatedList<GameDto>.CreateAsync(games, pageNumber, pageSize, _frontendOptions.MaxPaginationPageSize);
         }
 
         public async Task<GameDto> GetById(int id)
         {
-            var game = await _context.Games.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
+            var game = await _context.Games
+                .Include(g => g.Tags)
+                .AsNoTracking()
+                .FirstOrDefaultAsync(x => x.Id == id);
 
             if (game == null)
                 throw new HttpException($"Game with ID {id} not found", HttpStatusCode.NotFound);
@@ -91,8 +97,14 @@ namespace BusinessLogic.Services
             if (dto.SystemRequirements != null)
                 game.SystemRequirements = dto.SystemRequirements;
 
-            if (dto.CoverImage != null)
-                game.CoverImage = dto.CoverImage;
+            if (dto.CoverImageHorizontal != null)
+                game.CoverImageHorizontal = dto.CoverImageHorizontal;
+
+            if (dto.CoverImageVertical != null)
+                game.CoverImageVertical = dto.CoverImageVertical;
+
+            if (dto.TagIds != null)
+                await game.SetTagsAsync(_context, dto.TagIds);
 
             await _context.SaveChangesAsync();
         }
@@ -102,6 +114,9 @@ namespace BusinessLogic.Services
             var game = await GetGameForUpdate(id, userId);
 
             _mapper.Map(dto, game);
+
+            if (dto.TagIds != null)
+                await game.SetTagsAsync(_context, dto.TagIds);
 
             await _context.SaveChangesAsync();
         }
@@ -118,12 +133,15 @@ namespace BusinessLogic.Services
             user.EnsureExists(userId).EnsureHasAccessToGame(gameId);
 
             _context.Games.Remove(game);
+
             await _context.SaveChangesAsync();
         }
 
         private async Task<Game> GetGameForUpdate(int id, string userId)
         {
-            var game = await _context.Games.FindAsync(id);
+            var game = await _context.Games
+                .Include(g => g.Tags)
+                .FirstOrDefaultAsync(g => g.Id == id);
             if (game == null)
                 throw new HttpException($"Game with ID {id} not found", HttpStatusCode.NotFound);
 

@@ -13,6 +13,8 @@ namespace BusinessLogic.DTOs.Game
         public decimal Price { get; set; }
         public int Discount { get; set; }
         public string SystemRequirements { get; set; } = string.Empty;
-        public string CoverImage { get; set; } = string.Empty;   
+        public string? CoverImageVertical { get; set; } = string.Empty;
+        public string? CoverImageHorizontal { get; set; } = string.Empty;
+        public List<int>? TagIds { get; set; }
     }
 }
