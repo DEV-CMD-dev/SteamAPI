@@ -3,10 +3,9 @@ namespace DataAccess.Data.Entities
 {
     public class Profile
     {
-        public int Id { get; set; }
         public string UserId { get; set; }
         public string? Avatar { get; set; }
-        public virtual User? User { get; set; }
+        public User? User { get; set; }
         public int Level { get; set; }
         public int XP { get; set; }
         public string? Badges { get; set; }

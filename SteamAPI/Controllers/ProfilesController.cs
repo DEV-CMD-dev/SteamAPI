@@ -25,29 +25,29 @@ namespace SteamAPI.Controllers
             return Ok(await profilesService.GetAll(pageNumber, pageSize));
         }
 
-        [HttpGet("{id}")]
-        public async Task<ActionResult<ProfileDto>> GetProfiles(int id)
+        [HttpGet("{userId}")]
+        public async Task<ActionResult<ProfileDto>> GetProfiles(string userId)
         {
-            return Ok(await profilesService.GetById(id));
+            return Ok(await profilesService.GetById(userId));
         }
 
-        [HttpPatch("{id}")]
+        [HttpPatch("{userId}")]
         [Authorize]
-        public async Task<IActionResult> Patch(int id, PatchProfileDto dto)
+        public async Task<IActionResult> Patch(PatchProfileDto dto)
         {
             var userId = User.GetRequiredUserId();
 
-            await profilesService.Patch(id, userId, dto);
+            await profilesService.Patch(userId, dto);
             return Ok();
         }
 
-        [HttpPut("{id}")]
+        [HttpPut("{userId}")]
         [Authorize]
-        public async Task<IActionResult> Put(int id, PutProfileDto dto)
+        public async Task<IActionResult> Put(PutProfileDto dto)
         {
             var userId = User.GetRequiredUserId();
 
-            await profilesService.Put(id, userId, dto);
+            await profilesService.Put(userId, dto);
             return Ok();
         }
     }
