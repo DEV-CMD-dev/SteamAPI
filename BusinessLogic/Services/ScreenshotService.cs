@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using BusinessLogic.Configurations;
-using BusinessLogic.DTOs.Achievement;
 using BusinessLogic.DTOs.Screenshot;
 using BusinessLogic.Extensions;
 using BusinessLogic.Helpers;
@@ -68,7 +67,9 @@ namespace BusinessLogic.Services
             if (string.IsNullOrWhiteSpace(dto.Url))
                 throw new HttpException("Screenshot URL can not be empty", HttpStatusCode.BadRequest);
 
-            await Update(userId, id, dto);
+            var screenshot = await GetScreenshotForUpdate(id, userId);
+
+            await _context.SaveChangesAsync();
         }
 
         public async Task Put(int id, string userId, PutScreenshotDto dto)
@@ -76,7 +77,11 @@ namespace BusinessLogic.Services
             if (string.IsNullOrWhiteSpace(dto.Url))
                 throw new HttpException("Screenshot URL can not be empty", HttpStatusCode.BadRequest);
 
-            await Update(userId, id, dto);
+            var screenshot = await GetScreenshotForUpdate(id, userId);
+
+            _mapper.Map(dto, screenshot);
+
+            await _context.SaveChangesAsync();
         }
 
         public async Task Delete(string userId, int id)
@@ -93,19 +98,20 @@ namespace BusinessLogic.Services
             await _context.SaveChangesAsync();
         }
 
-        private async Task Update<TDto>(string userId, int id, TDto dto)
+        private async Task<Screenshot> GetScreenshotForUpdate(int id, string userId)
         {
-            var existingScreenshot = await _context.Screenshots.FindAsync(id);
-
-            if (existingScreenshot == null)
+            var screenshot = await _context.Screenshots
+                .FirstOrDefaultAsync(s => s.Id == id);
+            if (screenshot == null)
                 throw new HttpException($"Screenshot with ID {id} not found", HttpStatusCode.NotFound);
 
-            var user = await _context.Users.Include(u => u.DevelopedGames).FirstOrDefaultAsync(u => u.Id == userId);
-            user.EnsureExists(userId).EnsureHasAccessToGame(existingScreenshot.GameId);
+            var user = await _context.Users
+                .Include(u => u.DevelopedGames)
+                .FirstOrDefaultAsync(u => u.Id == userId);
 
-            _mapper.Map(dto, existingScreenshot);
+            user.EnsureExists(userId).EnsureHasAccessToGame(screenshot.GameId);
 
-            await _context.SaveChangesAsync();
+            return screenshot;
         }
 
     }

@@ -1,10 +1,8 @@
-﻿
-using BusinessLogic.DTOs.Achievement;
+﻿using BusinessLogic.DTOs.Achievement;
 using BusinessLogic.DTOs.Game;
 using BusinessLogic.DTOs.GameVersion;
 using BusinessLogic.DTOs.Screenshot;
 using BusinessLogic.DTOs.Tag;
-using BusinessLogic.Extensions;
 using DataAccess.Data.Entities;
 
 namespace BusinessLogic.Configurations
@@ -16,32 +14,38 @@ namespace BusinessLogic.Configurations
             // Game mappings
             CreateMap<Game, GameDto>().ReverseMap();
             CreateMap<CreateGameDto, Game>();
-            CreateMap<PutGameDto, Game>();
-            CreateMap<PatchGameDto, Game>().IgnoreNull();
-               
+            CreateMap<Game, GameDto>()
+                .ForMember(
+                    dest => dest.TagIds,
+                    opt => opt.MapFrom(src => src.Tags.Select(t => t.Id))
+                );
+            CreateMap<PutGameDto, Game>()
+                .ForMember(dest => dest.Tags, opt => opt.Ignore());
+
             // Tag mappings
             CreateMap<Tag, TagDto>().ReverseMap();
             CreateMap<CreateTagDto, Tag>();
             CreateMap<PutTagDto, Tag>();
-            CreateMap<PatchTagDto, Tag>().IgnoreNull();
 
-            // Tag mappings
+            // Achievement mappings
             CreateMap<Achievement, AchievementDto>().ReverseMap();
             CreateMap<CreateAchievementDto, Achievement>();
             CreateMap<PutAchievementDto, Achievement>();
-            CreateMap<PatchAchievementDto, Achievement>().IgnoreNull();
+            CreateMap<PatchAchievementDto, Achievement>();
 
             // Screenshot mappings
             CreateMap<Screenshot, ScreenshotDto>().ReverseMap();
             CreateMap<CreateScreenshotDto, Screenshot>();
             CreateMap<PutScreenshotDto, Screenshot>();
-            CreateMap<PatchScreenshotDto, Screenshot>().IgnoreNull();
+            CreateMap<PatchScreenshotDto, Screenshot>();
 
             // GameVersion mappings
             CreateMap<GameVersion, GameVersionDto>().ReverseMap();
             CreateMap<CreateGameVersionDto, GameVersion>();
             CreateMap<PutGameVersionDto, GameVersion>();
-            CreateMap<PatchGameVersionDto, GameVersion>().IgnoreNull();
+            CreateMap<PatchGameVersionDto, GameVersion>();
         }
     }
 }
+
+

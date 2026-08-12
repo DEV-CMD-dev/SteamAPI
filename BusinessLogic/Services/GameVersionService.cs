@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using BusinessLogic.Configurations;
-using BusinessLogic.DTOs.Achievement;
 using BusinessLogic.DTOs.GameVersion;
 using BusinessLogic.Extensions;
 using BusinessLogic.Helpers;
@@ -10,10 +9,7 @@ using DataAccess;
 using DataAccess.Data.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
-using System;
-using System.Collections.Generic;
 using System.Net;
-using System.Text;
 
 namespace BusinessLogic.Services
 {
@@ -53,6 +49,12 @@ namespace BusinessLogic.Services
 
         public async Task Create(string userId, CreateGameVersionDto dto)
         {
+            if (dto.GameId <= 0)
+                throw new HttpException("Game ID must be greater than zero", HttpStatusCode.BadRequest);
+
+            if (await _context.Games.FindAsync(dto.GameId) == null)
+                throw new HttpException($"Game with ID {dto.GameId} not found", HttpStatusCode.NotFound);
+
             if (string.IsNullOrWhiteSpace(dto.Version))
                 throw new HttpException("Game version name can not be empty", HttpStatusCode.BadRequest);
 
@@ -71,7 +73,12 @@ namespace BusinessLogic.Services
             if (string.IsNullOrWhiteSpace(dto.Version) && string.IsNullOrWhiteSpace(dto.PatchNotes))
                 throw new HttpException("Game version name and patch notes can not be empty", HttpStatusCode.BadRequest);
 
-            await Update(userId, id, dto);
+            var gameVersion = await GetGameVersionForUpdate(id, userId);
+
+           if(dto.Version != null) gameVersion.Version = dto.Version;
+           if (dto.PatchNotes != null) gameVersion.PatchNotes = dto.PatchNotes;
+
+            await _context.SaveChangesAsync();
         }
 
         public async Task Put(int id, string userId, PutGameVersionDto dto)
@@ -79,7 +86,11 @@ namespace BusinessLogic.Services
             if (string.IsNullOrWhiteSpace(dto.Version) || string.IsNullOrEmpty(dto.PatchNotes))
                 throw new HttpException("Game version name or patch notes can not be empty", HttpStatusCode.BadRequest);
 
-            await Update(userId, id, dto);
+            var gameVersion = await GetGameVersionForUpdate(id, userId);
+
+            _mapper.Map(dto, gameVersion);
+
+            await _context.SaveChangesAsync();
         }
 
         public async Task Delete(string userId, int id)
@@ -95,20 +106,20 @@ namespace BusinessLogic.Services
             _context.GameVersions.Remove(gameVersion);
             await _context.SaveChangesAsync();
         }
-
-        private async Task Update<TDto>(string userId, int id, TDto dto)
+        private async Task<GameVersion> GetGameVersionForUpdate(int id, string userId)
         {
-            var existingGameVersion = await _context.GameVersions.FindAsync(id);
-
-            if (existingGameVersion == null)
+            var gameVersion = await _context.GameVersions
+                .FirstOrDefaultAsync(g => g.Id == id);
+            if (gameVersion == null)
                 throw new HttpException($"Game version with ID {id} not found", HttpStatusCode.NotFound);
 
-            var user = await _context.Users.Include(u => u.DevelopedGames).FirstOrDefaultAsync(u => u.Id == userId);
-            user.EnsureExists(userId).EnsureHasAccessToGame(existingGameVersion.GameId);
+            var user = await _context.Users
+                .Include(u => u.DevelopedGames)
+                .FirstOrDefaultAsync(u => u.Id == userId);
 
-            _mapper.Map(dto, existingGameVersion);
+            user.EnsureExists(userId).EnsureHasAccessToGame(gameVersion.GameId);
 
-            await _context.SaveChangesAsync();
+            return gameVersion;
         }
     }
 }
