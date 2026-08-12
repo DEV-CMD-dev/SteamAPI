@@ -62,7 +62,20 @@ namespace BusinessLogic.Services
             if (existingProfile == null)
                 throw new HttpException($"Profile with UserId {userId} not found", HttpStatusCode.NotFound);
 
-            _mapper.Map(dto, existingProfile);
+            // Only map non-null properties
+            if (dto is PatchProfileDto patchDto)
+            {
+                if (patchDto.Avatar != null)
+                    existingProfile.Avatar = patchDto.Avatar;
+                if (patchDto.Badges != null)
+                    existingProfile.Badges = patchDto.Badges;
+                if (patchDto.Showcase != null)
+                    existingProfile.Showcase = patchDto.Showcase;
+            }
+            else
+            {
+                _mapper.Map(dto, existingProfile);
+            }
 
             await _context.SaveChangesAsync();
         }

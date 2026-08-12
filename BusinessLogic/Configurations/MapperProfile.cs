@@ -13,16 +13,7 @@ namespace BusinessLogic.Configurations
             // Profile mappings
             CreateMap<Profile, ProfileDto>().ReverseMap();
             CreateMap<Profile, PutProfileDto>().ReverseMap();
-            CreateMap<PatchProfileDto, Profile>()
-                .ForAllMembers(opts => opts.Condition((src, dest, srcMember) =>
-                {
-                    if (srcMember == null)
-                        return false;
-                    if (srcMember is DateTime dt && dt == default)
-                        return false;
-
-                    return true;
-                }));
+            CreateMap<PatchProfileDto, Profile>();
 
             // Game mappings
             CreateMap<Game, GameDto>().ReverseMap();

@@ -31,7 +31,7 @@ namespace SteamAPI.Controllers
             return Ok(await profilesService.GetById(userId));
         }
 
-        [HttpPatch("{userId}")]
+        [HttpPatch()]
         [Authorize]
         public async Task<IActionResult> Patch(PatchProfileDto dto)
         {
@@ -41,7 +41,7 @@ namespace SteamAPI.Controllers
             return Ok();
         }
 
-        [HttpPut("{userId}")]
+        [HttpPut()]
         [Authorize]
         public async Task<IActionResult> Put(PutProfileDto dto)
         {
