@@ -4,6 +4,7 @@ using DataAccess;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataAccess.Migrations
 {
     [DbContext(typeof(SteamDbContext))]
-    partial class SteamDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260809083248_add_Game_Tag_Indexes")]
+    partial class add_Game_Tag_Indexes
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -85,44 +88,6 @@ namespace DataAccess.Migrations
                     b.ToTable("Carts");
                 });
 
-            modelBuilder.Entity("DataAccess.Data.Entities.DataAccess.Data.Entities.Review", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Content")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("GameId")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("IsRecommended")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("GameId");
-
-                    b.HasIndex("UserId", "GameId")
-                        .IsUnique();
-
-                    b.ToTable("Reviews");
-                });
-
             modelBuilder.Entity("DataAccess.Data.Entities.Game", b =>
                 {
                     b.Property<int>("Id")
@@ -151,16 +116,6 @@ namespace DataAccess.Migrations
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<int>("Rating")
-                        .HasColumnType("int");
-
-                    b.Property<decimal>("RecommendationPercentage")
-                        .HasPrecision(5, 2)
-                        .HasColumnType("decimal(5,2)");
-
-                    b.Property<int>("RecommendedReviews")
-                        .HasColumnType("int");
-
                     b.Property<DateTime>("ReleaseDate")
                         .HasColumnType("datetime2");
 
@@ -170,9 +125,6 @@ namespace DataAccess.Migrations
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
-
-                    b.Property<int>("TotalReviews")
-                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -193,13 +145,9 @@ namespace DataAccess.Migrations
                             Description = "Tactical shooter.",
                             Discount = 0,
                             Price = 0.00m,
-                            Rating = 0,
-                            RecommendationPercentage = 0m,
-                            RecommendedReviews = 0,
                             ReleaseDate = new DateTime(2023, 9, 27, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             SystemRequirements = "Windows 10, 8GB RAM",
-                            Title = "Counter-Strike 2",
-                            TotalReviews = 0
+                            Title = "Counter-Strike 2"
                         },
                         new
                         {
@@ -207,13 +155,9 @@ namespace DataAccess.Migrations
                             Description = "Cyberpunk RPG.",
                             Discount = 0,
                             Price = 29.99m,
-                            Rating = 0,
-                            RecommendationPercentage = 0m,
-                            RecommendedReviews = 0,
                             ReleaseDate = new DateTime(2026, 5, 12, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             SystemRequirements = "Windows 11, 16GB RAM",
-                            Title = "Neon City 2026",
-                            TotalReviews = 0
+                            Title = "Neon City 2026"
                         },
                         new
                         {
@@ -221,13 +165,9 @@ namespace DataAccess.Migrations
                             Description = "Rise, Tarnished.",
                             Discount = 0,
                             Price = 59.99m,
-                            Rating = 0,
-                            RecommendationPercentage = 0m,
-                            RecommendedReviews = 0,
                             ReleaseDate = new DateTime(2022, 2, 25, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             SystemRequirements = "Windows 10, RTX 2060",
-                            Title = "Elden Ring",
-                            TotalReviews = 0
+                            Title = "Elden Ring"
                         });
                 });
 
@@ -776,25 +716,6 @@ namespace DataAccess.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("DataAccess.Data.Entities.DataAccess.Data.Entities.Review", b =>
-                {
-                    b.HasOne("DataAccess.Data.Entities.Game", "Game")
-                        .WithMany("Reviews")
-                        .HasForeignKey("GameId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("DataAccess.Data.Entities.User", "User")
-                        .WithMany("Reviews")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Game");
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("DataAccess.Data.Entities.Game", b =>
                 {
                     b.HasOne("DataAccess.Data.Entities.User", "Developer")
@@ -966,8 +887,6 @@ namespace DataAccess.Migrations
 
                     b.Navigation("Carts");
 
-                    b.Navigation("Reviews");
-
                     b.Navigation("Screenshots");
 
                     b.Navigation("UserGames");
@@ -984,8 +903,6 @@ namespace DataAccess.Migrations
                     b.Navigation("DevelopedGames");
 
                     b.Navigation("Profile");
-
-                    b.Navigation("Reviews");
 
                     b.Navigation("UserGames");
 

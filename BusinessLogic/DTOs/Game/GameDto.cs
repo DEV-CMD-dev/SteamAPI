@@ -1,4 +1,5 @@
-﻿using DataAccess.Enums;
+using DataAccess.Enums;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace BusinessLogic.DTOs.Game
 {
@@ -9,11 +10,13 @@ namespace BusinessLogic.DTOs.Game
         public string Description { get; set; } = string.Empty;
         public string DeveloperId { get; set; } = string.Empty;
         public DateTime ReleaseDate { get; set; }
+        [Range(0, double.MaxValue)]
         public decimal Price { get; set; }
         public int Discount { get; set; }
         public string SystemRequirements { get; set; } = string.Empty;
-        public string CoverImage { get; set; } = string.Empty;
-
+        public string? CoverImageVertical { get; set; } = string.Empty;
+        public string? CoverImageHorizontal { get; set; } = string.Empty;
+        public List<int>? TagIds { get; set; }
         public int TotalReviews { get; set; }
         public int RecommendedReviews { get; set; }
         public decimal RecommendationPercentage { get; set; }

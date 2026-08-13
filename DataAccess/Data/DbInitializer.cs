@@ -26,8 +26,7 @@ namespace DataAccess.Data
                     Description = "Tactical shooter.",
                     ReleaseDate = new DateTime(2023, 9, 27),
                     Price = 0.00m,
-                    SystemRequirements = "Windows 10, 8GB RAM",
-                    CoverImage = "https://example.com/covers/cs2.jpg"
+                    SystemRequirements = "Windows 10, 8GB RAM"
                 },
                 new()
                 {
@@ -36,8 +35,7 @@ namespace DataAccess.Data
                     Description = "Cyberpunk RPG.",
                     ReleaseDate = new DateTime(2026, 5, 12),
                     Price = 29.99m,
-                    SystemRequirements = "Windows 11, 16GB RAM",
-                    CoverImage = "https://example.com/covers/neon.jpg"
+                    SystemRequirements = "Windows 11, 16GB RAM"
                 },
                 new()
                 {
@@ -46,8 +44,7 @@ namespace DataAccess.Data
                     Description = "Rise, Tarnished.",
                     ReleaseDate = new DateTime(2022, 2, 25),
                     Price = 59.99m,
-                    SystemRequirements = "Windows 10, RTX 2060",
-                    CoverImage = "https://example.com/covers/elden.jpg"
+                    SystemRequirements = "Windows 10, RTX 2060"
                 }
             });
 

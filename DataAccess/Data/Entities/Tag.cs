@@ -1,5 +1,8 @@
-﻿namespace DataAccess.Data.Entities
+﻿using Microsoft.EntityFrameworkCore;
+
+namespace DataAccess.Data.Entities
 {
+    [Index(nameof(Name))]
     public class Tag
     {
         public int Id { get; set; }

@@ -1,8 +1,12 @@
-﻿using DataAccess.Data.Entities.DataAccess.Data.Entities;
+using DataAccess.Data.Entities.DataAccess.Data.Entities;
 using DataAccess.Enums;
+﻿using Microsoft.EntityFrameworkCore;
 
 namespace DataAccess.Data.Entities
 {
+    [Index(nameof(Price))]
+    [Index(nameof(Discount))]
+    [Index(nameof(Title))]
     public class Game
     {
         public int Id { get; set; }
@@ -13,8 +17,9 @@ namespace DataAccess.Data.Entities
         public DateTime ReleaseDate { get; set; }
         public decimal Price { get; set; }
         public string? SystemRequirements { get; set; }
-        public string? CoverImage { get; set; }
-        public int? Discount { get; set; }
+        public string? CoverImageVertical { get; set; }
+        public string? CoverImageHorizontal { get; set; }
+        public int Discount { get; set; }
 
         public int TotalReviews { get; set; }
         public int RecommendedReviews { get; set; }

@@ -1,5 +1,4 @@
-﻿
-using BusinessLogic.DTOs.Achievement;
+﻿using BusinessLogic.DTOs.Achievement;
 using BusinessLogic.DTOs.Game;
 using BusinessLogic.DTOs.Review;
 using BusinessLogic.DTOs.Tag;
@@ -29,37 +28,31 @@ namespace BusinessLogic.Configurations
                     return true;
                 }));
                 
+            CreateMap<Game, GameDto>()
+                .ForMember(
+                    dest => dest.TagIds,
+                    opt => opt.MapFrom(src => src.Tags.Select(t => t.Id))
+                );
+            CreateMap<PutGameDto, Game>()
+                .ForMember(dest => dest.Tags, opt => opt.Ignore());
+
+
             // Tag mappings
             CreateMap<Tag, TagDto>().ReverseMap();
             CreateMap<CreateTagDto, Tag>();
             CreateMap<PutTagDto, Tag>();
-            CreateMap<PatchTagDto, Tag>()
-                .ForAllMembers(opts => opts.Condition((src, dest, srcMember) =>
-                {
-                    if (srcMember == null)
-                        return false;
 
-                    return true;
-                }));
 
             // Review mappings
             CreateMap<Review, ReviewDto>()
                 .ForMember(dest => dest.UserName,
                     opt => opt.MapFrom(src => src.User!.UserName));
 
-
             // Achievement mappings
             CreateMap<Achievement, AchievementDto>().ReverseMap();
             CreateMap<CreateAchievementDto, Achievement>();
             CreateMap<PutAchievementDto, Achievement>();
-            CreateMap<PatchAchievementDto, Achievement>()
-                .ForAllMembers(opts => opts.Condition((src, dest, srcMember) =>
-                {
-                    if (srcMember == null)
-                        return false;
-
-                    return true;
-                }));
+            CreateMap<PatchAchievementDto, Achievement>();
         }
     }
 }
