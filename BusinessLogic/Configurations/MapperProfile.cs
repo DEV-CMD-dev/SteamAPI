@@ -1,5 +1,6 @@
 ﻿using BusinessLogic.DTOs.Achievement;
 using BusinessLogic.DTOs.Game;
+using BusinessLogic.DTOs.Item;
 using BusinessLogic.DTOs.Tag;
 using DataAccess.Data.Entities;
 
@@ -30,6 +31,12 @@ namespace BusinessLogic.Configurations
             CreateMap<CreateAchievementDto, Achievement>();
             CreateMap<PutAchievementDto, Achievement>();
             CreateMap<PatchAchievementDto, Achievement>();
+
+            // Item mappings
+            CreateMap<Item, ItemDto>().ReverseMap();
+            CreateMap<CreateItemDto, Item>();
+            CreateMap<PutItemDto, Item>();
+            CreateMap<PatchItemDto, Item>();
         }
     }
 }
