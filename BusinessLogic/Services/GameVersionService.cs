@@ -49,9 +49,6 @@ namespace BusinessLogic.Services
 
         public async Task Create(string userId, CreateGameVersionDto dto)
         {
-            if (dto.GameId <= 0)
-                throw new HttpException("Game ID must be greater than zero", HttpStatusCode.BadRequest);
-
             if (await _context.Games.FindAsync(dto.GameId) == null)
                 throw new HttpException($"Game with ID {dto.GameId} not found", HttpStatusCode.NotFound);
 

@@ -49,10 +49,7 @@ namespace BusinessLogic.Services
 
         public async Task Create(string userId, CreateScreenshotDto dto)
         {
-            if(dto.GameId <= 0)
-                throw new HttpException("Game ID must be greater than 0", HttpStatusCode.BadRequest);  
-
-            if(_context.Games.Find(dto.GameId) == null)
+            if(await _context.Games.FindAsync(dto.GameId) == null)
                 throw new HttpException($"Game with ID {dto.GameId} not found", HttpStatusCode.NotFound);
 
             if (string.IsNullOrWhiteSpace(dto.Url))
