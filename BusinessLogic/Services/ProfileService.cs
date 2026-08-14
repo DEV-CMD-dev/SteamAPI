@@ -1,15 +1,9 @@
 ﻿using System.Net;
 using AutoMapper;
-using AutoMapper.QueryableExtensions;
-using BusinessLogic.Configurations;
-using BusinessLogic.DTOs.Game;
 using BusinessLogic.DTOs.Profile;
-using BusinessLogic.Helpers;
 using BusinessLogic.Interfaces;
 using DataAccess;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace BusinessLogic.Services
 {
@@ -17,23 +11,11 @@ namespace BusinessLogic.Services
     {
         private readonly SteamDbContext _context;
         private readonly IMapper _mapper;
-        private readonly FrontendOptions _frontendOptions;
 
-        public ProfileService(SteamDbContext context, IMapper mapper, IOptions<FrontendOptions> frontendOptions)
+        public ProfileService(SteamDbContext context, IMapper mapper)
         {
             _context = context;
             _mapper = mapper;
-            _frontendOptions = frontendOptions.Value;
-        }
-
-        public async Task<PaginatedList<ProfileDto>> GetAll(int pageNumber, int pageSize)
-        {
-            var query = _context.Profiles
-                .AsNoTracking()
-                .OrderBy(t => t.UserId)
-                .ProjectTo<ProfileDto>(_mapper.ConfigurationProvider);
-
-            return await PaginatedList<ProfileDto>.CreateAsync(query, pageNumber, pageSize, _frontendOptions.MaxPaginationPageSize);
         }
 
         public async Task<ProfileDto> GetById(string userId)

@@ -10,44 +10,36 @@ namespace SteamAPI.Controllers
     [ApiController]
     public class ProfilesController : ControllerBase
     {
-        private readonly IProfileService profilesService;
+        private readonly IProfileService _profileService;
 
-        public ProfilesController(IProfileService profilesService)
+        public ProfilesController(IProfileService profileService)
         {
-            this.profilesService = profilesService;
-        }
-
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<ProfileDto>>> GetProfiles(
-            [FromQuery] int pageNumber = 1,
-            [FromQuery] int pageSize = 10)
-        {
-            return Ok(await profilesService.GetAll(pageNumber, pageSize));
+            _profileService = profileService;
         }
 
         [HttpGet("{userId}")]
-        public async Task<ActionResult<ProfileDto>> GetProfiles(string userId)
+        public async Task<ActionResult<ProfileDto>> GetById(string userId)
         {
-            return Ok(await profilesService.GetById(userId));
+            return Ok(await _profileService.GetById(userId));
         }
 
-        [HttpPatch()]
+        [HttpPatch]
         [Authorize]
         public async Task<IActionResult> Patch(PatchProfileDto dto)
         {
             var userId = User.GetRequiredUserId();
 
-            await profilesService.Patch(userId, dto);
+            await _profileService.Patch(userId, dto);
             return Ok();
         }
 
-        [HttpPut()]
+        [HttpPut]
         [Authorize]
         public async Task<IActionResult> Put(PutProfileDto dto)
         {
             var userId = User.GetRequiredUserId();
 
-            await profilesService.Put(userId, dto);
+            await _profileService.Put(userId, dto);
             return Ok();
         }
     }
