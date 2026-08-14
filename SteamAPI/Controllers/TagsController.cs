@@ -6,11 +6,11 @@ using Microsoft.AspNetCore.Mvc;
 
 [Route("api/[controller]")]
 [ApiController]
-public class TagController : ControllerBase
+public class TagsController : ControllerBase
 {
     private readonly ITagService _tagService;
 
-    public TagController(ITagService tagService)
+    public TagsController(ITagService tagService)
     {
         _tagService = tagService;
     }
