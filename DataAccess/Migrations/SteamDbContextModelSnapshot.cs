@@ -234,9 +234,6 @@ namespace DataAccess.Migrations
                     b.Property<string>("Badges")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("Id")
-                        .HasColumnType("int");
-
                     b.Property<int>("Level")
                         .HasColumnType("int");
 

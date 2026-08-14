@@ -36,16 +36,15 @@ namespace BusinessLogic.Services
             return await PaginatedList<ProfileDto>.CreateAsync(query, pageNumber, pageSize, _frontendOptions.MaxPaginationPageSize);
         }
 
-        public async Task<ProfileDto> GetById(int id)
+        public async Task<ProfileDto> GetById(string userId)
         {
-            var profile = await _context.Profiles.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
+            var profile = await _context.Profiles.AsNoTracking().FirstOrDefaultAsync(x => x.UserId == userId);
 
             if (profile == null)
-                throw new HttpException($"Profile with Id {id} not found", HttpStatusCode.NotFound);
+                throw new HttpException($"Profile with UserId {userId} not found", HttpStatusCode.NotFound);
 
             return _mapper.Map<ProfileDto>(profile);
         }
-
         public async Task Patch(string userId, PatchProfileDto dto)
         {
             await Update(userId, dto);
