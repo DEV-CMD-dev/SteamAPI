@@ -68,17 +68,7 @@ namespace BusinessLogic.Services
             await _context.SaveChangesAsync();
         }
 
-        public async Task Patch(int id, string userId, PatchScreenshotDto dto)
-        {    
-            if (string.IsNullOrWhiteSpace(dto.Url))
-                throw new HttpException("Screenshot URL can not be empty", HttpStatusCode.BadRequest);
-
-            var screenshot = await GetScreenshotForUpdate(id, userId);
-
-            await _context.SaveChangesAsync();
-        }
-
-        public async Task Put(int id, string userId, PutScreenshotDto dto)
+        public async Task Update(int id, string userId, UpdateScreenshotDto dto)
         {
             if (string.IsNullOrWhiteSpace(dto.Url))
                 throw new HttpException("Screenshot URL can not be empty", HttpStatusCode.BadRequest);

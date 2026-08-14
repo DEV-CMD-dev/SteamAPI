@@ -36,8 +36,7 @@ namespace BusinessLogic.Configurations
             // Screenshot mappings
             CreateMap<Screenshot, ScreenshotDto>().ReverseMap();
             CreateMap<CreateScreenshotDto, Screenshot>();
-            CreateMap<PutScreenshotDto, Screenshot>();
-            CreateMap<PatchScreenshotDto, Screenshot>();
+            CreateMap<UpdateScreenshotDto, Screenshot>();
 
             // GameVersion mappings
             CreateMap<GameVersion, GameVersionDto>().ReverseMap();

@@ -44,24 +44,13 @@ namespace SteamAPI.Controllers
             return Created(string.Empty, new { message = "Screenshot created successfully." });
         }
 
-        [HttpPatch("{id}")]
-        [Authorize]
-        public async Task<IActionResult> Patch(int id, PatchScreenshotDto dto)
-        {
-            var userId = User.GetRequiredUserId();
-
-            await _screenshotService.Patch(id, userId, dto);
-
-            return NoContent();
-        }
-
         [HttpPut("{id}")]
         [Authorize]
-        public async Task<IActionResult> Put(int id, PutScreenshotDto dto)
+        public async Task<IActionResult> Update(int id, UpdateScreenshotDto dto)
         {
             var userId = User.GetRequiredUserId();
 
-            await _screenshotService.Put(id, userId, dto);
+            await _screenshotService.Update(id, userId, dto);
 
             return NoContent();
         }
