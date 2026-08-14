@@ -6,7 +6,7 @@ namespace BusinessLogic.Interfaces
     public interface IProfileService
     {
         Task<PaginatedList<ProfileDto>> GetAll(int pageNumber, int pageSize);
-        Task<ProfileDto> GetById(string userId);
+        Task<ProfileDto> GetById(int id);
         Task Patch(string userId, PatchProfileDto dto);
         Task Put(string userId, PutProfileDto dto); 
     }

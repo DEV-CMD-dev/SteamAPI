@@ -3,6 +3,7 @@ namespace DataAccess.Data.Entities
 {
     public class Profile
     {
+        public int Id { get; set; }
         public string UserId { get; set; }
         public string? Avatar { get; set; }
         public User? User { get; set; }
