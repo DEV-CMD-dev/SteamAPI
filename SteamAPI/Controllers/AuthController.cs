@@ -25,11 +25,6 @@ public class AuthController : ControllerBase
     public async Task<IActionResult> Login(LoginRequestDto dto)
     {
         var result = await _authService.Login(dto);
-        Console.ForegroundColor = ConsoleColor.Blue;
-        Console.WriteLine(result.UserName);
-        Console.WriteLine(result.ExpirationTime);
-        Console.WriteLine(result.AccessToken);
-        Console.ResetColor();
         return Ok(result);
     }
 
