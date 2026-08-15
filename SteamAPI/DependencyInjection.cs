@@ -40,6 +40,7 @@ namespace SteamAPI
             services.AddScoped<IEmailService, EmailService>();
             services.AddScoped<IUserHelperService, UserHelperService>();
             services.AddScoped<IAchievementService, AchievementService>();
+            services.AddScoped<IWishListService, WishListService>();
 
 
             // Configurations
