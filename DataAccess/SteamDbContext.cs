@@ -31,6 +31,9 @@ namespace DataAccess
                 .Property(u => u.WalletBalance)
                 .HasPrecision(18, 2);
 
+            builder.Entity<Profile>()
+                .HasKey(p => p.UserId);
+
             builder.Entity<User>()
                 .HasOne(u => u.Profile)
                 .WithOne(p => p.User)

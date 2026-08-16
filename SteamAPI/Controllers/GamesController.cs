@@ -7,11 +7,11 @@ using BusinessLogic.Extensions.SearchFilters;
 
 [Route("api/[controller]")]
 [ApiController]
-public class GameController : ControllerBase
+public class GamesController : ControllerBase
 {
     private readonly IGameService _gameService;
 
-    public GameController(IGameService gameService)
+    public GamesController(IGameService gameService)
     {
         _gameService = gameService;
     }

@@ -1,20 +1,18 @@
 ﻿using BusinessLogic.DTOs.Achievement;
-using BusinessLogic.DTOs.Tag;
 using BusinessLogic.Extensions;
 using BusinessLogic.Interfaces;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace SteamAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AchievementController : ControllerBase
+    public class AchievementsController : ControllerBase
     {
         private readonly IAchievementService _achievementService;
 
-        public AchievementController(IAchievementService achievementService)
+        public AchievementsController(IAchievementService achievementService)
         {
             _achievementService = achievementService;
         }
