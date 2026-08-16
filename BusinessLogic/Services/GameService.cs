@@ -7,6 +7,7 @@ using BusinessLogic.Extensions;
 using BusinessLogic.Extensions.SearchFilters;
 using BusinessLogic.Helpers;
 using BusinessLogic.Interfaces;
+using BusinessLogic.Interfaces.BlobStorage;
 using DataAccess;
 using DataAccess.Data.Entities;
 using Microsoft.EntityFrameworkCore;
@@ -19,15 +20,18 @@ namespace BusinessLogic.Services
         private readonly SteamDbContext _context;
         private readonly IMapper _mapper;
         private readonly FrontendOptions _frontendOptions;
+        private readonly IGameBlobStorageService _gameBlobStorageService;
 
         public GameService(
             SteamDbContext context,
             IMapper mapper,
-            IOptions<FrontendOptions> frontendOptions)
+            IOptions<FrontendOptions> frontendOptions,
+            IGameBlobStorageService gameBlobStorageService)
         {
             _context = context;
             _mapper = mapper;
             _frontendOptions = frontendOptions.Value;
+            _gameBlobStorageService = gameBlobStorageService;
         }
 
         public async Task<PaginatedList<GameDto>> GetAll(int pageNumber, int pageSize, GameParameters gameParams)
@@ -69,6 +73,12 @@ namespace BusinessLogic.Services
             var newGame = _mapper.Map<Game>(dto);
             newGame.DeveloperId = userId;
 
+            if (dto.CoverImageHorizontal != null)
+                newGame.CoverImageHorizontal = await _gameBlobStorageService.UploadCoverAsync(dto.CoverImageHorizontal);
+
+            if (dto.CoverImageVertical != null)
+                newGame.CoverImageVertical = await _gameBlobStorageService.UploadCoverAsync(dto.CoverImageVertical);
+
             _context.Games.Add(newGame);
             await _context.SaveChangesAsync();
 
@@ -98,10 +108,10 @@ namespace BusinessLogic.Services
                 game.SystemRequirements = dto.SystemRequirements;
 
             if (dto.CoverImageHorizontal != null)
-                game.CoverImageHorizontal = dto.CoverImageHorizontal;
+                game.CoverImageHorizontal = await _gameBlobStorageService.ReplaceCoverAsync(dto.CoverImageHorizontal, game.CoverImageHorizontal);
 
             if (dto.CoverImageVertical != null)
-                game.CoverImageVertical = dto.CoverImageVertical;
+                game.CoverImageVertical = await _gameBlobStorageService.ReplaceCoverAsync(dto.CoverImageVertical, game.CoverImageVertical);
 
             if (dto.TagIds != null)
                 await game.SetTagsAsync(_context, dto.TagIds);
@@ -113,7 +123,16 @@ namespace BusinessLogic.Services
         {
             var game = await GetGameForUpdate(id, userId);
 
+            var oldHorizontal = game.CoverImageHorizontal;
+            var oldVertical = game.CoverImageVertical;
+
             _mapper.Map(dto, game);
+
+            if (dto.CoverImageHorizontal != null)
+                game.CoverImageHorizontal = await _gameBlobStorageService.ReplaceCoverAsync(dto.CoverImageHorizontal, oldHorizontal);
+
+            if (dto.CoverImageVertical != null)
+                game.CoverImageVertical = await _gameBlobStorageService.ReplaceCoverAsync(dto.CoverImageVertical, oldVertical);
 
             if (dto.TagIds != null)
                 await game.SetTagsAsync(_context, dto.TagIds);
@@ -125,20 +144,27 @@ namespace BusinessLogic.Services
         {
             var user = await _context.Users.FindAsync(userId);
             user.EnsureExists(userId);
-            
+
+            var game = await _context.Games.FindAsync(gameId);
+            if (game == null)
+                throw new HttpException("Game not found", HttpStatusCode.NotFound);
+
             var hasAccess = await _context.Users
                 .Where(u => u.Id == userId)
                 .AnyAsync(u => u.DevelopedGames.Any(g => g.Id == gameId));
 
             if (!hasAccess)
                 throw new HttpException("You do not have access to this game", HttpStatusCode.Forbidden);
-            
-            var rowsAffected = await _context.Games
+
+            if (game.CoverImageHorizontal != null)
+                await _gameBlobStorageService.DeleteCoverAsync(game.CoverImageHorizontal);
+
+            if (game.CoverImageVertical != null)
+                await _gameBlobStorageService.DeleteCoverAsync(game.CoverImageVertical);
+
+            await _context.Games
                 .Where(g => g.Id == gameId)
                 .ExecuteDeleteAsync();
-
-            if (rowsAffected == 0)
-                throw new HttpException($"Game with ID {gameId} not found", HttpStatusCode.NotFound);
         }
 
         private async Task<Game> GetGameForUpdate(int id, string userId)

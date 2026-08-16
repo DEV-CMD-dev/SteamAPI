@@ -32,8 +32,9 @@ public class GamesController : ControllerBase
     }
 
     [HttpPost]
+    [Consumes("multipart/form-data")]
     [Authorize]
-    public async Task<IActionResult> Add(CreateGameDto dto)
+    public async Task<IActionResult> Add([FromForm] CreateGameDto dto)
     {
         var userId = User.GetRequiredUserId();
 
@@ -43,8 +44,9 @@ public class GamesController : ControllerBase
     }
 
     [HttpPut("{id}")]
+    [Consumes("multipart/form-data")]
     [Authorize]
-    public async Task<IActionResult> Put(int id, PutGameDto dto)
+    public async Task<IActionResult> Put(int id, [FromForm] PutGameDto dto)
     {
         var userId = User.GetRequiredUserId();
 
@@ -54,8 +56,9 @@ public class GamesController : ControllerBase
     }
 
     [HttpPatch("{id}")]
+    [Consumes("multipart/form-data")]
     [Authorize]
-    public async Task<IActionResult> Patch(int id, PatchGameDto dto)
+    public async Task<IActionResult> Patch(int id, [FromForm] PatchGameDto dto)
     {
         var userId = User.GetRequiredUserId();
 

@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Http;
+using System.ComponentModel.DataAnnotations;
 
 namespace BusinessLogic.DTOs.Game
 {
@@ -10,7 +11,7 @@ namespace BusinessLogic.DTOs.Game
         [Range(0, double.MaxValue)]
         public decimal Price { get; set; }
         public string? SystemRequirements { get; set; }
-        public string? CoverImageVertical { get; set; }
-        public string? CoverImageHorizontal { get; set; }
+        public IFormFile? CoverImageVertical { get; set; }
+        public IFormFile? CoverImageHorizontal { get; set; }
     }
 }

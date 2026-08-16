@@ -18,14 +18,18 @@ namespace BusinessLogic.Configurations
             CreateMap<PatchProfileDto, Profile>();
 
             // Game mappings
-            CreateMap<Game, GameDto>().ReverseMap();
-            CreateMap<CreateGameDto, Game>();
             CreateMap<Game, GameDto>()
                 .ForMember(
                     dest => dest.TagIds,
                     opt => opt.MapFrom(src => src.Tags.Select(t => t.Id))
                 );
+            CreateMap<CreateGameDto, Game>()
+                .ForMember(dest => dest.CoverImageHorizontal, opt => opt.Ignore())
+                .ForMember(dest => dest.CoverImageVertical, opt => opt.Ignore());
+
             CreateMap<PutGameDto, Game>()
+                .ForMember(dest => dest.CoverImageHorizontal, opt => opt.Ignore())
+                .ForMember(dest => dest.CoverImageVertical, opt => opt.Ignore())
                 .ForMember(dest => dest.Tags, opt => opt.Ignore());
 
             // Tag mappings

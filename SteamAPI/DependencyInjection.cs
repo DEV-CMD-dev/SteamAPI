@@ -1,6 +1,9 @@
-﻿using BusinessLogic.Configurations;
+﻿using Azure.Storage.Blobs;
+using BusinessLogic.Configurations;
 using BusinessLogic.Interfaces;
+using BusinessLogic.Interfaces.BlobStorage;
 using BusinessLogic.Services;
+using BusinessLogic.Services.BlobStorage;
 using DataAccess;
 using DataAccess.Data.Entities;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -44,6 +47,16 @@ namespace SteamAPI
             services.AddScoped<IGameVersionService, GameVersionService>();
             services.AddScoped<IWishListService, WishListService>();
 
+            services.AddSingleton<IBlobServiceClient, BusinessLogic.Services.BlobStorage.BlobServiceClient>();
+            services.AddSingleton<IGameBlobStorageService, GameBlobStorageService>();
+            services.AddSingleton(p =>
+            {
+                var configuration = p.GetRequiredService<IConfiguration>();
+                var connectionString = configuration["AzureBlobStorage:ConnectionString"]
+                    ?? throw new Exception("Blob storage connection string not found");
+
+                return new Azure.Storage.Blobs.BlobServiceClient(connectionString);
+            });
 
             // Configurations
             services.AddOptions<ScalarOptions>().BindConfiguration("Scalar");
