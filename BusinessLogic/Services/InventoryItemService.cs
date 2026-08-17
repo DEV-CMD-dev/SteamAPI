@@ -5,6 +5,7 @@ using BusinessLogic.DTOs.Achievement;
 using BusinessLogic.DTOs.InventoryItem;
 using BusinessLogic.Extensions;
 using BusinessLogic.Helpers;
+using BusinessLogic.Interfaces;
 using DataAccess;
 using DataAccess.Data.Entities;
 using Microsoft.EntityFrameworkCore;
@@ -16,7 +17,7 @@ using System.Text;
 
 namespace BusinessLogic.Services
 {
-    public class InventoryItemService
+    public class InventoryItemService : IInventoryItemService
     {
         private readonly SteamDbContext _context;
         private readonly IMapper _mapper;
@@ -31,88 +32,46 @@ namespace BusinessLogic.Services
             _mapper = mapper;
             _frontendOptions = frontendOptions.Value;
         }
-        public async Task<PaginatedList<InventoryItemDto>> GetAll(int pageNumber, int pageSize)
+        public async Task<PaginatedList<InventoryItemDto>> GetAll(string userId, int pageNumber, int pageSize)
         {
             var query = _context.InventoryItems
                 .AsNoTracking()
+                .Where(i => i.UserId == userId)
                 .OrderBy(t => t.Id)
                 .ProjectTo<InventoryItemDto>(_mapper.ConfigurationProvider);
             return await PaginatedList<InventoryItemDto>.CreateAsync(query, pageNumber, pageSize, _frontendOptions.MaxPaginationPageSize);
         }
 
-        public async Task<InventoryItemDto> GetById(int id)
+        public async Task BuyFromStoreAsync(string userId, int itemId)
         {
-            var inventoryItem = await _context.InventoryItems.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
+            var itemTemplate = await _context.Items.FindAsync(itemId);
+            if (itemTemplate == null)
+                throw new HttpException($"Item with ID {itemId} not found", HttpStatusCode.NotFound);
 
-            if (inventoryItem == null)
-                throw new HttpException($"Inventory item with ID {id} not found", HttpStatusCode.NotFound);
-
-            return _mapper.Map<InventoryItemDto>(inventoryItem);
-        }
-
-        // User can only get item
-        public async Task Create(string userId, CreateInventoryItemDto dto)
-        {
-            var temp = await _context.Items.FindAsync(dto.ItemId);
-
-            if (temp == null)
-                throw new HttpException($"Item with ID {dto.ItemId} not found", HttpStatusCode.NotFound);
+            // TODO: add payment checking logic here 
 
             var newInventoryItem = new InventoryItem
             {
                 UserId = userId,
-                ItemId = dto.ItemId,
+                ItemId = itemId,      
                 Quantity = 1,
-                AcquiredAt = DateTime.UtcNow
+                AcquiredAt = DateTime.UtcNow,
             };
 
             _context.InventoryItems.Add(newInventoryItem);
             await _context.SaveChangesAsync();
         }
-
-        //public async Task Patch(int id, string userId, PatchInventoryItemDto dto)
-        //{
-        //    if (string.IsNullOrWhiteSpace(dto.UserId) && string.IsNullOrWhiteSpace(dto.ItemId))
-        //        throw new HttpException("Inventory item user ID and item ID can not be empty", HttpStatusCode.BadRequest);
-
-        //    await Update(userId, id, dto);
-        //}
-
-        //this for trade
-        //public async Task Put(int id, string userId, PutInventoryItemDto dto)
-        //{
-        //    if (string.IsNullOrWhiteSpace(dto.Quantity) || string.IsNullOrEmpty(dto.ItemId))
-        //        throw new HttpException("Inventory item user ID or item ID can not be empty", HttpStatusCode.BadRequest);
-
-        //    await Update(userId, id, dto);
-        //}
-
-        public async Task Delete(string userId, int id)
+        public async Task SellFromInventoryAsync(string userId, int inventoryItemId)
         {
-            var inventoryItem = await _context.InventoryItems.FindAsync(id);
+            var inventoryItem = await _context.InventoryItems.FindAsync(inventoryItemId);
 
             if (inventoryItem == null)
-                throw new HttpException($"Inventory item with ID {id} not found", HttpStatusCode.NotFound);
+                throw new HttpException($"Inventory item with ID {inventoryItemId} not found", HttpStatusCode.NotFound);
 
             var user = await _context.Users.Include(u => u.DevelopedGames).FirstOrDefaultAsync(u => u.Id == userId);
-            user.EnsureExists(userId);
+            user.EnsureExists(userId).EnsureHasAccessToGame(inventoryItem.Item.GameId);
 
             _context.InventoryItems.Remove(inventoryItem);
-            await _context.SaveChangesAsync();
-        }
-
-        private async Task Update<TDto>(string userId, int id, TDto dto)
-        {
-            var existingInventoryItem = await _context.InventoryItems.FindAsync(id);
-
-            if (existingInventoryItem == null)
-                throw new HttpException($"Inventory item with ID {id} not found", HttpStatusCode.NotFound);
-
-            var user = await _context.Users.Include(u => u.DevelopedGames).FirstOrDefaultAsync(u => u.Id == userId);
-            user.EnsureExists(userId);
-
-            _mapper.Map(dto, existingInventoryItem);
-
             await _context.SaveChangesAsync();
         }
     }

@@ -44,6 +44,10 @@ namespace SteamAPI
             services.AddScoped<IGameVersionService, GameVersionService>();
             services.AddScoped<IWishListService, WishListService>();
             services.AddScoped<IItemService, ItemService>();
+            services.AddScoped<IInventoryItemService, InventoryItemService>();
+            services.AddScoped<ITradeService, TradeService>();
+
+
 
 
 

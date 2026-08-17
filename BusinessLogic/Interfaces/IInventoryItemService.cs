@@ -1,4 +1,5 @@
 ﻿using BusinessLogic.DTOs.Achievement;
+using BusinessLogic.DTOs.InventoryItem;
 using BusinessLogic.Helpers;
 using System;
 using System.Collections.Generic;
@@ -8,11 +9,8 @@ namespace BusinessLogic.Interfaces
 {
     public interface IInventoryItemService
     {
-        Task<PaginatedList<AchievementDto>> GetAll(int pageNumber, int pageSize);
-        Task<AchievementDto> GetById(int id);
-        Task Create(string userId, CreateAchievementDto dto);
-        Task Patch(int id, string userId, PatchAchievementDto model);
-        Task Put(int id, string userId, PutAchievementDto model);
-        Task Delete(string userId, int id);
+        Task<PaginatedList<InventoryItemDto>> GetAll(string userId, int pageNumber, int pageSize);
+        Task BuyFromStoreAsync(string userId, int itemId);
+        Task SellFromInventoryAsync(string userId, int inventoryItemId);
     }
 }

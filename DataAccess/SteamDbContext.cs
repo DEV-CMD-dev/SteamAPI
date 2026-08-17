@@ -22,6 +22,7 @@ namespace DataAccess
         public DbSet<Profile> Profiles { get; set; }
         public DbSet<Item> Items { get; set; }
         public DbSet<InventoryItem> InventoryItems { get; set; }
+        public DbSet<TradeOffer> TradeOffers { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder builder)
