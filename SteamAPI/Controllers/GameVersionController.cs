@@ -1,5 +1,5 @@
 ﻿using BusinessLogic.DTOs.Achievement;
-using BusinessLogic.DTOs.Tag;
+using BusinessLogic.DTOs.GameVersion;
 using BusinessLogic.Extensions;
 using BusinessLogic.Interfaces;
 using Microsoft.AspNetCore.Authorization;
@@ -10,58 +10,58 @@ namespace SteamAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AchievementController : ControllerBase
+    public class GameVersionController : ControllerBase
     {
-        private readonly IAchievementService _achievementService;
+        private readonly IGameVersionService _gameVersionService;
 
-        public AchievementController(IAchievementService achievementService)
+        public GameVersionController(IGameVersionService gameVersionService)
         {
-            _achievementService = achievementService;
+            _gameVersionService = gameVersionService;
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAllAchievements(
+        public async Task<IActionResult> GetAllGameVersions(
             [FromQuery] int pageNumber = 1,
             [FromQuery] int pageSize = 10)
         {
-            return Ok(await _achievementService.GetAll(pageNumber, pageSize));
+            return Ok(await _gameVersionService.GetAll(pageNumber, pageSize));
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(int id)
         {
-            return Ok(await _achievementService.GetById(id));
+            return Ok(await _gameVersionService.GetById(id));
         }
 
         [HttpPost]
         [Authorize]
-        public async Task<IActionResult> Create(CreateAchievementDto dto)
+        public async Task<IActionResult> Create(CreateGameVersionDto dto)
         {
             var userId = User.GetRequiredUserId();
 
-            await _achievementService.Create(userId, dto);
+            await _gameVersionService.Create(userId, dto);
 
-            return Created(string.Empty, new { message = "Achievement created successfully." });
+            return Created(string.Empty, new { message = "Game version created successfully." });
         }
 
         [HttpPatch("{id}")]
         [Authorize]
-        public async Task<IActionResult> Patch(int id, PatchAchievementDto dto)
+        public async Task<IActionResult> Patch(int id, PatchGameVersionDto dto)
         {
             var userId = User.GetRequiredUserId();
 
-            await _achievementService.Patch(id, userId, dto);
+            await _gameVersionService.Patch(id, userId, dto);
 
             return NoContent();
         }
 
         [HttpPut("{id}")]
         [Authorize]
-        public async Task<IActionResult> Put(int id, PutAchievementDto dto)
+        public async Task<IActionResult> Put(int id, PutGameVersionDto dto)
         {
             var userId = User.GetRequiredUserId();
 
-            await _achievementService.Put(id, userId, dto);
+            await _gameVersionService.Put(id, userId, dto);
 
             return NoContent();
         }
@@ -72,7 +72,7 @@ namespace SteamAPI.Controllers
         {
             var userId = User.GetRequiredUserId();
 
-            await _achievementService.Delete(userId, id);
+            await _gameVersionService.Delete(userId, id);
 
             return NoContent();
         }

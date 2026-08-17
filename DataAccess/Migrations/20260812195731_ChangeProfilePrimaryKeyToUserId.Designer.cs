@@ -4,6 +4,7 @@ using DataAccess;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataAccess.Migrations
 {
     [DbContext(typeof(SteamDbContext))]
-    partial class SteamDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260812195731_ChangeProfilePrimaryKeyToUserId")]
+    partial class ChangeProfilePrimaryKeyToUserId
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -93,10 +96,7 @@ namespace DataAccess.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("CoverImageHorizontal")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("CoverImageVertical")
+                    b.Property<string>("CoverImage")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Description")
@@ -106,7 +106,7 @@ namespace DataAccess.Migrations
                     b.Property<string>("DeveloperId")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<int>("Discount")
+                    b.Property<int?>("Discount")
                         .HasColumnType("int");
 
                     b.Property<decimal>("Price")
@@ -121,17 +121,11 @@ namespace DataAccess.Migrations
 
                     b.Property<string>("Title")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("DeveloperId");
-
-                    b.HasIndex("Discount");
-
-                    b.HasIndex("Price");
-
-                    b.HasIndex("Title");
 
                     b.ToTable("Games");
 
@@ -139,8 +133,8 @@ namespace DataAccess.Migrations
                         new
                         {
                             Id = 1,
+                            CoverImage = "https://example.com/covers/cs2.jpg",
                             Description = "Tactical shooter.",
-                            Discount = 0,
                             Price = 0.00m,
                             ReleaseDate = new DateTime(2023, 9, 27, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             SystemRequirements = "Windows 10, 8GB RAM",
@@ -149,8 +143,8 @@ namespace DataAccess.Migrations
                         new
                         {
                             Id = 2,
+                            CoverImage = "https://example.com/covers/neon.jpg",
                             Description = "Cyberpunk RPG.",
-                            Discount = 0,
                             Price = 29.99m,
                             ReleaseDate = new DateTime(2026, 5, 12, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             SystemRequirements = "Windows 11, 16GB RAM",
@@ -159,8 +153,8 @@ namespace DataAccess.Migrations
                         new
                         {
                             Id = 3,
+                            CoverImage = "https://example.com/covers/elden.jpg",
                             Description = "Rise, Tarnished.",
-                            Discount = 0,
                             Price = 59.99m,
                             ReleaseDate = new DateTime(2022, 2, 25, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             SystemRequirements = "Windows 10, RTX 2060",
@@ -223,69 +217,6 @@ namespace DataAccess.Migrations
                         });
                 });
 
-            modelBuilder.Entity("DataAccess.Data.Entities.InventoryItem", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("AcquiredAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("ItemId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Quantity")
-                        .HasColumnType("int");
-
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ItemId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("InventoryItems");
-                });
-
-            modelBuilder.Entity("DataAccess.Data.Entities.Item", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("GameId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("ImageUrl")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("IsTradable")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("GameId");
-
-                    b.ToTable("Items");
-                });
-
             modelBuilder.Entity("DataAccess.Data.Entities.Profile", b =>
                 {
                     b.Property<string>("UserId")
@@ -297,14 +228,8 @@ namespace DataAccess.Migrations
                     b.Property<string>("Badges")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("Level")
-                        .HasColumnType("int");
-
                     b.Property<string>("Showcase")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("XP")
-                        .HasColumnType("int");
 
                     b.HasKey("UserId");
 
@@ -369,14 +294,12 @@ namespace DataAccess.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Picture")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("Name");
 
                     b.ToTable("Tags");
 
@@ -786,36 +709,6 @@ namespace DataAccess.Migrations
                     b.Navigation("Game");
                 });
 
-            modelBuilder.Entity("DataAccess.Data.Entities.InventoryItem", b =>
-                {
-                    b.HasOne("DataAccess.Data.Entities.Item", "Item")
-                        .WithMany()
-                        .HasForeignKey("ItemId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("DataAccess.Data.Entities.User", "User")
-                        .WithMany("Inventory")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Item");
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("DataAccess.Data.Entities.Item", b =>
-                {
-                    b.HasOne("DataAccess.Data.Entities.Game", "Game")
-                        .WithMany("Items")
-                        .HasForeignKey("GameId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Game");
-                });
-
             modelBuilder.Entity("DataAccess.Data.Entities.Profile", b =>
                 {
                     b.HasOne("DataAccess.Data.Entities.User", "User")
@@ -967,8 +860,6 @@ namespace DataAccess.Migrations
 
                     b.Navigation("Carts");
 
-                    b.Navigation("Items");
-
                     b.Navigation("Screenshots");
 
                     b.Navigation("UserGames");
@@ -983,8 +874,6 @@ namespace DataAccess.Migrations
                     b.Navigation("Carts");
 
                     b.Navigation("DevelopedGames");
-
-                    b.Navigation("Inventory");
 
                     b.Navigation("Profile");
 

@@ -123,18 +123,22 @@ namespace BusinessLogic.Services
 
         public async Task Delete(int gameId, string userId)
         {
-            var game = await _context.Games.FindAsync(gameId);
-            if (game == null)
+            var user = await _context.Users.FindAsync(userId);
+            user.EnsureExists(userId);
+            
+            var hasAccess = await _context.Users
+                .Where(u => u.Id == userId)
+                .AnyAsync(u => u.DevelopedGames.Any(g => g.Id == gameId));
+
+            if (!hasAccess)
+                throw new HttpException("You do not have access to this game", HttpStatusCode.Forbidden);
+            
+            var rowsAffected = await _context.Games
+                .Where(g => g.Id == gameId)
+                .ExecuteDeleteAsync();
+
+            if (rowsAffected == 0)
                 throw new HttpException($"Game with ID {gameId} not found", HttpStatusCode.NotFound);
-
-            var user = await _context.Users
-                .Include(u => u.DevelopedGames)
-                .FirstOrDefaultAsync(u => u.Id == userId);
-            user.EnsureExists(userId).EnsureHasAccessToGame(gameId);
-
-            _context.Games.Remove(game);
-
-            await _context.SaveChangesAsync();
         }
 
         private async Task<Game> GetGameForUpdate(int id, string userId)
