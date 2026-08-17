@@ -51,8 +51,5 @@ namespace SteamAPI.Controllers
 
             return Ok(new { message = "Item sold successfully!" });
         }
-
-
-
     }
 }

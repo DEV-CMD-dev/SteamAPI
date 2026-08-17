@@ -45,13 +45,22 @@ namespace BusinessLogic.Services
             if (senderId == dto.ReceiverId)
                 throw new HttpException("You cannot send a trade offer to yourself", HttpStatusCode.BadRequest);
 
-            var senderInventoryItem = await GetUserItemAsync(senderId, dto.SenderInventoryItemId);
-            if (senderInventoryItem == null)
-                throw new HttpException("Your inventory item not found", HttpStatusCode.NotFound);
+            if (dto.SenderInventoryItemId == null && dto.ReceiverInventoryItemId == null)
+                throw new HttpException("You must offer an item or ask for an item.", HttpStatusCode.BadRequest);
 
-            var receiverInventoryItem = await GetUserItemAsync(dto.ReceiverId, dto.ReceiverInventoryItemId);
-            if (receiverInventoryItem == null)
-                throw new HttpException("Receiver's inventory item not found", HttpStatusCode.NotFound);
+            if (dto.SenderInventoryItemId.HasValue)
+            {
+                var senderInventoryItem = await GetUserItemAsync(senderId, dto.SenderInventoryItemId.Value);
+                if (senderInventoryItem == null)
+                    throw new HttpException("Your inventory item not found", HttpStatusCode.NotFound);
+            }
+
+            if (dto.ReceiverInventoryItemId.HasValue)
+            {
+                var receiverInventoryItem = await GetUserItemAsync(dto.ReceiverId, dto.ReceiverInventoryItemId.Value);
+                if (receiverInventoryItem == null)
+                    throw new HttpException("Receiver's inventory item not found", HttpStatusCode.NotFound);
+            }
 
             var offer = new TradeOffer
             {
@@ -74,24 +83,30 @@ namespace BusinessLogic.Services
             if (tradeOffer.ReceiverId != userId)
                 throw new HttpException("You are not authorized to accept this trade offer", HttpStatusCode.Forbidden);
 
-            var senderItem = await _context.InventoryItems.FindAsync(tradeOffer.SenderInventoryItemId);
-            var receiverItem = await _context.InventoryItems.FindAsync(tradeOffer.ReceiverInventoryItemId);
 
-            bool isSenderItemValid = senderItem != null && senderItem.UserId == tradeOffer.SenderId;
-            bool isReceiverItemValid = receiverItem != null && receiverItem.UserId == tradeOffer.ReceiverId;
-
-            if (!isSenderItemValid || !isReceiverItemValid)
+            if(tradeOffer.SenderInventoryItemId.HasValue)
             {
-                tradeOffer.Status = TradeOfferStatus.Canceled;
-                await _context.SaveChangesAsync();
-
-                throw new HttpException("One of the items is no longer available. Trade canceled.", HttpStatusCode.BadRequest);
+                var senderItem = await _context.InventoryItems.FindAsync(tradeOffer.SenderInventoryItemId);
+                if (senderItem == null || senderItem.UserId != tradeOffer.SenderId)
+                {
+                    tradeOffer.Status = TradeOfferStatus.Canceled;
+                    await _context.SaveChangesAsync();
+                    throw new HttpException("Sender's item is no longer available. Trade canceled.", HttpStatusCode.BadRequest);
+                }
+                senderItem.UserId = tradeOffer.ReceiverId;
+            }
+            if(tradeOffer.ReceiverInventoryItemId.HasValue) {
+                var receiverItem = await _context.InventoryItems.FindAsync(tradeOffer.ReceiverInventoryItemId);
+                if (receiverItem == null || receiverItem.UserId != tradeOffer.ReceiverId)
+                {
+                    tradeOffer.Status = TradeOfferStatus.Canceled;
+                    await _context.SaveChangesAsync();
+                    throw new HttpException("Receiver's item is no longer available. Trade canceled.", HttpStatusCode.BadRequest);
+                }
+                receiverItem.UserId = tradeOffer.SenderId;
             }
 
-            senderItem!.UserId = tradeOffer.ReceiverId;
-            receiverItem!.UserId = tradeOffer.SenderId;
             tradeOffer.Status = TradeOfferStatus.Accepted;
-
             await _context.SaveChangesAsync();
         }
 

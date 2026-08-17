@@ -8,7 +8,7 @@ namespace BusinessLogic.DTOs.TradeOffer
     public class CreateTradeOfferDto
     {
         public string ReceiverId { get; set; }
-        public int SenderInventoryItemId { get; set; }
-        public int ReceiverInventoryItemId { get; set; }
+        public int? SenderInventoryItemId { get; set; }
+        public int? ReceiverInventoryItemId { get; set; }
     }
 }
