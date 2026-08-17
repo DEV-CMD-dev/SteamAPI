@@ -3,6 +3,7 @@ using DataAccess.Data.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using System.Reflection.Emit;
 
 namespace DataAccess
 {
@@ -115,7 +116,20 @@ namespace DataAccess
                 .HasOne(i => i.User)
                 .WithMany(u => u.Inventory) 
                 .HasForeignKey(i => i.UserId)
-                .OnDelete(DeleteBehavior.Cascade); 
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // TradeOffer
+            builder.Entity<TradeOffer>()
+                .HasOne(t => t.Sender)
+                .WithMany()
+                .HasForeignKey(t => t.SenderId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.Entity<TradeOffer>()
+                .HasOne(t => t.Receiver)
+                .WithMany()
+                .HasForeignKey(t => t.ReceiverId)
+                .OnDelete(DeleteBehavior.Restrict);
 
 
             builder.Entity<User>().ToTable("Users");

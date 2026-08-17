@@ -11,6 +11,7 @@ namespace SteamAPI.Controllers
     [ApiController]
     public class InventoryItemController : ControllerBase
     {
+        //TODO: Add Store Controller and StoreService for buying items from the store
         private readonly IInventoryItemService _inventoryItemService;
 
         public InventoryItemController(IInventoryItemService inventoryItemService)
