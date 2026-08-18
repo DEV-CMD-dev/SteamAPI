@@ -86,16 +86,17 @@ namespace BusinessLogic.Services
         public async Task Delete(string userId, int id)
         {
             var user = await _context.Users.FindAsync(userId);
-            user.EnsureExists(userId).EnsureModerator();
-
-            var tag = await _context.Tags.FindAsync(id);
-
-            if (tag == null)
+           
+            user.EnsureExists(userId).EnsureModerator(); 
+            
+            var rowsAffected = await _context.Tags
+                .Where(t => t.Id == id)
+                .ExecuteDeleteAsync();
+            
+            if (rowsAffected == 0)
                 throw new HttpException($"Tag with ID {id} not found", HttpStatusCode.NotFound);
-
-            _context.Tags.Remove(tag);
-            await _context.SaveChangesAsync();
         }
+
 
         private async Task<Tag> GetTagForUpdate(string userId, int id)
         {

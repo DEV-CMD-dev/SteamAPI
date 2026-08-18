@@ -35,7 +35,8 @@ namespace BusinessLogic.Services
                 CreatedAt = DateTime.UtcNow,
                 Profile = new Profile
                 {
-                    Level = 1
+                    Level = 0,
+                    XP = 0
                 }
             };
 
@@ -62,11 +63,13 @@ namespace BusinessLogic.Services
                 throw new HttpException("Invalid credentials or email is not confirmed", HttpStatusCode.Unauthorized);
 
             var claims = _jwtService.GetClaims(user);
-            var token = _jwtService.GenerateToken(claims);
+            var JWT = _jwtService.GenerateToken(claims);
 
             return new LoginResponseDto
             {
-                AccessToken = token
+                AccessToken = JWT.Token,
+                ExpirationTime = JWT.ExpirationTime,
+                UserName = user.UserName
             };
         }
 

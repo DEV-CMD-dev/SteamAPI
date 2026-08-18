@@ -1,5 +1,5 @@
 using DataAccess.Enums;
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 
 namespace BusinessLogic.DTOs.Game
 {

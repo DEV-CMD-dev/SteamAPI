@@ -32,19 +32,24 @@ namespace BusinessLogic.Services
             return claims;
         }
 
-        public string GenerateToken(IEnumerable<Claim> claims)
+        public JWT GenerateToken(IEnumerable<Claim> claims)
         {
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtOptions.Key));
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
+            var expirationTime = DateTime.UtcNow.AddMinutes(_jwtOptions.LifetimeInMinutes);
 
             var token = new JwtSecurityToken(
                 issuer: _jwtOptions.Issuer,
                 claims: claims,
-                expires: DateTime.UtcNow.AddMinutes(_jwtOptions.LifetimeInMinutes),
+                expires: expirationTime,
                 signingCredentials: credentials);
 
             var tokenString = new JwtSecurityTokenHandler().WriteToken(token);
-            return tokenString;
+            return new JWT
+            {
+                Token = tokenString,
+                ExpirationTime = expirationTime,
+            };
         }
     }
 }

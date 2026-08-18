@@ -2,7 +2,6 @@
 using AutoMapper.QueryableExtensions;
 using BusinessLogic.Configurations;
 using BusinessLogic.DTOs.Achievement;
-using BusinessLogic.DTOs.Tag;
 using BusinessLogic.Extensions;
 using BusinessLogic.Helpers;
 using BusinessLogic.Interfaces;
@@ -10,10 +9,7 @@ using DataAccess;
 using DataAccess.Data.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
-using System;
-using System.Collections.Generic;
 using System.Net;
-using System.Text;
 
 namespace BusinessLogic.Services
 {
