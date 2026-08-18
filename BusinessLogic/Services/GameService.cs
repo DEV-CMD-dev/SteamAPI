@@ -40,13 +40,9 @@ namespace BusinessLogic.Services
                 .OrderBy(g => g.Title)
                 .ProjectTo<GameDto>(_mapper.ConfigurationProvider);
 
-            var result = await PaginatedList<GameDto>.CreateAsync(
-               games,
-               pageNumber,
-               pageSize,
-               _frontendOptions.MaxPaginationPageSize);
+            var result = await PaginatedList<GameDto>.CreateAsync(games, pageNumber, pageSize, _frontendOptions.MaxPaginationPageSize);
 
-            foreach (var game in result)
+            foreach (var game in result.Items)
             {
                 game.HasRating = game.TotalReviews >= 10;
             }

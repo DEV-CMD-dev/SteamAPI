@@ -5,7 +5,7 @@ using System.Net;
 
 namespace BusinessLogic.Helpers;
 
-public class PaginatedList<T> : IEnumerable<T>
+public class PaginatedList<T> 
 {
     private PaginatedList(
         List<T> items,
@@ -28,9 +28,6 @@ public class PaginatedList<T> : IEnumerable<T>
 
     public bool HasPreviousPage => CurrentPage > 1;
     public bool HasNextPage => CurrentPage < TotalPages;
-
-    public IEnumerator<T> GetEnumerator() => Items.GetEnumerator();
-    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
     public static async Task<PaginatedList<T>> CreateAsync(
         IQueryable<T> source,
