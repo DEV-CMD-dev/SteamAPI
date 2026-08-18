@@ -20,9 +20,7 @@ namespace BusinessLogic.Configurations
             CreateMap<PatchProfileDto, Profile>();
 
             // Game mappings
-            CreateMap<Game, GameDto>()
-                .ForMember(dest => dest.HasRating, opt => opt.MapFrom(src => src.TotalReviews >= 10))
-                .ReverseMap();
+            CreateMap<Game, GameDto>().ReverseMap();
             CreateMap<CreateGameDto, Game>();
             CreateMap<PutGameDto, Game>();
             CreateMap<PatchGameDto, Game>()
