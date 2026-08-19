@@ -42,18 +42,32 @@ namespace BusinessLogic.Services
 
             return await PaginatedList<GameDto>.CreateAsync(games, pageNumber, pageSize, _frontendOptions.MaxPaginationPageSize);
         }
+        public async Task<PaginatedList<GameDto>> GetUserLibrary(string userId, int pageNumber, int pageSize, GameParameters gameParams)
+        {
+            var query = _context.Games
+                .Where(g => g.UserGames.Any(ug => ug.UserId == userId))
+                .ApplyFilters(gameParams);
 
-        public async Task<GameDto> GetById(int id)
+            var games = query
+                .AsNoTracking()
+                .OrderBy(g => g.Title)
+                .ProjectTo<GameDto>(_mapper.ConfigurationProvider);
+
+            return await PaginatedList<GameDto>.CreateAsync(games, pageNumber, pageSize, _frontendOptions.MaxPaginationPageSize);
+        }
+
+        public async Task<GameDtoWithScreenshot> GetById(int id)
         {
             var game = await _context.Games
                 .Include(g => g.Tags)
+                .Include(g => g.Screenshots)
                 .AsNoTracking()
                 .FirstOrDefaultAsync(x => x.Id == id);
 
             if (game == null)
                 throw new HttpException($"Game with ID {id} not found", HttpStatusCode.NotFound);
 
-            return _mapper.Map<GameDto>(game);
+            return _mapper.Map<GameDtoWithScreenshot>(game);
         }
 
         public async Task<GameDto> Create(string userId, CreateGameDto dto)

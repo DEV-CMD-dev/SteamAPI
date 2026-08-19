@@ -1,10 +1,12 @@
 ﻿using BusinessLogic.DTOs.Screenshot;
-using System.ComponentModel;
+using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Text;
 
 namespace BusinessLogic.DTOs.Game
 {
-    public class GameDto
+    public class GameDtoWithScreenshot
     {
         public int Id { get; set; }
         public string Title { get; set; } = string.Empty;
@@ -18,5 +20,6 @@ namespace BusinessLogic.DTOs.Game
         public string? CoverImageVertical { get; set; } = string.Empty;
         public string? CoverImageHorizontal { get; set; } = string.Empty;
         public List<int>? TagIds { get; set; }
+        public List<ScreenshotDto>? Screenshots { get; set; }
     }
 }

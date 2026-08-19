@@ -25,6 +25,17 @@ public class GamesController : ControllerBase
         return Ok(await _gameService.GetAll(pageNumber, pageSize, gameParams));
     }
 
+    [HttpGet("library")]
+    [Authorize]
+    public async Task<IActionResult> GetUserLibrary(
+        [FromQuery] GameParameters gameParams,
+        [FromQuery] int pageNumber = 1,
+        [FromQuery] int pageSize = 10)
+    {
+        var userId = User.GetRequiredUserId();
+        return Ok(await _gameService.GetUserLibrary(userId, pageNumber, pageSize, gameParams));
+    }
+
     [HttpGet("{id}")]
     public async Task<IActionResult> GetById(int id)
     {

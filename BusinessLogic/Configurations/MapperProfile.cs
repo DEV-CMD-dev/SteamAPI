@@ -27,6 +27,7 @@ namespace BusinessLogic.Configurations
                 );
             CreateMap<PutGameDto, Game>()
                 .ForMember(dest => dest.Tags, opt => opt.Ignore());
+            CreateMap<GameDtoWithScreenshot, Game>().ReverseMap();
 
             // Tag mappings
             CreateMap<Tag, TagDto>().ReverseMap();
