@@ -42,10 +42,6 @@ namespace BusinessLogic.Services
 
             return await PaginatedList<GameDto>.CreateAsync(games, pageNumber, pageSize, _frontendOptions.MaxPaginationPageSize);
         }
-            foreach (var game in result)
-            {
-                game.HasRating = game.TotalReviews >= 10;
-            }
 
         public async Task<GameDto> GetById(int id)
         {

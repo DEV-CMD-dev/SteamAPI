@@ -1,10 +1,11 @@
 ﻿using BusinessLogic.DTOs.Achievement;
 using BusinessLogic.DTOs.Game;
-using BusinessLogic.DTOs.Review;
 using BusinessLogic.DTOs.GameVersion;
-using BusinessLogic.DTOs.Screenshot;
 using BusinessLogic.DTOs.Profile;
+using BusinessLogic.DTOs.Review;
+using BusinessLogic.DTOs.Screenshot;
 using BusinessLogic.DTOs.Tag;
+using BusinessLogic.Helpers;
 using DataAccess.Data.Entities;
 using DataAccess.Data.Entities.DataAccess.Data.Entities;
 
@@ -21,7 +22,7 @@ namespace BusinessLogic.Configurations
 
             // Game mappings
             CreateMap<Game, GameDto>()
-                .ForMember(dest => dest.HasRating, opt => opt.MapFrom(src => src.TotalReviews >= 10))
+                .ForMember(dest => dest.HasRating, opt => opt.MapFrom(src => GameUtils.GetHasRating(src.TotalReviews)))
                 .ReverseMap();
             CreateMap<CreateGameDto, Game>();
             CreateMap<PutGameDto, Game>();
