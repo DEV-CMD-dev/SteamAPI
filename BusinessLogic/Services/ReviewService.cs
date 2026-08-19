@@ -37,9 +37,8 @@ namespace BusinessLogic.Services
             var dto = _mapper.Map<ReviewDto>(review);
 
             dto.HoursPlayed = await _context.UserGames
-                .Where(x =>
-                    x.UserId == review.UserId &&
-                    x.GameId == review.GameId)
+                .Where(x => x.UserId == review.UserId &&
+                            x.GameId == review.GameId)
                 .Select(x => Math.Round(x.PlayTimeMinutes / 60.0, 1))
                 .FirstOrDefaultAsync();
 

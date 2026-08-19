@@ -40,16 +40,12 @@ namespace BusinessLogic.Services
                 .OrderBy(g => g.Title)
                 .ProjectTo<GameDto>(_mapper.ConfigurationProvider);
 
-            var result = await PaginatedList<GameDto>.CreateAsync(games, pageNumber, pageSize, _frontendOptions.MaxPaginationPageSize);
-
-            foreach (var game in result.Items)
+            return await PaginatedList<GameDto>.CreateAsync(games, pageNumber, pageSize, _frontendOptions.MaxPaginationPageSize);
+        }
+            foreach (var game in result)
             {
                 game.HasRating = game.TotalReviews >= 10;
             }
-
-            return result;
-
-        }
 
         public async Task<GameDto> GetById(int id)
         {
@@ -61,11 +57,7 @@ namespace BusinessLogic.Services
             if (game == null)
                 throw new HttpException($"Game with ID {id} not found", HttpStatusCode.NotFound);
 
-            var dto = _mapper.Map<GameDto>(game);
-
-            dto.HasRating = dto.TotalReviews >= 10;
-
-            return dto;
+            return _mapper.Map<GameDto>(game);
         }
 
         public async Task<GameDto> Create(string userId, CreateGameDto dto)

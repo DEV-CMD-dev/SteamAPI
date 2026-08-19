@@ -1,7 +1,5 @@
-using Microsoft.EntityFrameworkCore;
-using System.Collections;
 using System.Net;
-
+using Microsoft.EntityFrameworkCore;
 
 namespace BusinessLogic.Helpers;
 
