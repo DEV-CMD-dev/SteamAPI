@@ -24,13 +24,10 @@ namespace BusinessLogic.Configurations
             CreateMap<Game, GameDto>().ReverseMap();
             CreateMap<CreateGameDto, Game>();
             CreateMap<Game, GameDto>()
-                .ForMember(
-                    dest => dest.TagIds,
-                    opt => opt.MapFrom(src => src.Tags.Select(t => t.Id))
-                );
+                .ForMember(dest => dest.Screenshots, opt => opt.ExplicitExpansion())
+                .ForMember(dest => dest.TagIds, opt => opt.MapFrom(src => src.Tags.Select(t => t.Id)));
             CreateMap<PutGameDto, Game>()
                 .ForMember(dest => dest.Tags, opt => opt.Ignore());
-            CreateMap<GameDtoWithScreenshot, Game>().ReverseMap();
 
             // Tag mappings
             CreateMap<Tag, TagDto>().ReverseMap();

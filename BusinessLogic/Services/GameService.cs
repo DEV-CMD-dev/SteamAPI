@@ -30,33 +30,34 @@ namespace BusinessLogic.Services
             _frontendOptions = frontendOptions.Value;
         }
 
-        public async Task<PaginatedList<GameDto>> GetAll(int pageNumber, int pageSize, GameParameters gameParams)
+        public async Task<PaginatedList<GameDto>> GetAll(int pageNumber, int pageSize, GameParameters gameParams, bool withScreenshots = false)
         {
             var query = _context.Games
-                .ApplyFilters(gameParams);
+             .ApplyFilters(gameParams)
+             .OrderBy(g => g.Title);
 
-            var games = query
-                .AsNoTracking()
-                .OrderBy(g => g.Title)
-                .ProjectTo<GameDto>(_mapper.ConfigurationProvider);
-
-            return await PaginatedList<GameDto>.CreateAsync(games, pageNumber, pageSize, _frontendOptions.MaxPaginationPageSize);
-        }
-        public async Task<PaginatedList<GameDto>> GetUserLibrary(string userId, int pageNumber, int pageSize, GameParameters gameParams)
-        {
-            var query = _context.Games
-                .Where(g => g.UserGames.Any(ug => ug.UserId == userId))
-                .ApplyFilters(gameParams);
-
-            var games = query
-                .AsNoTracking()
-                .OrderBy(g => g.Title)
-                .ProjectTo<GameDto>(_mapper.ConfigurationProvider);
+            IQueryable<GameDto> games = withScreenshots
+                ? query.ProjectTo<GameDto>(_mapper.ConfigurationProvider, dest => dest.Screenshots)
+                : query.ProjectTo<GameDto>(_mapper.ConfigurationProvider);
 
             return await PaginatedList<GameDto>.CreateAsync(games, pageNumber, pageSize, _frontendOptions.MaxPaginationPageSize);
         }
 
-        public async Task<GameDtoWithScreenshot> GetById(int id)
+        public async Task<PaginatedList<GameDto>> GetUserLibrary(string userId, int pageNumber, int pageSize, GameParameters gameParams, bool withScreenshots = false)
+        {
+            var query = _context.Games
+                .Where(g => g.UserGames.Any(ug => ug.UserId == userId)) 
+                .ApplyFilters(gameParams)
+                .OrderBy(g => g.Title);
+
+            IQueryable<GameDto> games = withScreenshots
+                ? query.ProjectTo<GameDto>(_mapper.ConfigurationProvider, dest => dest.Screenshots)
+                : query.ProjectTo<GameDto>(_mapper.ConfigurationProvider);
+
+            return await PaginatedList<GameDto>.CreateAsync(games, pageNumber, pageSize, _frontendOptions.MaxPaginationPageSize);
+        }
+
+        public async Task<GameDto> GetById(int id)
         {
             var game = await _context.Games
                 .Include(g => g.Tags)
@@ -67,7 +68,7 @@ namespace BusinessLogic.Services
             if (game == null)
                 throw new HttpException($"Game with ID {id} not found", HttpStatusCode.NotFound);
 
-            return _mapper.Map<GameDtoWithScreenshot>(game);
+            return _mapper.Map<GameDto>(game);
         }
 
         public async Task<GameDto> Create(string userId, CreateGameDto dto)
