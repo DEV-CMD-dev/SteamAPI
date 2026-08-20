@@ -35,5 +35,6 @@ namespace DataAccess.Data.Entities
         public List<Wishlist> Wishlists { get; set; } = new();
         public List<Cart> Carts { get; set; } = new();
         public List<Review> Reviews { get; set; } = new();
+        public List<Item> Items { get; set; }
     }
 }

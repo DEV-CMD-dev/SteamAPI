@@ -38,10 +38,8 @@ namespace BusinessLogic.Configurations
                 }));
                 
             CreateMap<Game, GameDto>()
-                .ForMember(
-                    dest => dest.TagIds,
-                    opt => opt.MapFrom(src => src.Tags.Select(t => t.Id))
-                );
+                .ForMember(dest => dest.Screenshots, opt => opt.ExplicitExpansion())
+                .ForMember(dest => dest.TagIds, opt => opt.MapFrom(src => src.Tags.Select(t => t.Id)));
             CreateMap<PutGameDto, Game>()
                 .ForMember(dest => dest.Tags, opt => opt.Ignore());
 
@@ -73,6 +71,22 @@ namespace BusinessLogic.Configurations
             CreateMap<CreateGameVersionDto, GameVersion>();
             CreateMap<PutGameVersionDto, GameVersion>();
             CreateMap<PatchGameVersionDto, GameVersion>();
+
+            // Item mappings
+            CreateMap<Item, ItemDto>().ReverseMap();
+            CreateMap<CreateItemDto, Item>();
+            CreateMap<PutItemDto, Item>();
+            CreateMap<PatchItemDto, Item>();
+
+            // InventoryItem mappings
+            CreateMap<InventoryItem, InventoryItemDto>().ReverseMap();
+            CreateMap<CreateInventoryItemDto, InventoryItem>();
+            CreateMap<PutInventoryItemDto, InventoryItem>();
+            CreateMap<PatchInventoryItemDto, InventoryItem>();
+
+            //TradeOffer mappings
+            CreateMap<TradeOffer, TradeOfferDto>().ReverseMap();
+
         }
     }
 }

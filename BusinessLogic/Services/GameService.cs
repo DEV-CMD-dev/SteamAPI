@@ -30,15 +30,29 @@ namespace BusinessLogic.Services
             _frontendOptions = frontendOptions.Value;
         }
 
-        public async Task<PaginatedList<GameDto>> GetAll(int pageNumber, int pageSize, GameParameters gameParams)
+        public async Task<PaginatedList<GameDto>> GetAll(int pageNumber, int pageSize, GameParameters gameParams, bool withScreenshots = false)
         {
             var query = _context.Games
-                .ApplyFilters(gameParams);
+             .ApplyFilters(gameParams)
+             .OrderBy(g => g.Title);
 
-            var games = query
-                .AsNoTracking()
-                .OrderBy(g => g.Title)
-                .ProjectTo<GameDto>(_mapper.ConfigurationProvider);
+            IQueryable<GameDto> games = withScreenshots
+                ? query.ProjectTo<GameDto>(_mapper.ConfigurationProvider, dest => dest.Screenshots)
+                : query.ProjectTo<GameDto>(_mapper.ConfigurationProvider);
+
+            return await PaginatedList<GameDto>.CreateAsync(games, pageNumber, pageSize, _frontendOptions.MaxPaginationPageSize);
+        }
+
+        public async Task<PaginatedList<GameDto>> GetUserLibrary(string userId, int pageNumber, int pageSize, GameParameters gameParams, bool withScreenshots = false)
+        {
+            var query = _context.Games
+                .Where(g => g.UserGames.Any(ug => ug.UserId == userId)) 
+                .ApplyFilters(gameParams)
+                .OrderBy(g => g.Title);
+
+            IQueryable<GameDto> games = withScreenshots
+                ? query.ProjectTo<GameDto>(_mapper.ConfigurationProvider, dest => dest.Screenshots)
+                : query.ProjectTo<GameDto>(_mapper.ConfigurationProvider);
 
             return await PaginatedList<GameDto>.CreateAsync(games, pageNumber, pageSize, _frontendOptions.MaxPaginationPageSize);
         }
@@ -47,6 +61,7 @@ namespace BusinessLogic.Services
         {
             var game = await _context.Games
                 .Include(g => g.Tags)
+                .Include(g => g.Screenshots)
                 .AsNoTracking()
                 .FirstOrDefaultAsync(x => x.Id == id);
 
