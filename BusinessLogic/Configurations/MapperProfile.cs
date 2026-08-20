@@ -3,8 +3,11 @@ using BusinessLogic.DTOs.Game;
 using BusinessLogic.DTOs.GameVersion;
 using BusinessLogic.DTOs.Screenshot;
 using BusinessLogic.DTOs.Profile;
+using BusinessLogic.DTOs.Item;
 using BusinessLogic.DTOs.Tag;
 using DataAccess.Data.Entities;
+using BusinessLogic.DTOs.InventoryItem;
+using BusinessLogic.DTOs.TradeOffer;
 
 namespace BusinessLogic.Configurations
 {
@@ -50,6 +53,22 @@ namespace BusinessLogic.Configurations
             CreateMap<CreateGameVersionDto, GameVersion>();
             CreateMap<PutGameVersionDto, GameVersion>();
             CreateMap<PatchGameVersionDto, GameVersion>();
+
+            // Item mappings
+            CreateMap<Item, ItemDto>().ReverseMap();
+            CreateMap<CreateItemDto, Item>();
+            CreateMap<PutItemDto, Item>();
+            CreateMap<PatchItemDto, Item>();
+
+            // InventoryItem mappings
+            CreateMap<InventoryItem, InventoryItemDto>().ReverseMap();
+            CreateMap<CreateInventoryItemDto, InventoryItem>();
+            CreateMap<PutInventoryItemDto, InventoryItem>();
+            CreateMap<PatchInventoryItemDto, InventoryItem>();
+
+            //TradeOffer mappings
+            CreateMap<TradeOffer, TradeOfferDto>().ReverseMap();
+
         }
     }
 }
