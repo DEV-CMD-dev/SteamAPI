@@ -46,6 +46,7 @@ namespace SteamAPI
             services.AddScoped<IItemService, ItemService>();
             services.AddScoped<IInventoryItemService, InventoryItemService>();
             services.AddScoped<ITradeService, TradeService>();
+            services.AddScoped<ICartService, CartService>();
 
 
 
