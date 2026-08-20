@@ -3,6 +3,7 @@ using DataAccess.Data.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using System.Reflection.Emit;
 
 namespace DataAccess
 {
@@ -20,6 +21,9 @@ namespace DataAccess
         public DbSet<Achievement> Achievements { get; set; }
         public DbSet<UserAchievement> UserAchievements { get; set; }
         public DbSet<Profile> Profiles { get; set; }
+        public DbSet<Item> Items { get; set; }
+        public DbSet<InventoryItem> InventoryItems { get; set; }
+        public DbSet<TradeOffer> TradeOffers { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder builder)
@@ -100,6 +104,32 @@ namespace DataAccess
                 .HasMany(w => w.Achievements)
                 .WithMany(w => w.Users)
                 .UsingEntity<UserAchievement>();
+
+
+            builder.Entity<Item>()
+                .HasOne(i => i.Game)
+                .WithMany(g => g.Items) 
+                .HasForeignKey(i => i.GameId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.Entity<InventoryItem>()
+                .HasOne(i => i.User)
+                .WithMany(u => u.Inventory) 
+                .HasForeignKey(i => i.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // TradeOffer
+            builder.Entity<TradeOffer>()
+                .HasOne(t => t.Sender)
+                .WithMany()
+                .HasForeignKey(t => t.SenderId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.Entity<TradeOffer>()
+                .HasOne(t => t.Receiver)
+                .WithMany()
+                .HasForeignKey(t => t.ReceiverId)
+                .OnDelete(DeleteBehavior.Restrict);
 
 
             builder.Entity<User>().ToTable("Users");
