@@ -23,8 +23,8 @@ namespace BusinessLogic.DTOs.Game
         public int RecommendedReviews { get; set; }
         public decimal RecommendationPercentage { get; set; }
         public GameRating Rating { get; set; }
-
         public List<ScreenshotDto>? Screenshots { get; set; }
         public string DeveloperName { get; set; }
+
     }
 }
