@@ -23,1120 +23,903 @@ namespace DataAccess.Migrations
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
             modelBuilder.Entity("DataAccess.Data.Entities.Achievement", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+            {
+                b.Property<int>("Id")
+                    .ValueGeneratedOnAdd()
+                    .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("GameId")
-                        .HasColumnType("int");
+                b.Property<int>("GameId")
+                    .HasColumnType("int");
 
-                    b.Property<string>("IconUrl")
-                        .HasColumnType("nvarchar(max)");
+                b.Property<string>("IconUrl")
+                    .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                b.Property<string>("Name")
+                    .IsRequired()
+                    .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("Id");
+                b.HasKey("Id");
 
-                    b.HasIndex("GameId");
+                b.HasIndex("GameId");
 
-                    b.ToTable("Achievements");
+                b.ToTable("Achievements");
 
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            GameId = 1,
-                            IconUrl = "https://example.com/icons/first_blood.png",
-                            Name = "First Blood"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            GameId = 2,
-                            IconUrl = "https://example.com/icons/hacker.png",
-                            Name = "Master Hacker"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            GameId = 3,
-                            IconUrl = "https://example.com/icons/elden_lord.png",
-                            Name = "Lord of Frenzied Flame"
-                        });
-                });
+                b.HasData(
+                    new
+                    {
+                        Id = 1,
+                        GameId = 1,
+                        IconUrl = "https://example.com/icons/first_blood.png",
+                        Name = "First Blood"
+                    },
+                    new
+                    {
+                        Id = 2,
+                        GameId = 2,
+                        IconUrl = "https://example.com/icons/hacker.png",
+                        Name = "Master Hacker"
+                    },
+                    new
+                    {
+                        Id = 3,
+                        GameId = 3,
+                        IconUrl = "https://example.com/icons/elden_lord.png",
+                        Name = "Lord of Frenzied Flame"
+                    });
+            });
 
             modelBuilder.Entity("DataAccess.Data.Entities.Cart", b =>
-                {
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
+            {
+                b.Property<string>("UserId")
+                    .HasColumnType("nvarchar(450)");
 
-                    b.Property<int>("GameId")
-                        .HasColumnType("int");
+                b.Property<int>("GameId")
+                    .HasColumnType("int");
 
-                    b.HasKey("UserId", "GameId");
+                b.HasKey("UserId", "GameId");
 
-                    b.HasIndex("GameId");
+                b.HasIndex("GameId");
 
-                    b.ToTable("Carts");
-                });
+                b.ToTable("Carts");
+            });
 
-            modelBuilder.Entity("DataAccess.Data.Entities.DataAccess.Data.Entities.Review", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+            modelBuilder.Entity("DataAccess.Data.Entities.Friendship", b =>
+            {
+                b.Property<string>("UserId")
+                    .HasColumnType("nvarchar(450)");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                b.Property<string>("FriendId")
+                    .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("Content")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                b.Property<DateTime>("CreatedAt")
+                    .HasColumnType("datetime2");
 
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
+                b.Property<int>("Status")
+                    .HasColumnType("int");
 
-                    b.Property<int>("GameId")
-                        .HasColumnType("int");
+                b.HasKey("UserId", "FriendId");
 
-                    b.Property<bool>("IsRecommended")
-                        .HasColumnType("bit");
+                b.HasIndex("FriendId");
 
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
+                b.ToTable("Friendships");
+            });
 
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+            modelBuilder.Entity("DataAccess.Data.Entities.Review", b =>
+            {
+                b.Property<int>("Id")
+                    .ValueGeneratedOnAdd()
+                    .HasColumnType("int");
 
-                    b.HasKey("Id");
+                SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.HasIndex("GameId");
+                b.Property<string>("Content")
+                    .IsRequired()
+                    .HasColumnType("nvarchar(max)");
 
-                    b.HasIndex("UserId", "GameId")
-                        .IsUnique();
+                b.Property<DateTime>("CreatedAt")
+                    .HasColumnType("datetime2");
 
-                    b.ToTable("Reviews");
-                });
+                b.Property<int>("GameId")
+                    .HasColumnType("int");
+
+                b.Property<bool>("IsRecommended")
+                    .HasColumnType("bit");
+
+                b.Property<DateTime?>("UpdatedAt")
+                    .HasColumnType("datetime2");
+
+                b.Property<string>("UserId")
+                    .IsRequired()
+                    .HasColumnType("nvarchar(450)");
+
+                b.HasKey("Id");
+
+                b.HasIndex("GameId");
+
+                b.HasIndex("UserId", "GameId")
+                    .IsUnique();
+
+                b.ToTable("Reviews");
+            });
 
             modelBuilder.Entity("DataAccess.Data.Entities.Game", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+            {
+                b.Property<int>("Id")
+                    .ValueGeneratedOnAdd()
+                    .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("CoverImageHorizontal")
-                        .HasColumnType("nvarchar(max)");
+                b.Property<string>("CoverImageHorizontal")
+                    .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("CoverImageVertical")
-                        .HasColumnType("nvarchar(max)");
+                b.Property<string>("CoverImageVertical")
+                    .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                b.Property<string>("Description")
+                    .IsRequired()
+                    .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("DeveloperId")
-                        .HasColumnType("nvarchar(450)");
+                b.Property<string>("DeveloperId")
+                    .HasColumnType("nvarchar(450)");
 
-                    b.Property<int>("Discount")
-                        .HasColumnType("int");
+                b.Property<int>("Discount")
+                    .HasColumnType("int");
 
-                    b.Property<decimal>("Price")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
+                b.Property<decimal>("Price")
+                    .HasPrecision(18, 2)
+                    .HasColumnType("decimal(18,2)");
 
-                    b.Property<int>("Rating")
-                        .HasColumnType("int");
+                b.Property<int>("Rating")
+                    .HasColumnType("int");
 
-                    b.Property<decimal>("RecommendationPercentage")
-                        .HasPrecision(5, 2)
-                        .HasColumnType("decimal(5,2)");
+                b.Property<decimal>("RecommendationPercentage")
+                    .HasPrecision(5, 2)
+                    .HasColumnType("decimal(5,2)");
 
-                    b.Property<int>("RecommendedReviews")
-                        .HasColumnType("int");
+                b.Property<int>("RecommendedReviews")
+                    .HasColumnType("int");
 
-                    b.Property<DateTime>("ReleaseDate")
-                        .HasColumnType("datetime2");
+                b.Property<DateTime>("ReleaseDate")
+                    .HasColumnType("datetime2");
 
-                    b.Property<string>("SystemRequirements")
-                        .HasColumnType("nvarchar(max)");
+                b.Property<string>("SystemRequirements")
+                    .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                b.Property<string>("Title")
+                    .IsRequired()
+                    .HasColumnType("nvarchar(450)");
 
-                    b.Property<int>("TotalReviews")
-                        .HasColumnType("int");
+                b.Property<int>("TotalReviews")
+                    .HasColumnType("int");
 
-                    b.HasKey("Id");
+                b.HasKey("Id");
 
-                    b.HasIndex("DeveloperId");
+                b.HasIndex("DeveloperId");
 
-                    b.HasIndex("Discount");
+                b.HasIndex("Discount");
 
-                    b.HasIndex("Price");
+                b.HasIndex("Price");
 
-                    b.HasIndex("Title");
+                b.HasIndex("Title");
 
-                    b.ToTable("Games");
+                b.ToTable("Games");
 
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Description = "Tactical shooter.",
-                            Discount = 0,
-                            Price = 0.00m,
-                            Rating = 0,
-                            RecommendationPercentage = 0m,
-                            RecommendedReviews = 0,
-                            ReleaseDate = new DateTime(2023, 9, 27, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            SystemRequirements = "Windows 10, 8GB RAM",
-                            Title = "Counter-Strike 2",
-                            TotalReviews = 0
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Description = "Cyberpunk RPG.",
-                            Discount = 0,
-                            Price = 29.99m,
-                            Rating = 0,
-                            RecommendationPercentage = 0m,
-                            RecommendedReviews = 0,
-                            ReleaseDate = new DateTime(2026, 5, 12, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            SystemRequirements = "Windows 11, 16GB RAM",
-                            Title = "Neon City 2026",
-                            TotalReviews = 0
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Description = "Rise, Tarnished.",
-                            Discount = 0,
-                            Price = 59.99m,
-                            Rating = 0,
-                            RecommendationPercentage = 0m,
-                            RecommendedReviews = 0,
-                            ReleaseDate = new DateTime(2022, 2, 25, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            SystemRequirements = "Windows 10, RTX 2060",
-                            Title = "Elden Ring",
-                            TotalReviews = 0
-                        });
-                });
+                b.HasData(
+                    new
+                    {
+                        Id = 1,
+                        Description = "Tactical shooter.",
+                        Discount = 0,
+                        Price = 0.00m,
+                        Rating = 0,
+                        RecommendationPercentage = 0m,
+                        RecommendedReviews = 0,
+                        ReleaseDate = new DateTime(2023, 9, 27, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                        SystemRequirements = "Windows 10, 8GB RAM",
+                        Title = "Counter-Strike 2",
+                        TotalReviews = 0
+                    },
+                    new
+                    {
+                        Id = 2,
+                        Description = "Cyberpunk RPG.",
+                        Discount = 0,
+                        Price = 29.99m,
+                        Rating = 0,
+                        RecommendationPercentage = 0m,
+                        RecommendedReviews = 0,
+                        ReleaseDate = new DateTime(2026, 5, 12, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                        SystemRequirements = "Windows 11, 16GB RAM",
+                        Title = "Neon City 2026",
+                        TotalReviews = 0
+                    },
+                    new
+                    {
+                        Id = 3,
+                        Description = "Rise, Tarnished.",
+                        Discount = 0,
+                        Price = 59.99m,
+                        Rating = 0,
+                        RecommendationPercentage = 0m,
+                        RecommendedReviews = 0,
+                        ReleaseDate = new DateTime(2022, 2, 25, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                        SystemRequirements = "Windows 10, RTX 2060",
+                        Title = "Elden Ring",
+                        TotalReviews = 0
+                    });
+            });
 
             modelBuilder.Entity("DataAccess.Data.Entities.GameVersion", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+            {
+                b.Property<int>("Id")
+                    .ValueGeneratedOnAdd()
+                    .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("GameId")
-                        .HasColumnType("int");
+                b.Property<int>("GameId")
+                    .HasColumnType("int");
 
-                    b.Property<string>("PatchNotes")
-                        .HasColumnType("nvarchar(max)");
+                b.Property<string>("PatchNotes")
+                    .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Version")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                b.Property<string>("Version")
+                    .IsRequired()
+                    .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("Id");
+                b.HasKey("Id");
 
-                    b.HasIndex("GameId");
+                b.HasIndex("GameId");
 
-                    b.ToTable("GameVersions");
+                b.ToTable("GameVersions");
 
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            GameId = 1,
-                            PatchNotes = "Initial release.",
-                            Version = "v1.0"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            GameId = 1,
-                            PatchNotes = "Fixed smoke grenades.",
-                            Version = "v1.1"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            GameId = 2,
-                            PatchNotes = "Early Access Launch.",
-                            Version = "v0.9"
-                        },
-                        new
-                        {
-                            Id = 4,
-                            GameId = 3,
-                            PatchNotes = "Colosseum update.",
-                            Version = "v1.10"
-                        });
-                });
+                b.HasData(
+                    new
+                    {
+                        Id = 1,
+                        GameId = 1,
+                        PatchNotes = "Initial release.",
+                        Version = "v1.0"
+                    },
+                    new
+                    {
+                        Id = 2,
+                        GameId = 1,
+                        PatchNotes = "Fixed smoke grenades.",
+                        Version = "v1.1"
+                    },
+                    new
+                    {
+                        Id = 3,
+                        GameId = 2,
+                        PatchNotes = "Early Access Launch.",
+                        Version = "v0.9"
+                    },
+                    new
+                    {
+                        Id = 4,
+                        GameId = 3,
+                        PatchNotes = "Colosseum update.",
+                        Version = "v1.10"
+                    });
+            });
 
             modelBuilder.Entity("DataAccess.Data.Entities.InventoryItem", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+            {
+                b.Property<int>("Id")
+                    .ValueGeneratedOnAdd()
+                    .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<DateTime>("AcquiredAt")
-                        .HasColumnType("datetime2");
+                b.Property<DateTime>("AcquiredAt")
+                    .HasColumnType("datetime2");
 
-                    b.Property<int>("ItemId")
-                        .HasColumnType("int");
+                b.Property<int>("ItemId")
+                    .HasColumnType("int");
 
-                    b.Property<int>("Quantity")
-                        .HasColumnType("int");
+                b.Property<int>("Quantity")
+                    .HasColumnType("int");
 
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                b.Property<string>("UserId")
+                    .IsRequired()
+                    .HasColumnType("nvarchar(450)");
 
-                    b.HasKey("Id");
+                b.HasKey("Id");
 
-                    b.HasIndex("ItemId");
+                b.HasIndex("ItemId");
 
-                    b.HasIndex("UserId");
+                b.HasIndex("UserId");
 
-                    b.ToTable("InventoryItems");
-                });
+                b.ToTable("InventoryItems");
+            });
 
             modelBuilder.Entity("DataAccess.Data.Entities.Item", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+            {
+                b.Property<int>("Id")
+                    .ValueGeneratedOnAdd()
+                    .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                b.Property<string>("Description")
+                    .IsRequired()
+                    .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("GameId")
-                        .HasColumnType("int");
+                b.Property<int>("GameId")
+                    .HasColumnType("int");
 
-                    b.Property<string>("ImageUrl")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                b.Property<string>("ImageUrl")
+                    .IsRequired()
+                    .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("IsTradable")
-                        .HasColumnType("bit");
+                b.Property<bool>("IsTradable")
+                    .HasColumnType("bit");
 
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                b.Property<string>("Name")
+                    .IsRequired()
+                    .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("Id");
+                b.HasKey("Id");
 
-                    b.HasIndex("GameId");
+                b.HasIndex("GameId");
 
-                    b.ToTable("Items");
-                });
+                b.ToTable("Items");
+            });
 
             modelBuilder.Entity("DataAccess.Data.Entities.Profile", b =>
-                {
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
+            {
+                b.Property<string>("UserId")
+                    .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("Avatar")
-                        .HasColumnType("nvarchar(max)");
+                b.Property<string>("Avatar")
+                    .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Badges")
-                        .HasColumnType("nvarchar(max)");
+                b.Property<string>("Badges")
+                    .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("Level")
-                        .HasColumnType("int");
+                b.Property<int>("Level")
+                    .HasColumnType("int");
 
-                    b.Property<string>("Showcase")
-                        .HasColumnType("nvarchar(max)");
+                b.Property<string>("Showcase")
+                    .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("XP")
-                        .HasColumnType("int");
+                b.Property<int>("XP")
+                    .HasColumnType("int");
 
-                    b.HasKey("UserId");
+                b.HasKey("UserId");
 
-                    b.ToTable("Profiles");
-                });
+                b.ToTable("Profiles");
+            });
 
             modelBuilder.Entity("DataAccess.Data.Entities.Screenshot", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+            {
+                b.Property<int>("Id")
+                    .ValueGeneratedOnAdd()
+                    .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("GameId")
-                        .HasColumnType("int");
+                b.Property<int>("GameId")
+                    .HasColumnType("int");
 
-                    b.Property<string>("Url")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                b.Property<string>("Url")
+                    .IsRequired()
+                    .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("Id");
+                b.HasKey("Id");
 
-                    b.HasIndex("GameId");
+                b.HasIndex("GameId");
 
-                    b.ToTable("Screenshots");
+                b.ToTable("Screenshots");
 
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            GameId = 1,
-                            Url = "https://example.com/screenshots/cs2_1.jpg"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            GameId = 1,
-                            Url = "https://example.com/screenshots/cs2_2.jpg"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            GameId = 2,
-                            Url = "https://example.com/screenshots/neon_1.jpg"
-                        },
-                        new
-                        {
-                            Id = 4,
-                            GameId = 3,
-                            Url = "https://example.com/screenshots/elden_1.jpg"
-                        });
-                });
+                b.HasData(
+                    new
+                    {
+                        Id = 1,
+                        GameId = 1,
+                        Url = "https://example.com/screenshots/cs2_1.jpg"
+                    },
+                    new
+                    {
+                        Id = 2,
+                        GameId = 1,
+                        Url = "https://example.com/screenshots/cs2_2.jpg"
+                    },
+                    new
+                    {
+                        Id = 3,
+                        GameId = 2,
+                        Url = "https://example.com/screenshots/neon_1.jpg"
+                    },
+                    new
+                    {
+                        Id = 4,
+                        GameId = 3,
+                        Url = "https://example.com/screenshots/elden_1.jpg"
+                    });
+            });
 
             modelBuilder.Entity("DataAccess.Data.Entities.Tag", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+            {
+                b.Property<int>("Id")
+                    .ValueGeneratedOnAdd()
+                    .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                b.Property<string>("Name")
+                    .IsRequired()
+                    .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("Picture")
-                        .HasColumnType("nvarchar(max)");
+                b.Property<string>("Picture")
+                    .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("Id");
+                b.HasKey("Id");
 
-                    b.HasIndex("Name");
+                b.HasIndex("Name");
 
-                    b.ToTable("Tags");
+                b.ToTable("Tags");
 
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Name = "Action"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Name = "Co-op"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Name = "Cyberpunk"
-                        },
-                        new
-                        {
-                            Id = 4,
-                            Name = "Souls-like"
-                        });
-                });
+                b.HasData(
+                    new
+                    {
+                        Id = 1,
+                        Name = "Action"
+                    },
+                    new
+                    {
+                        Id = 2,
+                        Name = "Co-op"
+                    },
+                    new
+                    {
+                        Id = 3,
+                        Name = "Cyberpunk"
+                    },
+                    new
+                    {
+                        Id = 4,
+                        Name = "Souls-like"
+                    });
+            });
 
             modelBuilder.Entity("DataAccess.Data.Entities.TradeOffer", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+            {
+                b.Property<int>("Id")
+                    .ValueGeneratedOnAdd()
+                    .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
+                b.Property<DateTime>("CreatedAt")
+                    .HasColumnType("datetime2");
 
-                    b.Property<string>("ReceiverId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                b.Property<string>("ReceiverId")
+                    .IsRequired()
+                    .HasColumnType("nvarchar(450)");
 
-                    b.Property<int?>("ReceiverInventoryItemId")
-                        .HasColumnType("int");
+                b.Property<int?>("ReceiverInventoryItemId")
+                    .HasColumnType("int");
 
-                    b.Property<string>("SenderId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                b.Property<string>("SenderId")
+                    .IsRequired()
+                    .HasColumnType("nvarchar(450)");
 
-                    b.Property<int?>("SenderInventoryItemId")
-                        .HasColumnType("int");
+                b.Property<int?>("SenderInventoryItemId")
+                    .HasColumnType("int");
 
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
+                b.Property<int>("Status")
+                    .HasColumnType("int");
 
-                    b.HasKey("Id");
+                b.HasKey("Id");
 
-                    b.HasIndex("ReceiverId");
+                b.HasIndex("ReceiverId");
 
-                    b.HasIndex("SenderId");
+                b.HasIndex("SenderId");
 
-                    b.ToTable("TradeOffers");
-                });
+                b.ToTable("TradeOffers");
+            });
 
             modelBuilder.Entity("DataAccess.Data.Entities.User", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
+            {
+                b.Property<string>("Id")
+                    .HasColumnType("nvarchar(450)");
 
-                    b.Property<int>("AccessFailedCount")
-                        .HasColumnType("int");
+                b.Property<int>("AccessFailedCount")
+                    .HasColumnType("int");
 
-                    b.Property<string>("Bio")
-                        .HasColumnType("nvarchar(max)");
+                b.Property<string>("Bio")
+                    .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("ConcurrencyStamp")
-                        .IsConcurrencyToken()
-                        .HasColumnType("nvarchar(max)");
+                b.Property<string>("ConcurrencyStamp")
+                    .IsConcurrencyToken()
+                    .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Country")
-                        .HasColumnType("nvarchar(max)");
+                b.Property<string>("Country")
+                    .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
+                b.Property<DateTime>("CreatedAt")
+                    .HasColumnType("datetime2");
 
-                    b.Property<string>("Email")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
+                b.Property<string>("Email")
+                    .HasMaxLength(256)
+                    .HasColumnType("nvarchar(256)");
 
-                    b.Property<bool>("EmailConfirmed")
-                        .HasColumnType("bit");
+                b.Property<bool>("EmailConfirmed")
+                    .HasColumnType("bit");
 
-                    b.Property<DateTime>("LastOnline")
-                        .HasColumnType("datetime2");
+                b.Property<DateTime>("LastOnline")
+                    .HasColumnType("datetime2");
 
-                    b.Property<bool>("LockoutEnabled")
-                        .HasColumnType("bit");
+                b.Property<bool>("LockoutEnabled")
+                    .HasColumnType("bit");
 
-                    b.Property<DateTimeOffset?>("LockoutEnd")
-                        .HasColumnType("datetimeoffset");
+                b.Property<DateTimeOffset?>("LockoutEnd")
+                    .HasColumnType("datetimeoffset");
 
-                    b.Property<string>("NormalizedEmail")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
+                b.Property<string>("NormalizedEmail")
+                    .HasMaxLength(256)
+                    .HasColumnType("nvarchar(256)");
 
-                    b.Property<string>("NormalizedUserName")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
+                b.Property<string>("NormalizedUserName")
+                    .HasMaxLength(256)
+                    .HasColumnType("nvarchar(256)");
 
-                    b.Property<string>("PasswordHash")
-                        .HasColumnType("nvarchar(max)");
+                b.Property<string>("PasswordHash")
+                    .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("PhoneNumber")
-                        .HasColumnType("nvarchar(max)");
+                b.Property<string>("PhoneNumber")
+                    .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("PhoneNumberConfirmed")
-                        .HasColumnType("bit");
+                b.Property<bool>("PhoneNumberConfirmed")
+                    .HasColumnType("bit");
 
-                    b.Property<string>("SecurityStamp")
-                        .HasColumnType("nvarchar(max)");
+                b.Property<string>("SecurityStamp")
+                    .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("TwoFactorEnabled")
-                        .HasColumnType("bit");
+                b.Property<bool>("TwoFactorEnabled")
+                    .HasColumnType("bit");
 
-                    b.Property<string>("UserName")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
+                b.Property<string>("UserName")
+                    .HasMaxLength(256)
+                    .HasColumnType("nvarchar(256)");
 
-                    b.Property<int>("UserRole")
-                        .HasColumnType("int");
+                b.Property<int>("UserRole")
+                    .HasColumnType("int");
 
-                    b.Property<int>("UserVisibility")
-                        .HasColumnType("int");
+                b.Property<int>("UserVisibility")
+                    .HasColumnType("int");
 
-                    b.Property<decimal>("WalletBalance")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
+                b.Property<decimal>("WalletBalance")
+                    .HasPrecision(18, 2)
+                    .HasColumnType("decimal(18,2)");
 
-                    b.HasKey("Id");
+                b.HasKey("Id");
 
-                    b.HasIndex("NormalizedEmail")
-                        .HasDatabaseName("EmailIndex");
+                b.HasIndex("NormalizedEmail")
+                    .HasDatabaseName("EmailIndex");
 
-                    b.HasIndex("NormalizedUserName")
-                        .IsUnique()
-                        .HasDatabaseName("UserNameIndex")
-                        .HasFilter("[NormalizedUserName] IS NOT NULL");
+                b.HasIndex("NormalizedUserName")
+                    .IsUnique()
+                    .HasDatabaseName("UserNameIndex")
+                    .HasFilter("[NormalizedUserName] IS NOT NULL");
 
-                    b.ToTable("Users", (string)null);
-                });
+                b.ToTable("Users", (string)null);
+            });
 
             modelBuilder.Entity("DataAccess.Data.Entities.UserAchievement", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+            {
+                b.Property<int>("Id")
+                    .ValueGeneratedOnAdd()
+                    .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("AchievementId")
-                        .HasColumnType("int");
+                b.Property<int>("AchievementId")
+                    .HasColumnType("int");
 
-                    b.Property<DateTime>("UnlockedAt")
-                        .HasColumnType("datetime2");
+                b.Property<DateTime>("UnlockedAt")
+                    .HasColumnType("datetime2");
 
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                b.Property<string>("UserId")
+                    .IsRequired()
+                    .HasColumnType("nvarchar(450)");
 
-                    b.HasKey("Id");
+                b.HasKey("Id");
 
-                    b.HasIndex("AchievementId");
+                b.HasIndex("AchievementId");
 
-                    b.HasIndex("UserId");
+                b.HasIndex("UserId");
 
-                    b.ToTable("UserAchievements");
-                });
+                b.ToTable("UserAchievements");
+            });
 
             modelBuilder.Entity("DataAccess.Data.Entities.UserGame", b =>
-                {
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
+            {
+                b.Property<string>("UserId")
+                    .HasColumnType("nvarchar(450)");
 
-                    b.Property<int>("GameId")
-                        .HasColumnType("int");
+                b.Property<int>("GameId")
+                    .HasColumnType("int");
 
-                    b.Property<bool>("IsInstalled")
-                        .HasColumnType("bit");
+                b.Property<bool>("IsInstalled")
+                    .HasColumnType("bit");
 
-                    b.Property<int>("PlayTimeMinutes")
-                        .HasColumnType("int");
+                b.Property<int>("PlayTimeMinutes")
+                    .HasColumnType("int");
 
-                    b.Property<DateTime>("PurchasedAt")
-                        .HasColumnType("datetime2");
+                b.Property<DateTime>("PurchasedAt")
+                    .HasColumnType("datetime2");
 
-                    b.HasKey("UserId", "GameId");
+                b.HasKey("UserId", "GameId");
 
-                    b.HasIndex("GameId");
+                b.HasIndex("GameId");
 
-                    b.ToTable("UserGames");
-                });
+                b.ToTable("UserGames");
+            });
 
             modelBuilder.Entity("DataAccess.Data.Entities.Wishlist", b =>
-                {
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
+            {
+                b.Property<string>("UserId")
+                    .HasColumnType("nvarchar(450)");
 
-                    b.Property<int>("GameId")
-                        .HasColumnType("int");
+                b.Property<int>("GameId")
+                    .HasColumnType("int");
 
-                    b.HasKey("UserId", "GameId");
+                b.HasKey("UserId", "GameId");
 
-                    b.HasIndex("GameId");
+                b.HasIndex("GameId");
 
-                    b.ToTable("Wishlists");
-                });
+                b.ToTable("Wishlists");
+            });
 
             modelBuilder.Entity("GameTag", b =>
-                {
-                    b.Property<int>("GamesId")
-                        .HasColumnType("int");
+            {
+                b.Property<int>("GamesId")
+                    .HasColumnType("int");
 
-                    b.Property<int>("TagsId")
-                        .HasColumnType("int");
+                b.Property<int>("TagsId")
+                    .HasColumnType("int");
 
-                    b.HasKey("GamesId", "TagsId");
+                b.HasKey("GamesId", "TagsId");
 
-                    b.HasIndex("TagsId");
+                b.HasIndex("TagsId");
 
-                    b.ToTable("GameTag");
+                b.ToTable("GameTag");
 
-                    b.HasData(
-                        new
-                        {
-                            GamesId = 1,
-                            TagsId = 1
-                        },
-                        new
-                        {
-                            GamesId = 1,
-                            TagsId = 2
-                        },
-                        new
-                        {
-                            GamesId = 2,
-                            TagsId = 1
-                        },
-                        new
-                        {
-                            GamesId = 2,
-                            TagsId = 3
-                        },
-                        new
-                        {
-                            GamesId = 3,
-                            TagsId = 1
-                        },
-                        new
-                        {
-                            GamesId = 3,
-                            TagsId = 4
-                        });
-                });
+                b.HasData(
+                    new
+                    {
+                        GamesId = 1,
+                        TagsId = 1
+                    },
+                    new
+                    {
+                        GamesId = 1,
+                        TagsId = 2
+                    },
+                    new
+                    {
+                        GamesId = 2,
+                        TagsId = 1
+                    },
+                    new
+                    {
+                        GamesId = 2,
+                        TagsId = 3
+                    },
+                    new
+                    {
+                        GamesId = 3,
+                        TagsId = 1
+                    },
+                    new
+                    {
+                        GamesId = 3,
+                        TagsId = 4
+                    });
+            });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
+            {
+                b.Property<string>("Id")
+                    .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("ConcurrencyStamp")
-                        .IsConcurrencyToken()
-                        .HasColumnType("nvarchar(max)");
+                b.Property<string>("ConcurrencyStamp")
+                    .IsConcurrencyToken()
+                    .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Name")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
+                b.Property<string>("Name")
+                    .HasMaxLength(256)
+                    .HasColumnType("nvarchar(256)");
 
-                    b.Property<string>("NormalizedName")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
+                b.Property<string>("NormalizedName")
+                    .HasMaxLength(256)
+                    .HasColumnType("nvarchar(256)");
 
-                    b.HasKey("Id");
+                b.HasKey("Id");
 
-                    b.HasIndex("NormalizedName")
-                        .IsUnique()
-                        .HasDatabaseName("RoleNameIndex")
-                        .HasFilter("[NormalizedName] IS NOT NULL");
+                b.HasIndex("NormalizedName")
+                    .IsUnique()
+                    .HasDatabaseName("RoleNameIndex")
+                    .HasFilter("[NormalizedName] IS NOT NULL");
 
-                    b.ToTable("Roles", (string)null);
-                });
+                b.ToTable("Roles", (string)null);
+            });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+            {
+                b.Property<int>("Id")
+                    .ValueGeneratedOnAdd()
+                    .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("ClaimType")
-                        .HasColumnType("nvarchar(max)");
+                b.Property<string>("ClaimType")
+                    .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("ClaimValue")
-                        .HasColumnType("nvarchar(max)");
+                b.Property<string>("ClaimValue")
+                    .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("RoleId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                b.Property<string>("RoleId")
+                    .IsRequired()
+                    .HasColumnType("nvarchar(450)");
 
-                    b.HasKey("Id");
+                b.HasKey("Id");
 
-                    b.HasIndex("RoleId");
+                b.HasIndex("RoleId");
 
-                    b.ToTable("RoleClaims", (string)null);
-                });
+                b.ToTable("RoleClaims", (string)null);
+            });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+            {
+                b.Property<int>("Id")
+                    .ValueGeneratedOnAdd()
+                    .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("ClaimType")
-                        .HasColumnType("nvarchar(max)");
+                b.Property<string>("ClaimType")
+                    .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("ClaimValue")
-                        .HasColumnType("nvarchar(max)");
+                b.Property<string>("ClaimValue")
+                    .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                b.Property<string>("UserId")
+                    .IsRequired()
+                    .HasColumnType("nvarchar(450)");
 
-                    b.HasKey("Id");
+                b.HasKey("Id");
 
-                    b.HasIndex("UserId");
+                b.HasIndex("UserId");
 
-                    b.ToTable("UserClaims", (string)null);
-                });
+                b.ToTable("UserClaims", (string)null);
+            });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
-                {
-                    b.Property<string>("LoginProvider")
-                        .HasColumnType("nvarchar(450)");
+            {
+                b.Property<string>("LoginProvider")
+                    .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("ProviderKey")
-                        .HasColumnType("nvarchar(450)");
+                b.Property<string>("ProviderKey")
+                    .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("ProviderDisplayName")
-                        .HasColumnType("nvarchar(max)");
+                b.Property<string>("ProviderDisplayName")
+                    .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                b.Property<string>("UserId")
+                    .IsRequired()
+                    .HasColumnType("nvarchar(450)");
 
-                    b.HasKey("LoginProvider", "ProviderKey");
+                b.HasKey("LoginProvider", "ProviderKey");
 
-                    b.HasIndex("UserId");
+                b.HasIndex("UserId");
 
-                    b.ToTable("UserLogins", (string)null);
-                });
+                b.ToTable("UserLogins", (string)null);
+            });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
-                {
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
+            {
+                b.Property<string>("UserId")
+                    .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("RoleId")
-                        .HasColumnType("nvarchar(450)");
+                b.Property<string>("RoleId")
+                    .HasColumnType("nvarchar(450)");
 
-                    b.HasKey("UserId", "RoleId");
+                b.HasKey("UserId", "RoleId");
 
-                    b.HasIndex("RoleId");
+                b.HasIndex("RoleId");
 
-                    b.ToTable("UserRoles", (string)null);
-                });
+                b.ToTable("UserRoles", (string)null);
+            });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
-                {
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
+            {
+                b.Property<string>("UserId")
+                    .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("LoginProvider")
-                        .HasColumnType("nvarchar(450)");
+                b.Property<string>("LoginProvider")
+                    .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(450)");
+                b.Property<string>("Name")
+                    .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("Value")
-                        .HasColumnType("nvarchar(max)");
+                b.Property<string>("Value")
+                    .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("UserId", "LoginProvider", "Name");
+                b.HasKey("UserId", "LoginProvider", "Name");
 
-                    b.ToTable("UserTokens", (string)null);
-                });
+                b.ToTable("UserTokens", (string)null);
+            });
 
             modelBuilder.Entity("DataAccess.Data.Entities.Achievement", b =>
-                {
-                    b.HasOne("DataAccess.Data.Entities.Game", "Game")
-                        .WithMany("Achievements")
-                        .HasForeignKey("GameId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+            {
+                b.HasOne("DataAccess.Data.Entities.Game", "Game")
+                    .WithMany("Achievements")
+                    .HasForeignKey("GameId")
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .IsRequired();
 
-                    b.Navigation("Game");
-                });
+                b.Navigation("Game");
+            });
 
             modelBuilder.Entity("DataAccess.Data.Entities.Cart", b =>
-                {
-                    b.HasOne("DataAccess.Data.Entities.Game", "Game")
-                        .WithMany("Carts")
-                        .HasForeignKey("GameId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+            {
+                b.HasOne("DataAccess.Data.Entities.Game", "Game")
+                    .WithMany("Carts")
+                    .HasForeignKey("GameId")
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .IsRequired();
 
-                    b.HasOne("DataAccess.Data.Entities.User", "User")
-                        .WithMany("Carts")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                b.HasOne("DataAccess.Data.Entities.User", "User")
+                    .WithMany("Carts")
+                    .HasForeignKey("UserId")
+                    .OnDelete(DeleteBehavior.Restrict)
+                    .IsRequired();
 
-                    b.Navigation("Game");
+                b.Navigation("Game");
 
-                    b.Navigation("User");
-                });
+                b.Navigation("User");
+            });
 
-            modelBuilder.Entity("DataAccess.Data.Entities.DataAccess.Data.Entities.Review", b =>
-                {
-                    b.HasOne("DataAccess.Data.Entities.Game", "Game")
-                        .WithMany("Reviews")
-                        .HasForeignKey("GameId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+            modelBuilder.Entity("DataAccess.Data.Entities.Friendship", b =>
+            {
+                b.HasOne("DataAccess.Data.Entities.User", "Friend")
+                    .WithMany()
+                    .HasForeignKey("FriendId")
+                    .OnDelete(DeleteBehavior.Restrict)
+                    .IsRequired();
 
-                    b.HasOne("DataAccess.Data.Entities.User", "User")
-                        .WithMany("Reviews")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                b.HasOne("DataAccess.Data.Entities.User", "User")
+                    .WithMany()
+                    .HasForeignKey("UserId")
+                    .OnDelete(DeleteBehavior.Restrict)
+                    .IsRequired();
+            });
 
-                    b.Navigation("Game");
+            modelBuilder.Entity("DataAccess.Data.Entities.Review", b =>
+            {
+                b.HasOne("DataAccess.Data.Entities.Game", "Game")
+                    .WithMany("Reviews")
+                    .HasForeignKey("GameId")
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .IsRequired();
 
-                    b.Navigation("User");
-                });
+                b.HasOne("DataAccess.Data.Entities.User", "User")
+                    .WithMany("Reviews")
+                    .HasForeignKey("UserId")
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .IsRequired();
 
-            modelBuilder.Entity("DataAccess.Data.Entities.Game", b =>
-                {
-                    b.HasOne("DataAccess.Data.Entities.User", "Developer")
-                        .WithMany("DevelopedGames")
-                        .HasForeignKey("DeveloperId");
+                b.Navigation("Game");
 
-                    b.Navigation("Developer");
-                });
-
-            modelBuilder.Entity("DataAccess.Data.Entities.GameVersion", b =>
-                {
-                    b.HasOne("DataAccess.Data.Entities.Game", "Game")
-                        .WithMany("Versions")
-                        .HasForeignKey("GameId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Game");
-                });
-
-            modelBuilder.Entity("DataAccess.Data.Entities.InventoryItem", b =>
-                {
-                    b.HasOne("DataAccess.Data.Entities.Item", "Item")
-                        .WithMany()
-                        .HasForeignKey("ItemId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("DataAccess.Data.Entities.User", "User")
-                        .WithMany("Inventory")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Item");
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("DataAccess.Data.Entities.Item", b =>
-                {
-                    b.HasOne("DataAccess.Data.Entities.Game", "Game")
-                        .WithMany("Items")
-                        .HasForeignKey("GameId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Game");
-                });
-
-            modelBuilder.Entity("DataAccess.Data.Entities.Profile", b =>
-                {
-                    b.HasOne("DataAccess.Data.Entities.User", "User")
-                        .WithOne("Profile")
-                        .HasForeignKey("DataAccess.Data.Entities.Profile", "UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("DataAccess.Data.Entities.Screenshot", b =>
-                {
-                    b.HasOne("DataAccess.Data.Entities.Game", "Game")
-                        .WithMany("Screenshots")
-                        .HasForeignKey("GameId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Game");
-                });
-
-            modelBuilder.Entity("DataAccess.Data.Entities.TradeOffer", b =>
-                {
-                    b.HasOne("DataAccess.Data.Entities.User", "Receiver")
-                        .WithMany()
-                        .HasForeignKey("ReceiverId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("DataAccess.Data.Entities.User", "Sender")
-                        .WithMany()
-                        .HasForeignKey("SenderId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Receiver");
-
-                    b.Navigation("Sender");
-                });
-
-            modelBuilder.Entity("DataAccess.Data.Entities.UserAchievement", b =>
-                {
-                    b.HasOne("DataAccess.Data.Entities.Achievement", "Achievement")
-                        .WithMany()
-                        .HasForeignKey("AchievementId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("DataAccess.Data.Entities.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Achievement");
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("DataAccess.Data.Entities.UserGame", b =>
-                {
-                    b.HasOne("DataAccess.Data.Entities.Game", "Game")
-                        .WithMany("UserGames")
-                        .HasForeignKey("GameId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("DataAccess.Data.Entities.User", "User")
-                        .WithMany("UserGames")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Game");
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("DataAccess.Data.Entities.Wishlist", b =>
-                {
-                    b.HasOne("DataAccess.Data.Entities.Game", "Game")
-                        .WithMany("Wishlists")
-                        .HasForeignKey("GameId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("DataAccess.Data.Entities.User", "User")
-                        .WithMany("Wishlists")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Game");
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("GameTag", b =>
-                {
-                    b.HasOne("DataAccess.Data.Entities.Game", null)
-                        .WithMany()
-                        .HasForeignKey("GamesId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("DataAccess.Data.Entities.Tag", null)
-                        .WithMany()
-                        .HasForeignKey("TagsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
-                {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
-                        .WithMany()
-                        .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
-                {
-                    b.HasOne("DataAccess.Data.Entities.User", null)
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
-                {
-                    b.HasOne("DataAccess.Data.Entities.User", null)
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
-                {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
-                        .WithMany()
-                        .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("DataAccess.Data.Entities.User", null)
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
-                {
-                    b.HasOne("DataAccess.Data.Entities.User", null)
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("DataAccess.Data.Entities.Game", b =>
-                {
-                    b.Navigation("Achievements");
-
-                    b.Navigation("Carts");
-
-<<<<<<< HEAD
-                    b.Navigation("Reviews");
-=======
-                    b.Navigation("Items");
->>>>>>> develop
-
-                    b.Navigation("Screenshots");
-
-                    b.Navigation("UserGames");
-
-                    b.Navigation("Versions");
-
-                    b.Navigation("Wishlists");
-                });
-
-            modelBuilder.Entity("DataAccess.Data.Entities.User", b =>
-                {
-                    b.Navigation("Carts");
-
-                    b.Navigation("DevelopedGames");
-
-                    b.Navigation("Inventory");
-
-                    b.Navigation("Profile");
-
-                    b.Navigation("Reviews");
-
-                    b.Navigation("UserGames");
-
-                    b.Navigation("Wishlists");
-                });
-#pragma warning restore 612, 618
+                b.Navigation("User");
+            });
         }
     }
 }

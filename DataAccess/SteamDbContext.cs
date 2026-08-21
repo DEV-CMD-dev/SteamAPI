@@ -26,6 +26,7 @@ namespace DataAccess
         public DbSet<Item> Items { get; set; }
         public DbSet<InventoryItem> InventoryItems { get; set; }
         public DbSet<TradeOffer> TradeOffers { get; set; }
+        public DbSet<Friendship> Friendships { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder builder)
@@ -151,6 +152,24 @@ namespace DataAccess
                 .HasOne(t => t.Receiver)
                 .WithMany()
                 .HasForeignKey(t => t.ReceiverId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            //Friendship
+            builder.Entity<Friendship>()
+                .HasKey(f => new { f.UserId, f.FriendId });
+
+           
+            builder.Entity<Friendship>()
+                .HasOne(f => f.User)
+                .WithMany() 
+                .HasForeignKey(f => f.UserId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+   
+            builder.Entity<Friendship>()
+                .HasOne(f => f.Friend)
+                .WithMany()
+                .HasForeignKey(f => f.FriendId)
                 .OnDelete(DeleteBehavior.Restrict);
 
 
