@@ -19,5 +19,6 @@ namespace BusinessLogic.DTOs.Game
         public string? CoverImageHorizontal { get; set; } = string.Empty;
         public List<int>? TagIds { get; set; }
         public List<ScreenshotDto>? Screenshots { get; set; }
+        public string DeveloperName { get; set; }
     }
 }
