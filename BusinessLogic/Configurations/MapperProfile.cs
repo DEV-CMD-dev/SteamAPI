@@ -41,6 +41,10 @@ namespace BusinessLogic.Configurations
                 }));
                 
             CreateMap<Game, GameDto>()
+                .ForMember(
+                    dest => dest.DeveloperName,
+                    opt => opt.MapFrom(src => src.Developer != null ? src.Developer.UserName : string.Empty)
+                )
                 .ForMember(dest => dest.Screenshots, opt => opt.ExplicitExpansion())
                 .ForMember(dest => dest.TagIds, opt => opt.MapFrom(src => src.Tags.Select(t => t.Id)));
             CreateMap<PutGameDto, Game>()

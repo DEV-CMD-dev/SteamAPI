@@ -26,5 +26,6 @@ namespace BusinessLogic.DTOs.Game
 
         public bool HasRating { get; set; }
         public List<ScreenshotDto>? Screenshots { get; set; }
+        public string DeveloperName { get; set; }
     }
 }
