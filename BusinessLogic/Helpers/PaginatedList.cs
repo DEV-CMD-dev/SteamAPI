@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BusinessLogic.Helpers;
 
-public class PaginatedList<T>
+public class PaginatedList<T> 
 {
     private PaginatedList(
         List<T> items,
