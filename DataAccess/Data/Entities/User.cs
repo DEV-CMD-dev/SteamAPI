@@ -21,6 +21,8 @@ namespace DataAccess.Data.Entities
         public List<Cart> Carts { get; set; } = new();
         public List<Review> Reviews { get; set; } = new();
 
+        public List<InventoryItem> Inventory { get; set; }
+
         public virtual Profile? Profile { get; set; }
     }
 }

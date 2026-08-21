@@ -1,4 +1,6 @@
 using DataAccess.Enums;
+﻿using BusinessLogic.DTOs.Screenshot;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
 namespace BusinessLogic.DTOs.Game
@@ -23,5 +25,6 @@ namespace BusinessLogic.DTOs.Game
         public GameRating Rating { get; set; }
 
         public bool HasRating { get; set; }
+        public List<ScreenshotDto>? Screenshots { get; set; }
     }
 }
