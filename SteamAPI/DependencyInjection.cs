@@ -132,7 +132,7 @@ namespace SteamAPI
                 app.MapScalarApiReference("", options => options.WithTitle("Steam API"));
             }
 
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
             app.UseRouting();
             app.UseCors("AllowSteamApp");
             app.UseErrorHandler();

@@ -19,6 +19,5 @@ namespace BusinessLogic.DTOs.GameRate
 
         public string RatingText { get; set; } = string.Empty;
 
-        public bool HasRating { get; set; }
     }
 }

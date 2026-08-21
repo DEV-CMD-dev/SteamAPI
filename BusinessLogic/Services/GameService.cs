@@ -62,6 +62,7 @@ namespace BusinessLogic.Services
             var game = await _context.Games
                 .Include(g => g.Tags)
                 .Include(g => g.Screenshots)
+                .Include(g => g.Developer)
                 .AsNoTracking()
                 .FirstOrDefaultAsync(x => x.Id == id);
 

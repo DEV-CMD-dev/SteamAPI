@@ -42,28 +42,24 @@ namespace BusinessLogic.Services
             game.TotalReviews = totalReviews;
             game.RecommendedReviews = recommendedReviews;
             game.RecommendationPercentage = recommendationPercentage;
-            game.Rating = CalculateRating(totalReviews, recommendationPercentage);
+            game.Rating = CalculateRating(recommendationPercentage);
 
             await _context.SaveChangesAsync();
         }
 
         private static GameRating CalculateRating(
-            int totalReviews,
             decimal recommendationPercentage)
         {
-            if (totalReviews < 10)
-                return GameRating.None;
-
             if (recommendationPercentage >= 95)
                 return GameRating.OverwhelminglyPositive;
 
             if (recommendationPercentage >= 80)
                 return GameRating.VeryPositive;
 
-            if (recommendationPercentage >= 80)
+            if (recommendationPercentage >= 70)
                 return GameRating.Positive;
 
-            if (recommendationPercentage >= 70)
+            if (recommendationPercentage >= 60)
                 return GameRating.MostlyPositive;
 
             if (recommendationPercentage >= 40)
