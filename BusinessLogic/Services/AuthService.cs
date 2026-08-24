@@ -1,5 +1,4 @@
-﻿using BusinessLogic.Configurations;
-using BusinessLogic.DTOs.Auth;
+﻿using BusinessLogic.DTOs.Auth;
 using BusinessLogic.Extensions;
 using BusinessLogic.Interfaces;
 using DataAccess.Data.Entities;
@@ -68,11 +67,12 @@ namespace BusinessLogic.Services
 
             if (user.TwoFactorEnabled)
             {
-                var code = await _userManager.GenerateTwoFactorTokenAsync(user, TokenOptions.DefaultAuthenticatorProvider);
-                await _emailService.SendEmailAsync(user.Email, $"Your 2FA Code: {code}");
+                var code = await _userManager.GenerateTwoFactorTokenAsync(user, "Email");
+                await _emailService.SendEmailAsync(user.Email, "2FA Code", $"<h3>Your code: {code}</h3>");
                 return new LoginResponseDto
                 {
-                    Message = "Two factor code has been sent to your email"
+                    Message = "Two factor code has been sent to your email",
+                    RequireTwoFactorAuth = true
                 };
             }
 
@@ -83,21 +83,22 @@ namespace BusinessLogic.Services
             {
                 AccessToken = JWT.Token,
                 ExpirationTime = JWT.ExpirationTime,
-                UserName = user.UserName
+                UserName = user.UserName,
+                RequireTwoFactorAuth = false
             };
         }
 
-        public async Task<LoginResponseDto> LoginTwoFactor(LoginTwoFactorRequestDto dto)
+        public async Task<LoginResponseDto> LoginTwoFactor(TwoFactorLoginRequestDto dto)
         {
-            var user = await _userManager.FindByIdAsync(dto.UserId);
+            var user = await _userManager.FindByIdentifierAsync(dto.Identifier);
 
             if (user == null || !await _userManager.IsEmailConfirmedAsync(user))
-                throw new HttpException("Invalid credentials or email is not confirmed", HttpStatusCode.Unauthorized);
+                throw new HttpException("Invalid 2FA code or credentials", HttpStatusCode.Unauthorized);
 
-            var valid = await _userManager.VerifyTwoFactorTokenAsync(user, TokenOptions.DefaultAuthenticatorProvider, dto.Code);
+            var valid = await _userManager.VerifyTwoFactorTokenAsync(user, "Email", dto.Code);
 
             if (!valid)
-                throw new HttpException("Invalid 2FA code", HttpStatusCode.BadRequest);
+                throw new HttpException("Invalid 2FA code or credentials", HttpStatusCode.Unauthorized);
 
             var claims = _jwtService.GetClaims(user);
             var JWT = _jwtService.GenerateToken(claims);

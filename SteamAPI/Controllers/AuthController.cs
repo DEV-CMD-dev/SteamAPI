@@ -1,4 +1,5 @@
 ﻿using BusinessLogic.DTOs.Auth;
+using BusinessLogic.Extensions;
 using BusinessLogic.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -29,7 +30,7 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("login-2FA")]
-    public async Task<IActionResult> LoginTwoFactor(LoginTwoFactorRequestDto dto)
+    public async Task<IActionResult> LoginTwoFactor(TwoFactorLoginRequestDto dto)
     {
         var result = await _authService.LoginTwoFactor(dto);
         return Ok(result);
