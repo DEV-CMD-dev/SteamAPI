@@ -28,6 +28,13 @@ public class AuthController : ControllerBase
         return Ok(result);
     }
 
+    [HttpPost("login-2FA")]
+    public async Task<IActionResult> LoginTwoFactor(LoginTwoFactorRequestDto dto)
+    {
+        var result = await _authService.LoginTwoFactor(dto);
+        return Ok(result);
+    }
+
     [HttpPost("logout")]
     public async Task<IActionResult> Logout()
     {

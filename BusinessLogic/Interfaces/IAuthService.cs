@@ -7,6 +7,7 @@ namespace BusinessLogic.Interfaces
     {
         Task Register(RegisterRequestDto model);
         Task<LoginResponseDto> Login(LoginRequestDto model);
+        Task<LoginResponseDto> LoginTwoFactor(LoginTwoFactorRequestDto model);
         Task Logout();
     }
 }
