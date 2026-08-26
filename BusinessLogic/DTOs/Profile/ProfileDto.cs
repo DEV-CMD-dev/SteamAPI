@@ -8,5 +8,6 @@
         public int XP { get; set; }
         public string? Badges { get; set; }
         public string? Showcase { get; set; }
+        public List<RecentGameDto> RecentlyPlayedGames { get; set; } = new();
     }
 }
