@@ -1,4 +1,6 @@
-﻿using System.ComponentModel;
+using DataAccess.Enums;
+﻿using BusinessLogic.DTOs.Screenshot;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
 namespace BusinessLogic.DTOs.Game
@@ -17,5 +19,12 @@ namespace BusinessLogic.DTOs.Game
         public string? CoverImageVertical { get; set; } = string.Empty;
         public string? CoverImageHorizontal { get; set; } = string.Empty;
         public List<int>? TagIds { get; set; }
+        public int TotalReviews { get; set; }
+        public int RecommendedReviews { get; set; }
+        public decimal RecommendationPercentage { get; set; }
+        public GameRating Rating { get; set; }
+        public List<ScreenshotDto>? Screenshots { get; set; }
+        public string DeveloperName { get; set; }
+
     }
 }

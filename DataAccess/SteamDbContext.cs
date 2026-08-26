@@ -1,8 +1,10 @@
 ﻿using DataAccess.Data;
 using DataAccess.Data.Entities;
+using DataAccess.Data.Entities.DataAccess.Data.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using System.Reflection.Emit;
 
 namespace DataAccess
 {
@@ -20,6 +22,11 @@ namespace DataAccess
         public DbSet<Achievement> Achievements { get; set; }
         public DbSet<UserAchievement> UserAchievements { get; set; }
         public DbSet<Profile> Profiles { get; set; }
+        public DbSet<Review> Reviews { get; set; }
+        public DbSet<Item> Items { get; set; }
+        public DbSet<InventoryItem> InventoryItems { get; set; }
+        public DbSet<TradeOffer> TradeOffers { get; set; }
+        public DbSet<Friendship> Friendships { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder builder)
@@ -61,6 +68,10 @@ namespace DataAccess
                 .HasPrecision(18, 2);
 
             builder.Entity<Game>()
+                .Property(g => g.RecommendationPercentage)
+                .HasPrecision(5, 2);
+
+            builder.Entity<Game>()
                 .HasOne(g => g.Developer)
                 .WithMany(u => u.DevelopedGames)
                 .HasForeignKey(g => g.DeveloperId);
@@ -95,11 +106,71 @@ namespace DataAccess
                 .WithMany(g => g.Carts)
                 .HasForeignKey(w => w.GameId);
 
-            // User - Ahievement
+            // Review
+            builder.Entity<Review>()
+                .HasOne(r => r.User)
+                .WithMany(u => u.Reviews)
+                .HasForeignKey(r => r.UserId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.Entity<Review>()
+                .HasOne(r => r.Game)
+                .WithMany(g => g.Reviews)
+                .HasForeignKey(r => r.GameId);
+
+            builder.Entity<Review>()
+                .HasIndex(r => new { r.UserId, r.GameId })
+                .IsUnique();
+
+            // User - Achievement
             builder.Entity<User>()
                 .HasMany(w => w.Achievements)
                 .WithMany(w => w.Users)
                 .UsingEntity<UserAchievement>();
+
+
+            builder.Entity<Item>()
+                .HasOne(i => i.Game)
+                .WithMany(g => g.Items) 
+                .HasForeignKey(i => i.GameId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.Entity<InventoryItem>()
+                .HasOne(i => i.User)
+                .WithMany(u => u.Inventory) 
+                .HasForeignKey(i => i.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // TradeOffer
+            builder.Entity<TradeOffer>()
+                .HasOne(t => t.Sender)
+                .WithMany()
+                .HasForeignKey(t => t.SenderId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.Entity<TradeOffer>()
+                .HasOne(t => t.Receiver)
+                .WithMany()
+                .HasForeignKey(t => t.ReceiverId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            //Friendship
+            builder.Entity<Friendship>()
+                .HasKey(f => new { f.UserId, f.FriendId });
+
+           
+            builder.Entity<Friendship>()
+                .HasOne(f => f.User)
+                .WithMany() 
+                .HasForeignKey(f => f.UserId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+   
+            builder.Entity<Friendship>()
+                .HasOne(f => f.Friend)
+                .WithMany()
+                .HasForeignKey(f => f.FriendId)
+                .OnDelete(DeleteBehavior.Restrict);
 
 
             builder.Entity<User>().ToTable("Users");

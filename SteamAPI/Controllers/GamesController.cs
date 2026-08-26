@@ -20,9 +20,22 @@ public class GamesController : ControllerBase
     public async Task<IActionResult> GetAllGames(
         [FromQuery] GameParameters gameParams,
         [FromQuery] int pageNumber = 1,
-        [FromQuery] int pageSize = 10)
+        [FromQuery] int pageSize = 10,
+        [FromQuery] bool withScreenshots = false)
     {
-        return Ok(await _gameService.GetAll(pageNumber, pageSize, gameParams));
+        return Ok(await _gameService.GetAll(pageNumber, pageSize, gameParams, withScreenshots));
+    }
+
+    [HttpGet("library")]
+    [Authorize]
+    public async Task<IActionResult> GetUserLibrary(
+        [FromQuery] GameParameters gameParams,
+        [FromQuery] int pageNumber = 1,
+        [FromQuery] int pageSize = 10,
+        [FromQuery] bool withScreenshots = false)
+    {
+        var userId = User.GetRequiredUserId();
+        return Ok(await _gameService.GetUserLibrary(userId, pageNumber, pageSize, gameParams, withScreenshots));
     }
 
     [HttpGet("{id}")]

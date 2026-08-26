@@ -39,10 +39,20 @@ namespace SteamAPI
             services.AddScoped<ITagService, TagService>();
             services.AddScoped<IEmailService, EmailService>();
             services.AddScoped<IUserHelperService, UserHelperService>();
+            services.AddScoped<IReviewService, ReviewService>();
+            services.AddScoped<IGameRatingService, GameRatingService>();
             services.AddScoped<IAchievementService, AchievementService>();
             services.AddScoped<IScreenshotService, ScreenshotService>();
             services.AddScoped<IGameVersionService, GameVersionService>();
             services.AddScoped<IWishListService, WishListService>();
+            services.AddScoped<IItemService, ItemService>();
+            services.AddScoped<IInventoryItemService, InventoryItemService>();
+            services.AddScoped<ITradeService, TradeService>();
+            services.AddScoped<IFriendshipService, FriendshipService>();
+            services.AddScoped<ICartService, CartService>();
+
+
+
 
 
             // Configurations

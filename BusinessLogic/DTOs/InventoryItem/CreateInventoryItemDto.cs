@@ -1,0 +1,15 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace BusinessLogic.DTOs.InventoryItem
+{
+    public class CreateInventoryItemDto
+    {
+        public string UserId { get; set; }
+        public int ItemId { get; set; }
+
+        public DateTime AcquiredAt { get; set; }
+        public int Quantity { get; set; }
+    }
+}

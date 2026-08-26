@@ -1,3 +1,5 @@
+using DataAccess.Data.Entities.DataAccess.Data.Entities;
+using DataAccess.Enums;
 ﻿using Microsoft.EntityFrameworkCore;
 
 namespace DataAccess.Data.Entities
@@ -19,6 +21,12 @@ namespace DataAccess.Data.Entities
         public string? CoverImageHorizontal { get; set; }
         public int Discount { get; set; }
 
+        public int TotalReviews { get; set; }
+        public int RecommendedReviews { get; set; }
+        public decimal RecommendationPercentage { get; set; }
+
+        public GameRating Rating { get; set; } = GameRating.None;
+
         public List<Tag>? Tags { get; set; }
         public List<Screenshot>? Screenshots { get; set; }
         public List<GameVersion>? Versions { get; set; }
@@ -26,5 +34,7 @@ namespace DataAccess.Data.Entities
         public List<UserGame>? UserGames { get; set; }
         public List<Wishlist> Wishlists { get; set; } = new();
         public List<Cart> Carts { get; set; } = new();
+        public List<Review> Reviews { get; set; } = new();
+        public List<Item> Items { get; set; }
     }
 }

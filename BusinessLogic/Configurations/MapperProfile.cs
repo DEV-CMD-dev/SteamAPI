@@ -1,10 +1,16 @@
 ﻿using BusinessLogic.DTOs.Achievement;
 using BusinessLogic.DTOs.Game;
 using BusinessLogic.DTOs.GameVersion;
-using BusinessLogic.DTOs.Screenshot;
 using BusinessLogic.DTOs.Profile;
+using BusinessLogic.DTOs.Review;
+using BusinessLogic.DTOs.Screenshot;
+using BusinessLogic.DTOs.Item;
 using BusinessLogic.DTOs.Tag;
+using BusinessLogic.Helpers;
 using DataAccess.Data.Entities;
+using DataAccess.Data.Entities.DataAccess.Data.Entities;
+using BusinessLogic.DTOs.InventoryItem;
+using BusinessLogic.DTOs.TradeOffer;
 
 namespace BusinessLogic.Configurations
 {
@@ -20,18 +26,39 @@ namespace BusinessLogic.Configurations
             // Game mappings
             CreateMap<Game, GameDto>().ReverseMap();
             CreateMap<CreateGameDto, Game>();
+            CreateMap<PutGameDto, Game>();
+            CreateMap<PatchGameDto, Game>()
+                .ForAllMembers(opts => opts.Condition((src, dest, srcMember) =>
+                {
+                    if (srcMember == null)
+                        return false;
+                    if (srcMember is DateTime dt && dt == default)
+                        return false;
+
+                    return true;
+                }));
+                
             CreateMap<Game, GameDto>()
                 .ForMember(
-                    dest => dest.TagIds,
-                    opt => opt.MapFrom(src => src.Tags.Select(t => t.Id))
-                );
+                    dest => dest.DeveloperName,
+                    opt => opt.MapFrom(src => src.Developer != null ? src.Developer.UserName : string.Empty)
+                )
+                .ForMember(dest => dest.Screenshots, opt => opt.ExplicitExpansion())
+                .ForMember(dest => dest.TagIds, opt => opt.MapFrom(src => src.Tags.Select(t => t.Id)));
             CreateMap<PutGameDto, Game>()
                 .ForMember(dest => dest.Tags, opt => opt.Ignore());
+
 
             // Tag mappings
             CreateMap<Tag, TagDto>().ReverseMap();
             CreateMap<CreateTagDto, Tag>();
             CreateMap<PutTagDto, Tag>();
+
+
+            // Review mappings
+            CreateMap<Review, ReviewDto>()
+                .ForMember(dest => dest.UserName,
+                    opt => opt.MapFrom(src => src.User!.UserName));
 
             // Achievement mappings
             CreateMap<Achievement, AchievementDto>().ReverseMap();
@@ -49,6 +76,22 @@ namespace BusinessLogic.Configurations
             CreateMap<CreateGameVersionDto, GameVersion>();
             CreateMap<PutGameVersionDto, GameVersion>();
             CreateMap<PatchGameVersionDto, GameVersion>();
+
+            // Item mappings
+            CreateMap<Item, ItemDto>().ReverseMap();
+            CreateMap<CreateItemDto, Item>();
+            CreateMap<PutItemDto, Item>();
+            CreateMap<PatchItemDto, Item>();
+
+            // InventoryItem mappings
+            CreateMap<InventoryItem, InventoryItemDto>().ReverseMap();
+            CreateMap<CreateInventoryItemDto, InventoryItem>();
+            CreateMap<PutInventoryItemDto, InventoryItem>();
+            CreateMap<PatchInventoryItemDto, InventoryItem>();
+
+            //TradeOffer mappings
+            CreateMap<TradeOffer, TradeOfferDto>().ReverseMap();
+
         }
     }
 }
