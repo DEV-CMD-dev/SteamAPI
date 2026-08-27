@@ -22,4 +22,10 @@
     <ProjectReference Include="..\BusinessLogic\BusinessLogic.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="EmailTemplates\ConfirmEmail.html">
+      <SubType>Component</SubType>
+    </None>
+  </ItemGroup>
+
 </Project>

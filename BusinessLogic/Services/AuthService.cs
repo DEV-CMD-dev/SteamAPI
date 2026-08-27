@@ -68,7 +68,7 @@ namespace BusinessLogic.Services
             if (user.TwoFactorEnabled)
             {
                 var code = await _userManager.GenerateTwoFactorTokenAsync(user, "Email");
-                await _emailService.SendEmailAsync(user.Email, "2FA Code", $"<h3>Your code: {code}</h3>");
+                await _emailService.SendTwoFactorCode(user.Email, code);
                 return new LoginResponseDto
                 {
                     Message = "Two factor code has been sent to your email",

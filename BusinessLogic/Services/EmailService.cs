@@ -51,5 +51,38 @@ namespace BusinessLogic.Services
                 throw;
             }
         }
+
+        public async Task SendConfirmationLink(string to, string link, int expirationTime)
+        {
+            var template = await File.ReadAllTextAsync("EmailTemplates/ConfirmEmail.html");
+            var subject = "Email confirmation";
+
+            template = template
+                .Replace("{{Link}}", link)
+                .Replace("{{ExpirationTime}}", expirationTime.ToString());
+
+            await SendEmailAsync(to, subject, template);
+        }
+
+        public async Task SendPasswordResetLink(string to, string link, int expirationTime)
+        {
+            var template = await File.ReadAllTextAsync("EmailTemplates/PasswordReset.html");
+
+            template = template
+                .Replace("{{Link}}", link)
+                .Replace("{{ExpirationTime}}", expirationTime.ToString());
+
+            await SendEmailAsync(to, "Password Reset", template);
+        }
+
+
+        public async Task SendTwoFactorCode(string to, string code)
+        {
+            var template = await File.ReadAllTextAsync("EmailTemplates/TwoFactorCode.html");
+
+            template = template.Replace("{{Code}}", code);
+
+            await SendEmailAsync(to, "2FA Code", template);
+        }
     }
 }
