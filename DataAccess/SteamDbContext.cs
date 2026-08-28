@@ -27,6 +27,8 @@ namespace DataAccess
         public DbSet<InventoryItem> InventoryItems { get; set; }
         public DbSet<TradeOffer> TradeOffers { get; set; }
         public DbSet<Friendship> Friendships { get; set; }
+        public DbSet<Order> Orders { get; set; }
+        public DbSet<OrderItem> OrderItems { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder builder)
@@ -105,6 +107,33 @@ namespace DataAccess
                 .HasOne(w => w.Game)
                 .WithMany(g => g.Carts)
                 .HasForeignKey(w => w.GameId);
+
+            // Order
+            builder.Entity<Order>()
+                .HasOne(o => o.User)
+                .WithMany(u => u.Orders)
+                .HasForeignKey(o => o.UserId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.Entity<Order>()
+                .Property(o => o.TotalAmount)
+                .HasPrecision(18, 2);
+         
+            // OrderItem
+            builder.Entity<OrderItem>()
+                .HasOne(oi => oi.Order)
+                .WithMany(o => o.OrderItems)
+                .HasForeignKey(oi => oi.OrderId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.Entity<OrderItem>()
+                .HasOne(oi => oi.Game)
+                .WithMany(g => g.OrderItems)
+                .HasForeignKey(oi => oi.GameId);
+
+            builder.Entity<OrderItem>()
+             .Property(o => o.Price)
+             .HasPrecision(18, 2);
 
             // Review
             builder.Entity<Review>()
