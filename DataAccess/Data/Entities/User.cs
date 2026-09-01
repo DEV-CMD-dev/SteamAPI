@@ -19,6 +19,7 @@ namespace DataAccess.Data.Entities
         public List<Game> DevelopedGames { get; set; } = new();
         public List<Wishlist> Wishlists { get; set; } = new();
         public List<Cart> Carts { get; set; } = new();
+        public List<Order> Orders { get; set; } = new();
         public List<Review> Reviews { get; set; } = new();
         public List<InventoryItem> Inventory { get; set; }
 

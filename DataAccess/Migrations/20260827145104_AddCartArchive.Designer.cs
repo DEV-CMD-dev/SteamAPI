@@ -4,6 +4,7 @@ using DataAccess;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataAccess.Migrations
 {
     [DbContext(typeof(SteamDbContext))]
-    partial class SteamDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260827145104_AddCartArchive")]
+    partial class AddCartArchive
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -83,6 +86,36 @@ namespace DataAccess.Migrations
                     b.HasIndex("GameId");
 
                     b.ToTable("Carts");
+                });
+
+            modelBuilder.Entity("DataAccess.Data.Entities.CartArchive", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("ArchivedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("GameId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("GameId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("CartArchives");
                 });
 
             modelBuilder.Entity("DataAccess.Data.Entities.DataAccess.Data.Entities.Review", b =>
@@ -370,59 +403,6 @@ namespace DataAccess.Migrations
                     b.ToTable("Items");
                 });
 
-            modelBuilder.Entity("DataAccess.Data.Entities.Order", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("OrderDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<decimal>("TotalAmount")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Orders");
-                });
-
-            modelBuilder.Entity("DataAccess.Data.Entities.OrderItem", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("GameId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("OrderId")
-                        .HasColumnType("int");
-
-                    b.Property<decimal>("Price")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("GameId");
-
-                    b.HasIndex("OrderId");
-
-                    b.ToTable("OrderItems");
-                });
-
             modelBuilder.Entity("DataAccess.Data.Entities.Profile", b =>
                 {
                     b.Property<string>("UserId")
@@ -702,9 +682,6 @@ namespace DataAccess.Migrations
                     b.Property<bool>("IsInstalled")
                         .HasColumnType("bit");
 
-                    b.Property<DateTime>("LastPlayDate")
-                        .HasColumnType("datetime2");
-
                     b.Property<int>("PlayTimeMinutes")
                         .HasColumnType("int");
 
@@ -943,6 +920,25 @@ namespace DataAccess.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("DataAccess.Data.Entities.CartArchive", b =>
+                {
+                    b.HasOne("DataAccess.Data.Entities.Game", "Game")
+                        .WithMany("CartArchives")
+                        .HasForeignKey("GameId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("DataAccess.Data.Entities.User", "User")
+                        .WithMany("CartArchives")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Game");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("DataAccess.Data.Entities.DataAccess.Data.Entities.Review", b =>
                 {
                     b.HasOne("DataAccess.Data.Entities.Game", "Game")
@@ -1029,36 +1025,6 @@ namespace DataAccess.Migrations
                         .IsRequired();
 
                     b.Navigation("Game");
-                });
-
-            modelBuilder.Entity("DataAccess.Data.Entities.Order", b =>
-                {
-                    b.HasOne("DataAccess.Data.Entities.User", "User")
-                        .WithMany("Orders")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("DataAccess.Data.Entities.OrderItem", b =>
-                {
-                    b.HasOne("DataAccess.Data.Entities.Game", "Game")
-                        .WithMany("OrderItems")
-                        .HasForeignKey("GameId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("DataAccess.Data.Entities.Order", "Order")
-                        .WithMany("OrderItems")
-                        .HasForeignKey("OrderId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Game");
-
-                    b.Navigation("Order");
                 });
 
             modelBuilder.Entity("DataAccess.Data.Entities.Profile", b =>
@@ -1229,11 +1195,11 @@ namespace DataAccess.Migrations
                 {
                     b.Navigation("Achievements");
 
+                    b.Navigation("CartArchives");
+
                     b.Navigation("Carts");
 
                     b.Navigation("Items");
-
-                    b.Navigation("OrderItems");
 
                     b.Navigation("Reviews");
 
@@ -1246,20 +1212,15 @@ namespace DataAccess.Migrations
                     b.Navigation("Wishlists");
                 });
 
-            modelBuilder.Entity("DataAccess.Data.Entities.Order", b =>
-                {
-                    b.Navigation("OrderItems");
-                });
-
             modelBuilder.Entity("DataAccess.Data.Entities.User", b =>
                 {
+                    b.Navigation("CartArchives");
+
                     b.Navigation("Carts");
 
                     b.Navigation("DevelopedGames");
 
                     b.Navigation("Inventory");
-
-                    b.Navigation("Orders");
 
                     b.Navigation("Profile");
 
