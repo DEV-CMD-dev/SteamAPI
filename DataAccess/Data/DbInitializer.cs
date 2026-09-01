@@ -5,6 +5,92 @@ namespace DataAccess.Data
 {
     public static class DbInitializer
     {
+        public static async Task SeedAchievementsAsync(this SteamDbContext context)
+        {
+            if (await context.Achievements.AnyAsync()) return;
+
+            var achievements = new[]
+            {
+                new Achievement { Name = "First Strike", GameId = 67, IconUrl = "https://example.com/icons/first_strike.png" },
+                new Achievement { Name = "Untouchable", GameId = 67, IconUrl = "https://example.com/icons/untouchable.png" },
+                new Achievement { Name = "Team Player", GameId = 67, IconUrl = "https://example.com/icons/team_player.png" },
+                new Achievement { Name = "Welcome to the City", GameId = 68, IconUrl = "https://example.com/icons/welcome_city.png" },
+                new Achievement { Name = "High Roller", GameId = 68, IconUrl = "https://example.com/icons/high_roller.png" },
+                new Achievement { Name = "Street Legend", GameId = 68, IconUrl = "https://example.com/icons/street_legend.png" },
+                new Achievement { Name = "The Journey Begins", GameId = 69, IconUrl = "https://example.com/icons/journey_begins.png" },
+                new Achievement { Name = "Master of Arms", GameId = 69, IconUrl = "https://example.com/icons/master_of_arms.png" },
+                new Achievement { Name = "Legendary Victory", GameId = 69, IconUrl = "https://example.com/icons/legendary_victory.png" }
+            };
+
+            foreach (var achievement in achievements)
+            {
+                context.Achievements.Add(achievement);
+            }
+
+            await context.SaveChangesAsync();
+        }
+
+        public static async Task SeedRecentlyPlayedGamesAsync(this SteamDbContext context)
+        {
+            var user = await context.Users.FirstOrDefaultAsync(item => item.UserName == "Solid");
+            if (user == null)
+                return;
+
+            var seededGames = new[]
+            {
+                new { GameId = 67, PlayedAt = new DateTime(2026, 8, 24), Minutes = 3240, UnlockedAchievements = 2 },
+                new { GameId = 68, PlayedAt = new DateTime(2026, 8, 20), Minutes = 1560, UnlockedAchievements = 1 },
+                new { GameId = 69, PlayedAt = new DateTime(2026, 8, 16), Minutes = 780, UnlockedAchievements = 1 }
+            };
+
+            foreach (var seededGame in seededGames)
+            {
+                var userGame = await context.UserGames
+                    .FirstOrDefaultAsync(item => item.UserId == user.Id && item.GameId == seededGame.GameId);
+
+                if (userGame == null)
+                {
+                    context.UserGames.Add(new UserGame
+                    {
+                        UserId = user.Id,
+                        GameId = seededGame.GameId,
+                        PurchasedAt = seededGame.PlayedAt.AddMonths(-1),
+                        LastPlayDate = seededGame.PlayedAt,
+                        PlayTimeMinutes = seededGame.Minutes,
+                        IsInstalled = true
+                    });
+                }
+                else if (userGame.LastPlayDate == default)
+                {
+                    userGame.LastPlayDate = seededGame.PlayedAt;
+                }
+
+                var achievements = await context.Achievements
+                    .Where(item => item.GameId == seededGame.GameId)
+                    .OrderBy(item => item.Id)
+                    .Take(seededGame.UnlockedAchievements)
+                    .ToListAsync();
+
+                foreach (var achievement in achievements)
+                {
+                    var userAchievementExists = await context.UserAchievements.AnyAsync(item =>
+                        item.UserId == user.Id && item.AchievementId == achievement.Id);
+
+                    if (!userAchievementExists)
+                    {
+                        context.UserAchievements.Add(new UserAchievement
+                        {
+                            UserId = user.Id,
+                            AchievementId = achievement.Id,
+                            UnlockedAt = seededGame.PlayedAt.AddDays(-1)
+                        });
+                    }
+                }
+            }
+
+            await context.SaveChangesAsync();
+        }
+
         public static void SeedSteamData(this ModelBuilder modelBuilder)
         {
            

@@ -649,8 +649,11 @@ namespace DataAccess.Migrations
                 b.Property<bool>("IsInstalled")
                     .HasColumnType("bit");
 
-                b.Property<int>("PlayTimeMinutes")
-                    .HasColumnType("int");
+                    b.Property<DateTime>("LastPlayDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("PlayTimeMinutes")
+                        .HasColumnType("int");
 
                 b.Property<DateTime>("PurchasedAt")
                     .HasColumnType("datetime2");
