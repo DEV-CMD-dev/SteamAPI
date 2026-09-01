@@ -4,6 +4,7 @@ using DataAccess;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataAccess.Migrations
 {
     [DbContext(typeof(SteamDbContext))]
-    partial class SteamDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260826190334_AddLastPlayDate")]
+    partial class AddLastPlayDate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -85,65 +88,6 @@ namespace DataAccess.Migrations
                     b.ToTable("Carts");
                 });
 
-            modelBuilder.Entity("DataAccess.Data.Entities.DataAccess.Data.Entities.Review", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Content")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("GameId")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("IsRecommended")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("GameId");
-
-                    b.HasIndex("UserId", "GameId")
-                        .IsUnique();
-
-                    b.ToTable("Reviews");
-                });
-
-            modelBuilder.Entity("DataAccess.Data.Entities.Friendship", b =>
-                {
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("FriendId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
-
-                    b.HasKey("UserId", "FriendId");
-
-                    b.HasIndex("FriendId");
-
-                    b.ToTable("Friendships");
-                });
-
             modelBuilder.Entity("DataAccess.Data.Entities.Game", b =>
                 {
                     b.Property<int>("Id")
@@ -172,16 +116,6 @@ namespace DataAccess.Migrations
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<int>("Rating")
-                        .HasColumnType("int");
-
-                    b.Property<decimal>("RecommendationPercentage")
-                        .HasPrecision(5, 2)
-                        .HasColumnType("decimal(5,2)");
-
-                    b.Property<int>("RecommendedReviews")
-                        .HasColumnType("int");
-
                     b.Property<DateTime>("ReleaseDate")
                         .HasColumnType("datetime2");
 
@@ -191,9 +125,6 @@ namespace DataAccess.Migrations
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
-
-                    b.Property<int>("TotalReviews")
-                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -214,13 +145,9 @@ namespace DataAccess.Migrations
                             Description = "Tactical shooter.",
                             Discount = 0,
                             Price = 0.00m,
-                            Rating = 0,
-                            RecommendationPercentage = 0m,
-                            RecommendedReviews = 0,
                             ReleaseDate = new DateTime(2023, 9, 27, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             SystemRequirements = "Windows 10, 8GB RAM",
-                            Title = "Counter-Strike 2",
-                            TotalReviews = 0
+                            Title = "Counter-Strike 2"
                         },
                         new
                         {
@@ -228,13 +155,9 @@ namespace DataAccess.Migrations
                             Description = "Cyberpunk RPG.",
                             Discount = 0,
                             Price = 29.99m,
-                            Rating = 0,
-                            RecommendationPercentage = 0m,
-                            RecommendedReviews = 0,
                             ReleaseDate = new DateTime(2026, 5, 12, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             SystemRequirements = "Windows 11, 16GB RAM",
-                            Title = "Neon City 2026",
-                            TotalReviews = 0
+                            Title = "Neon City 2026"
                         },
                         new
                         {
@@ -242,13 +165,9 @@ namespace DataAccess.Migrations
                             Description = "Rise, Tarnished.",
                             Discount = 0,
                             Price = 59.99m,
-                            Rating = 0,
-                            RecommendationPercentage = 0m,
-                            RecommendedReviews = 0,
                             ReleaseDate = new DateTime(2022, 2, 25, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             SystemRequirements = "Windows 10, RTX 2060",
-                            Title = "Elden Ring",
-                            TotalReviews = 0
+                            Title = "Elden Ring"
                         });
                 });
 
@@ -305,122 +224,6 @@ namespace DataAccess.Migrations
                             PatchNotes = "Colosseum update.",
                             Version = "v1.10"
                         });
-                });
-
-            modelBuilder.Entity("DataAccess.Data.Entities.InventoryItem", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("AcquiredAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("ItemId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Quantity")
-                        .HasColumnType("int");
-
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ItemId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("InventoryItems");
-                });
-
-            modelBuilder.Entity("DataAccess.Data.Entities.Item", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("GameId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("ImageUrl")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("IsTradable")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("GameId");
-
-                    b.ToTable("Items");
-                });
-
-            modelBuilder.Entity("DataAccess.Data.Entities.Order", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("OrderDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<decimal>("TotalAmount")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Orders");
-                });
-
-            modelBuilder.Entity("DataAccess.Data.Entities.OrderItem", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("GameId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("OrderId")
-                        .HasColumnType("int");
-
-                    b.Property<decimal>("Price")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("GameId");
-
-                    b.HasIndex("OrderId");
-
-                    b.ToTable("OrderItems");
                 });
 
             modelBuilder.Entity("DataAccess.Data.Entities.Profile", b =>
@@ -538,43 +341,6 @@ namespace DataAccess.Migrations
                             Id = 4,
                             Name = "Souls-like"
                         });
-                });
-
-            modelBuilder.Entity("DataAccess.Data.Entities.TradeOffer", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("ReceiverId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<int?>("ReceiverInventoryItemId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("SenderId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<int?>("SenderInventoryItemId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ReceiverId");
-
-                    b.HasIndex("SenderId");
-
-                    b.ToTable("TradeOffers");
                 });
 
             modelBuilder.Entity("DataAccess.Data.Entities.User", b =>
@@ -943,44 +709,6 @@ namespace DataAccess.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("DataAccess.Data.Entities.DataAccess.Data.Entities.Review", b =>
-                {
-                    b.HasOne("DataAccess.Data.Entities.Game", "Game")
-                        .WithMany("Reviews")
-                        .HasForeignKey("GameId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("DataAccess.Data.Entities.User", "User")
-                        .WithMany("Reviews")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Game");
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("DataAccess.Data.Entities.Friendship", b =>
-                {
-                    b.HasOne("DataAccess.Data.Entities.User", "Friend")
-                        .WithMany()
-                        .HasForeignKey("FriendId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("DataAccess.Data.Entities.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Friend");
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("DataAccess.Data.Entities.Game", b =>
                 {
                     b.HasOne("DataAccess.Data.Entities.User", "Developer")
@@ -999,66 +727,6 @@ namespace DataAccess.Migrations
                         .IsRequired();
 
                     b.Navigation("Game");
-                });
-
-            modelBuilder.Entity("DataAccess.Data.Entities.InventoryItem", b =>
-                {
-                    b.HasOne("DataAccess.Data.Entities.Item", "Item")
-                        .WithMany()
-                        .HasForeignKey("ItemId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("DataAccess.Data.Entities.User", "User")
-                        .WithMany("Inventory")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Item");
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("DataAccess.Data.Entities.Item", b =>
-                {
-                    b.HasOne("DataAccess.Data.Entities.Game", "Game")
-                        .WithMany("Items")
-                        .HasForeignKey("GameId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Game");
-                });
-
-            modelBuilder.Entity("DataAccess.Data.Entities.Order", b =>
-                {
-                    b.HasOne("DataAccess.Data.Entities.User", "User")
-                        .WithMany("Orders")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("DataAccess.Data.Entities.OrderItem", b =>
-                {
-                    b.HasOne("DataAccess.Data.Entities.Game", "Game")
-                        .WithMany("OrderItems")
-                        .HasForeignKey("GameId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("DataAccess.Data.Entities.Order", "Order")
-                        .WithMany("OrderItems")
-                        .HasForeignKey("OrderId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Game");
-
-                    b.Navigation("Order");
                 });
 
             modelBuilder.Entity("DataAccess.Data.Entities.Profile", b =>
@@ -1081,25 +749,6 @@ namespace DataAccess.Migrations
                         .IsRequired();
 
                     b.Navigation("Game");
-                });
-
-            modelBuilder.Entity("DataAccess.Data.Entities.TradeOffer", b =>
-                {
-                    b.HasOne("DataAccess.Data.Entities.User", "Receiver")
-                        .WithMany()
-                        .HasForeignKey("ReceiverId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("DataAccess.Data.Entities.User", "Sender")
-                        .WithMany()
-                        .HasForeignKey("SenderId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Receiver");
-
-                    b.Navigation("Sender");
                 });
 
             modelBuilder.Entity("DataAccess.Data.Entities.UserAchievement", b =>
@@ -1231,12 +880,6 @@ namespace DataAccess.Migrations
 
                     b.Navigation("Carts");
 
-                    b.Navigation("Items");
-
-                    b.Navigation("OrderItems");
-
-                    b.Navigation("Reviews");
-
                     b.Navigation("Screenshots");
 
                     b.Navigation("UserGames");
@@ -1246,24 +889,13 @@ namespace DataAccess.Migrations
                     b.Navigation("Wishlists");
                 });
 
-            modelBuilder.Entity("DataAccess.Data.Entities.Order", b =>
-                {
-                    b.Navigation("OrderItems");
-                });
-
             modelBuilder.Entity("DataAccess.Data.Entities.User", b =>
                 {
                     b.Navigation("Carts");
 
                     b.Navigation("DevelopedGames");
 
-                    b.Navigation("Inventory");
-
-                    b.Navigation("Orders");
-
                     b.Navigation("Profile");
-
-                    b.Navigation("Reviews");
 
                     b.Navigation("UserGames");
 

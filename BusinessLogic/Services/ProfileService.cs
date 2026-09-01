@@ -25,7 +25,33 @@ namespace BusinessLogic.Services
             if (profile == null)
                 throw new HttpException($"Profile with UserId {userId} not found", HttpStatusCode.NotFound);
 
-            return _mapper.Map<ProfileDto>(profile);
+            var result = _mapper.Map<ProfileDto>(profile);
+            result.RecentlyPlayedGames = await _context.UserGames
+                .AsNoTracking()
+                .Where(userGame => userGame.UserId == userId && userGame.Game != null)
+                .OrderByDescending(userGame => userGame.LastPlayDate)
+                .Take(10)
+                .Select(userGame => new RecentGameDto
+                {
+                    Id = userGame.GameId,
+                    Title = userGame.Game!.Title,
+                    CoverImageHorizontal = userGame.Game.CoverImageHorizontal,
+                    LastPlayDate = userGame.LastPlayDate,
+                    PlayTimeMinutes = userGame.PlayTimeMinutes,
+                    Achievements = userGame.Game.Achievements!
+                        .Select(achievement => new AchievementProgressDto
+                        {
+                            Id = achievement.Id,
+                            Name = achievement.Name,
+                            IconUrl = achievement.IconUrl,
+                            IsUnlocked = _context.UserAchievements.Any(userAchievement =>
+                                userAchievement.UserId == userId && userAchievement.AchievementId == achievement.Id)
+                        })
+                        .ToList()
+                })
+                .ToListAsync();
+
+            return result;
         }
         public async Task Patch(string userId, PatchProfileDto dto)
         {
