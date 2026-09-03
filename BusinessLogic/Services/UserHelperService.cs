@@ -46,12 +46,8 @@ namespace BusinessLogic.Services
             var link = $"{_frontendOptions.BaseUrl}/reset-password" +
                 $"?identifier={encodedEmail}" +
                 $"&token={encodedToken}";
-            
-            await _emailService.SendEmailAsync(user.Email, "Password Reset", $@"
-                <p>Your password reset link:</p>
-                <strong>{link}</strong>
-                <p>This link will expire in {_dataProtectionToken.ExpirationTimeInMinutes} minutes.</p>
-            ");
+
+            await _emailService.SendPasswordResetLink(user.Email, link, _dataProtectionToken.ExpirationTimeInMinutes);
         }
 
         public async Task ResetPasswordAsync(PasswordResetDto dto)
@@ -81,11 +77,7 @@ namespace BusinessLogic.Services
                 $"?identifier={encodedEmail}" +
                 $"&token={encodedToken}";
 
-            await _emailService.SendEmailAsync(user.Email, "Email Confirmation link", $@"
-                <p>Your confirmation token:</p>
-                <strong>{link}</strong>
-                <p>This link will expire in {_dataProtectionToken.ExpirationTimeInMinutes} minutes.</p>
-            ");
+            await _emailService.SendConfirmationLink(user.Email, link, _dataProtectionToken.ExpirationTimeInMinutes);
         }
 
         public async Task ConfirmEmailAsync(ConfirmEmailDto dto)
@@ -98,9 +90,7 @@ namespace BusinessLogic.Services
             var result = await _userManager.ConfirmEmailAsync(user, dto.Token);
 
             if (!result.Succeeded)
-            {
                 throw new HttpException("Invalid or expired token", HttpStatusCode.BadRequest);
-            }
         }
 
     }

@@ -1,0 +1,70 @@
+﻿<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Confirmation</title>
+</head>
+
+<body style="margin:0;padding:0;background:#192b3d;font-family:Arial,Helvetica,sans-serif;color:#d6d7d8;">
+<div style="display:none;max-height:0;overflow:hidden;">
+    Confirm your email address to complete your registration.
+</div>
+
+<table role="presentation" style="width:100%;border-collapse:collapse;">
+    <tr>
+        <td style="padding:40px 16px;">
+            <table role="presentation" style="width:100%;max-width:600px;margin:0 auto;border-collapse:collapse;background:#1b2838;">
+                <tr>
+                    <td style="padding:28px 40px;background:linear-gradient(135deg,#1b2838,#171d25);border-bottom:1px solid #2a475e;">
+                        <div style="font-size:28px;font-weight:bold;color:#ffffff;letter-spacing:1px;">
+                            NEXUS
+                        </div>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td style="padding:40px;">
+                        <h1 style="margin:0 0 20px;font-size:24px;line-height:1.3;font-weight:normal;color:#ffffff;">
+                            Confirm your email address
+                        </h1>
+
+                        <p style="margin:0 0 24px;font-size:15px;line-height:1.6;color:#c7d5e0;">
+                            Thanks for registering. Please confirm your email address to finish creating your account.
+                        </p>
+
+                        <table role="presentation" style="border-collapse:collapse;margin:0 0 30px;">
+                            <tr>
+                                <td style="background:#1a9fff;border-radius:2px;">
+                                    <a href="{{Link}}" style="display:inline-block;padding:12px 26px;font-size:15px;font-weight:bold;color:#ffffff;text-decoration:none;">
+                                        Confirm Email
+                                    </a>
+                                </td>
+                            </tr>
+                        </table>
+
+                        <p style="margin:0 0 16px;font-size:13px;line-height:1.6;color:#8f98a0;">
+                            This link will expire in <strong style="color:#c7d5e0;">{{ExpirationTime}}</strong> minutes.
+                        </p>
+
+                        <p style="margin:28px 0 0;padding-top:20px;border-top:1px solid #2a475e;font-size:12px;line-height:1.6;color:#68747e;">
+                            If you didn't create an account, you can safely ignore this email.
+                        </p>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td style="padding:20px 40px;background:#171d25;border-top:1px solid #2a475e;">
+                        <p style="margin:0;font-size:11px;line-height:1.5;color:#68747e;">
+                            This is an automated message. Please do not reply to this email.
+                        </p>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+</table>
+
+</body>
+</html>
