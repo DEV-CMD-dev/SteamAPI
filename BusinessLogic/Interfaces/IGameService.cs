@@ -8,6 +8,7 @@ namespace BusinessLogic.Interfaces
     {
         Task<PaginatedList<GameDto>> GetAll(int pageNumber, int pageSize, GameParameters gameParams, bool withScreenshots = false);
         Task<PaginatedList<GameDto>> GetUserLibrary(string userId, int pageNumber, int pageSize, GameParameters gameParams, bool withScreenshots = false);
+        Task<PaginatedList<GameDto>> GetTopSellers(int pageNumber, int pageSize);
         Task<GameDto> GetById(int id);
         Task<GameDto> Create(string userId, CreateGameDto dto);
         Task Patch(int id, string userId, PatchGameDto model);
