@@ -57,6 +57,17 @@ namespace BusinessLogic.Services
             return await PaginatedList<GameDto>.CreateAsync(games, pageNumber, pageSize, _frontendOptions.MaxPaginationPageSize);
         }
 
+        public async Task<PaginatedList<GameDto>> GetTopSellers(int pageNumber, int pageSize)
+        {
+            var query = _context.Games
+                .OrderByDescending(g => g.OrderItems.Count)
+                .ThenBy(g => g.Title);
+
+            var games = query.ProjectTo<GameDto>(_mapper.ConfigurationProvider);
+
+            return await PaginatedList<GameDto>.CreateAsync(games, pageNumber, pageSize, _frontendOptions.MaxPaginationPageSize);
+        }
+
         public async Task<GameDto> GetById(int id)
         {
             var game = await _context.Games

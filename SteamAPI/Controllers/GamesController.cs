@@ -38,6 +38,14 @@ public class GamesController : ControllerBase
         return Ok(await _gameService.GetUserLibrary(userId, pageNumber, pageSize, gameParams, withScreenshots));
     }
 
+    [HttpGet("top-sellers")]
+    public async Task<IActionResult> GetTopSellers(
+        [FromQuery] int pageNumber = 1,
+        [FromQuery] int pageSize = 10)
+    {
+        return Ok(await _gameService.GetTopSellers(pageNumber, pageSize));
+    }
+
     [HttpGet("{id}")]
     public async Task<IActionResult> GetById(int id)
     {
