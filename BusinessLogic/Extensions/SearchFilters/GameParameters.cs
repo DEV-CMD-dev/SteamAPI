@@ -12,5 +12,7 @@
 
         public List<int>? TagIds { get; set; }
         public bool? OnSaleOnly { get; set; } = false;
+        public bool? HideFreeToPlay { get; set; } = false;
+        public string? OsFilter { get; set; }
     }
 }
