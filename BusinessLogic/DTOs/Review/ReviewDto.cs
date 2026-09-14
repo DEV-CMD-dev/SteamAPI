@@ -26,5 +26,9 @@ namespace BusinessLogic.DTOs.Review
         public DateTime? UpdatedAt { get; set; }
 
         public bool IsEdited => UpdatedAt.HasValue;
+
+        public string? UserAvatarUrl { get; set; }
+        public int UserGamesOwnedCount { get; set; }
+        public int UserReviewsCount { get; set; }
     }
 }
