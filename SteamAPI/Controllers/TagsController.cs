@@ -17,10 +17,12 @@ public class TagsController : ControllerBase
 
     [HttpGet]
     public async Task<IActionResult> GetAllTags(
-        [FromQuery] int pageNumber = 1,
-        [FromQuery] int pageSize = 10)
+       [FromQuery] int pageNumber = 1,
+       [FromQuery] int pageSize = 10,
+       [FromQuery] string? searchTerm = null)
     {
-        return Ok(await _tagService.GetAll(pageNumber, pageSize));
+        var result = await _tagService.GetAll(pageNumber, pageSize, searchTerm);
+        return Ok(result);
     }
 
     [HttpGet("{id}")]

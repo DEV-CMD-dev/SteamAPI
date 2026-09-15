@@ -23,6 +23,14 @@ namespace SteamAPI.Controllers
             return Ok(await _profileService.GetById(userId));
         }
 
+        [HttpGet("GetMyProfile")]
+        [Authorize]
+        public async Task<ActionResult<MiniProfileDto>> GetMyProfile()
+        {
+            var userId = User.GetRequiredUserId();
+            return Ok(await _profileService.GetMyProfile(userId));
+        }
+
         [HttpPatch]
         [Authorize]
         public async Task<IActionResult> Patch(PatchProfileDto dto)

@@ -6,5 +6,6 @@ namespace BusinessLogic.Interfaces
     {
         Task<List<OrderDto>> GetOrders(string userId);
         Task Checkout(string userId);
+        Task<decimal> GetBalance(string userId);
     }
 }

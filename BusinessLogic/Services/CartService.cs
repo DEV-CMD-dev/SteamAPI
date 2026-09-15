@@ -30,6 +30,11 @@ namespace BusinessLogic.Services
                 .ToListAsync();
         }
 
+        public async Task<int> GetCountByUserId(string userId)
+        {
+            return await _context.Carts.Where(u =>  u.UserId == userId).CountAsync();
+        }
+
         public async Task AddGameToCart(string userId, int gameId)
         {
             var gameExists = await _context.Games.AnyAsync(g => g.Id == gameId);

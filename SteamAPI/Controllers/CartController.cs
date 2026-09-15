@@ -24,6 +24,14 @@ namespace SteamAPI.Controllers
             return Ok(cart);
         }
 
+        [HttpGet("NumberOfCart")]
+        public async Task<IActionResult> GetCountMyCart()
+        {
+            var userId = User.GetRequiredUserId();
+            var cart = await _cartService.GetCountByUserId(userId);
+            return Ok(cart);
+        }
+
         [HttpPost("{gameId}")]
         public async Task<IActionResult> AddGame(int gameId)
         {
