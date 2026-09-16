@@ -96,7 +96,6 @@ namespace BusinessLogic.Services
             if (existingProfile == null)
                 throw new HttpException($"Profile with UserId {userId} not found", HttpStatusCode.NotFound);
 
-            // Only map non-null properties
             if (dto is PatchProfileDto patchDto)
             {
                 if (patchDto.Avatar != null)
@@ -112,6 +111,24 @@ namespace BusinessLogic.Services
             }
 
             await _context.SaveChangesAsync();
+        }
+        public async Task<List<ProfileSearchResultDto>> SearchByUserName(string query)
+        {
+            if (string.IsNullOrWhiteSpace(query))
+                return new List<ProfileSearchResultDto>();
+
+            return await _context.Profiles
+                .AsNoTracking()
+                .Where(p => p.User != null && EF.Functions.Like(p.User.UserName, $"%{query}%"))
+                .OrderBy(p => p.User!.UserName)
+                .Take(10)
+                .Select(p => new ProfileSearchResultDto
+                {
+                    UserId = p.UserId,
+                    UserName = p.User!.UserName,
+                    Avatar = p.Avatar
+                })
+                .ToListAsync();
         }
     }
 }

@@ -9,10 +9,18 @@ namespace BusinessLogic.DTOs.TradeOffer
     public class TradeOfferDto
     {
         public int Id { get; set; }
+
         public string SenderId { get; set; }
+        public string SenderName { get; set; }
+
         public string ReceiverId { get; set; }
-        public int SenderInventoryItemId { get; set; }
-        public int ReceiverInventoryItemId { get; set; }
+        public string ReceiverName { get; set; }
+
+        public int? SenderInventoryItemId { get; set; }
+        public TradeOfferItemDto? SenderItem { get; set; }
+
+        public int? ReceiverInventoryItemId { get; set; }
+        public TradeOfferItemDto? ReceiverItem { get; set; }
 
         public TradeOfferStatus Status { get; set; } = TradeOfferStatus.Pending;
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;

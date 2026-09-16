@@ -130,6 +130,9 @@ namespace BusinessLogic.Services
             if (dto.CoverImageVertical != null)
                 game.CoverImageVertical = dto.CoverImageVertical;
 
+            if (dto.IconUrl != null)
+                game.IconUrl = dto.IconUrl;
+
             if (dto.TagIds != null)
                 await game.SetTagsAsync(_context, dto.TagIds);
 

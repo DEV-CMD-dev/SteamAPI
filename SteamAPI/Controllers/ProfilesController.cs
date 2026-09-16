@@ -50,5 +50,13 @@ namespace SteamAPI.Controllers
             await _profileService.Put(userId, dto);
             return Ok();
         }
+        [HttpGet("search")]
+        [Authorize]
+        public async Task<IActionResult> Search([FromQuery] string query)
+        {
+            var result = await _profileService.SearchByUserName(query);
+
+            return Ok(result);
+        }
     }
 }

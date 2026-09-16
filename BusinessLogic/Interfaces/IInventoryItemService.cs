@@ -12,5 +12,7 @@ namespace BusinessLogic.Interfaces
         Task<PaginatedList<InventoryItemDto>> GetAll(string userId, int pageNumber, int pageSize);
         Task BuyFromStoreAsync(string userId, int itemId);
         Task SellFromInventoryAsync(string userId, int inventoryItemId);
+
+        Task<PaginatedList<InventoryItemDto>> GetTradableByUser(string userId, int pageNumber, int pageSize);
     }
 }

@@ -86,7 +86,14 @@ namespace BusinessLogic.Configurations
             CreateMap<PatchGameVersionDto, GameVersion>();
 
             // Item mappings
-            CreateMap<Item, ItemDto>().ReverseMap();
+            CreateMap<Item, ItemDto>()
+                .ForMember(dest => dest.GameTitle,
+                    opt => opt.MapFrom(src => src.Game != null ? src.Game.Title : string.Empty))
+                .ForMember(dest => dest.GameIconUrl,
+                    opt => opt.MapFrom(src => src.Game != null
+                        ? (!string.IsNullOrEmpty(src.Game.IconUrl) ? src.Game.IconUrl : src.Game.CoverImageHorizontal)
+                        : null));
+            CreateMap<ItemDto, Item>();
             CreateMap<CreateItemDto, Item>();
             CreateMap<PutItemDto, Item>();
             CreateMap<PatchItemDto, Item>();
@@ -98,7 +105,21 @@ namespace BusinessLogic.Configurations
             CreateMap<PatchInventoryItemDto, InventoryItem>();
 
             //TradeOffer mappings
-            CreateMap<TradeOffer, TradeOfferDto>().ReverseMap();
+            CreateMap<InventoryItem, TradeOfferItemDto>()
+                .ForMember(dest => dest.InventoryItemId, opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Item.Name))
+                .ForMember(dest => dest.ImageUrl, opt => opt.MapFrom(src => src.Item.ImageUrl))
+                .ForMember(dest => dest.GameTitle, opt => opt.MapFrom(src => src.Item.Game.Title));
+
+            CreateMap<TradeOffer, TradeOfferDto>()
+                .ForMember(dest => dest.SenderName,
+                    opt => opt.MapFrom(src => src.Sender != null ? src.Sender.UserName : string.Empty))
+                .ForMember(dest => dest.ReceiverName,
+                    opt => opt.MapFrom(src => src.Receiver != null ? src.Receiver.UserName : string.Empty))
+                .ForMember(dest => dest.SenderItem,
+                    opt => opt.MapFrom(src => src.SenderInventoryItem))
+                .ForMember(dest => dest.ReceiverItem,
+                    opt => opt.MapFrom(src => src.ReceiverInventoryItem));
 
         }
     }

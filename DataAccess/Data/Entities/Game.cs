@@ -19,6 +19,7 @@ namespace DataAccess.Data.Entities
         public string? SystemRequirements { get; set; }
         public string? CoverImageVertical { get; set; }
         public string? CoverImageHorizontal { get; set; }
+        public string? IconUrl { get; set; }
         public int Discount { get; set; }
 
         public int TotalReviews { get; set; }

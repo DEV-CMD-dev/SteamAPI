@@ -11,7 +11,6 @@ namespace SteamAPI.Controllers
     [ApiController]
     public class InventoryItemController : ControllerBase
     {
-        //TODO: Add Store Controller and StoreService for buying items from the store
         private readonly IInventoryItemService _inventoryItemService;
 
         public InventoryItemController(IInventoryItemService inventoryItemService)
@@ -50,6 +49,18 @@ namespace SteamAPI.Controllers
             await _inventoryItemService.SellFromInventoryAsync(userId, inventoryItemId);
 
             return Ok(new { message = "Item sold successfully!" });
+        }
+
+        [HttpGet("user/{userId}")]
+        [Authorize]
+        public async Task<IActionResult> GetUserInventory(
+            [FromRoute] string userId,
+            [FromQuery] int pageNumber = 1,
+            [FromQuery] int pageSize = 10)
+        {
+            var result = await _inventoryItemService.GetTradableByUser(userId, pageNumber, pageSize);
+
+            return Ok(result);
         }
     }
 }

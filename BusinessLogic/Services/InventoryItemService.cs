@@ -32,11 +32,22 @@ namespace BusinessLogic.Services
             _mapper = mapper;
             _frontendOptions = frontendOptions.Value;
         }
+
         public async Task<PaginatedList<InventoryItemDto>> GetAll(string userId, int pageNumber, int pageSize)
         {
             var query = _context.InventoryItems
                 .AsNoTracking()
                 .Where(i => i.UserId == userId)
+                .OrderBy(t => t.Id)
+                .ProjectTo<InventoryItemDto>(_mapper.ConfigurationProvider);
+            return await PaginatedList<InventoryItemDto>.CreateAsync(query, pageNumber, pageSize, _frontendOptions.MaxPaginationPageSize);
+        }
+
+        public async Task<PaginatedList<InventoryItemDto>> GetTradableByUser(string userId, int pageNumber, int pageSize)
+        {
+            var query = _context.InventoryItems
+                .AsNoTracking()
+                .Where(i => i.UserId == userId && i.Item.IsTradable)
                 .OrderBy(t => t.Id)
                 .ProjectTo<InventoryItemDto>(_mapper.ConfigurationProvider);
             return await PaginatedList<InventoryItemDto>.CreateAsync(query, pageNumber, pageSize, _frontendOptions.MaxPaginationPageSize);
@@ -48,12 +59,10 @@ namespace BusinessLogic.Services
             if (itemTemplate == null)
                 throw new HttpException($"Item with ID {itemId} not found", HttpStatusCode.NotFound);
 
-            // TODO: add payment checking logic here 
-
             var newInventoryItem = new InventoryItem
             {
                 UserId = userId,
-                ItemId = itemId,      
+                ItemId = itemId,
                 Quantity = 1,
                 AcquiredAt = DateTime.UtcNow,
             };
@@ -61,15 +70,18 @@ namespace BusinessLogic.Services
             _context.InventoryItems.Add(newInventoryItem);
             await _context.SaveChangesAsync();
         }
+
         public async Task SellFromInventoryAsync(string userId, int inventoryItemId)
         {
-            var inventoryItem = await _context.InventoryItems.FindAsync(inventoryItemId);
+            var inventoryItem = await _context.InventoryItems
+                .FirstOrDefaultAsync(i => i.Id == inventoryItemId);
 
             if (inventoryItem == null)
                 throw new HttpException($"Inventory item with ID {inventoryItemId} not found", HttpStatusCode.NotFound);
 
-            var user = await _context.Users.Include(u => u.DevelopedGames).FirstOrDefaultAsync(u => u.Id == userId);
-            user.EnsureExists(userId).EnsureHasAccessToGame(inventoryItem.Item.GameId);
+            if (inventoryItem.UserId != userId)
+                throw new HttpException("You do not own this inventory item", HttpStatusCode.Forbidden);
+
 
             _context.InventoryItems.Remove(inventoryItem);
             await _context.SaveChangesAsync();
