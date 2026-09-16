@@ -22,6 +22,8 @@ namespace BusinessLogic.Configurations
             CreateMap<Profile, ProfileDto>().ReverseMap();
             CreateMap<Profile, PutProfileDto>().ReverseMap();
             CreateMap<PatchProfileDto, Profile>();
+            CreateMap<MiniProfileDto, Profile>();
+
 
             // Game mappings
             CreateMap<Game, GameDto>().ReverseMap();

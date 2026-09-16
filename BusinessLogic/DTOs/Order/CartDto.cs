@@ -8,5 +8,7 @@ namespace BusinessLogic.DTOs.Order
     {
         public int GameId { get; set; }
         public decimal Price { get; set; }
+        public int Discount { get; set; }
+
     }
 }

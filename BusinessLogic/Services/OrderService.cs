@@ -53,14 +53,15 @@ namespace BusinessLogic.Services
                 .Select(c => new CartDto
                 {
                     GameId = c.GameId,
-                    Price = c.Game.Price
+                    Price = c.Game.Price,
+                    Discount = c.Game.Discount
                 })
                 .ToListAsync();
 
             if (cartItems == null || !cartItems.Any())
                 throw new HttpException($"Any items in the cart not found", HttpStatusCode.NotFound);
 
-            var totalPrice = cartItems.Sum(c => c.Price);
+            var totalPrice = cartItems.Sum(c => c.Price * (1 - c.Discount / 100m));
 
             using(var transaction = await _context.Database.BeginTransactionAsync())
             {
@@ -79,8 +80,19 @@ namespace BusinessLogic.Services
                             Price = c.Price
                         }).ToList()
                     };
-
                     _context.Orders.Add(order);
+
+                    var userGames = cartItems.Select(c => new UserGame
+                    {
+                        UserId = userId,
+                        GameId = c.GameId,
+                        PurchasedAt = DateTime.UtcNow,
+                        LastPlayDate = DateTime.UtcNow, 
+                        PlayTimeMinutes = 0,
+                        IsInstalled = false
+                    }).ToList();
+                    _context.UserGames.AddRange(userGames);
+
                     await _context.SaveChangesAsync();
                     await _context.Carts.Where(c => c.UserId == userId).ExecuteDeleteAsync();
 
@@ -93,5 +105,13 @@ namespace BusinessLogic.Services
                 }
             }
         }
+
+        public async Task<decimal> GetBalance(string userId)
+        {
+            var balance = await _paymentService.GetBalance(userId);
+
+            return balance;
+        }
+
     }
 }

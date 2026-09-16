@@ -19,6 +19,15 @@ namespace BusinessLogic.Extensions
             if (gameParams.OnSaleOnly == true)
                 query = query.Where(g => g.Discount > 0);
 
+            if (gameParams.HideFreeToPlay == true)
+                query = query.Where(g => g.Price > 0 || (g.Price == 0 && g.Discount == 100));
+
+            if (!string.IsNullOrWhiteSpace(gameParams.OsFilter))
+            {
+                var selectedOs = gameParams.OsFilter.ToLower().Split(',');
+                query = query.Where(g => selectedOs.Any(os => g.SystemRequirements.ToLower().Contains(os.Trim())));
+            }
+
             if (gameParams.TagIds != null && gameParams.TagIds.Count > 0)
             {
                 query = query.Where(g => g.Tags.Any(t => gameParams.TagIds.Contains(t.Id)));

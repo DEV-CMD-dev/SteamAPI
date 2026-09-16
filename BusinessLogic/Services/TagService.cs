@@ -29,14 +29,29 @@ namespace BusinessLogic.Services
             _frontendOptions = frontendOptions.Value;
         }
 
-        public async Task<PaginatedList<TagDto>> GetAll(int pageNumber, int pageSize)
+        public async Task<PaginatedList<TagDto>> GetAll(int pageNumber, int pageSize, string? searchTerm = null)
         {
             var query = _context.Tags
-                .AsNoTracking()
+                .AsNoTracking();
+
+            if (!string.IsNullOrWhiteSpace(searchTerm))
+            {
+                searchTerm = searchTerm.Trim();
+                query = query.Where(t => t.Name.Contains(searchTerm));
+            }
+
+            var projectedQuery = query
                 .OrderBy(t => t.Id)
                 .ProjectTo<TagDto>(_mapper.ConfigurationProvider);
-            return await PaginatedList<TagDto>.CreateAsync(query, pageNumber, pageSize, _frontendOptions.MaxPaginationPageSize);
+
+            return await PaginatedList<TagDto>.CreateAsync(
+                projectedQuery,
+                pageNumber,
+                pageSize,
+                _frontendOptions.MaxPaginationPageSize);
         }
+
+
 
         public async Task<TagDto> GetById(int id)
         {

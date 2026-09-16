@@ -5,7 +5,7 @@ namespace BusinessLogic.Interfaces
 {
     public interface ITagService
     {
-        Task<PaginatedList<TagDto>> GetAll(int pageNumber, int pageSize);
+        Task<PaginatedList<TagDto>> GetAll(int pageNumber, int pageSize, string? searchTerm = null);
         Task<TagDto> GetById(int id);
         Task Create(string userId,CreateTagDto dto);
         Task Patch(string userId, int id, PatchTagDto dto);

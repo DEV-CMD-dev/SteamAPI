@@ -53,6 +53,27 @@ namespace BusinessLogic.Services
 
             return result;
         }
+
+
+        public async Task<MiniProfileDto> GetMyProfile(string userId)
+        {
+            var profile = await _context.Profiles
+                .Where(p => p.UserId == userId) 
+                .Select(p => new MiniProfileDto
+                {
+                    Avatar = p.Avatar,
+                    Name = p.User.UserName,     
+                    UserId = p.UserId
+                })
+                .FirstOrDefaultAsync();
+
+            if (profile == null)
+                throw new HttpException($"Profile with UserId {userId} not found", HttpStatusCode.NotFound);
+
+            return profile;
+        }
+
+
         public async Task Patch(string userId, PatchProfileDto dto)
         {
             await Update(userId, dto);

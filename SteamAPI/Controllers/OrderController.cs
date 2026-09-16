@@ -34,5 +34,14 @@ namespace SteamAPI.Controllers
             await _orderService.Checkout(userId);
             return Ok();
         }
+
+        [HttpGet("GetBalance")]
+        [Authorize]
+        public async Task<IActionResult> GetBalance()
+        {
+            var userId = User.GetRequiredUserId();
+            var balance = await _orderService.GetBalance(userId);
+            return Ok(balance);
+        }
     }
 }
