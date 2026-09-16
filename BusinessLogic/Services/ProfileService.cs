@@ -21,11 +21,16 @@ namespace BusinessLogic.Services
         public async Task<ProfileDto> GetById(string userId)
         {
             var profile = await _context.Profiles.AsNoTracking().FirstOrDefaultAsync(x => x.UserId == userId);
+            var userBio = await _context.Users.AsNoTracking()
+                .Where(u => userId == u.Id)
+                .Select(u => u.Bio)
+                .FirstOrDefaultAsync();
 
             if (profile == null)
                 throw new HttpException($"Profile with UserId {userId} not found", HttpStatusCode.NotFound);
 
             var result = _mapper.Map<ProfileDto>(profile);
+            result.Bio = userBio;
             result.RecentlyPlayedGames = await _context.UserGames
                 .AsNoTracking()
                 .Where(userGame => userGame.UserId == userId && userGame.Game != null)
