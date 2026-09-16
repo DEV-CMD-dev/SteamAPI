@@ -11,6 +11,8 @@ namespace BusinessLogic.DTOs.Item
         public string Description { get; set; }
         public string ImageUrl { get; set; }
         public int GameId { get; set; }
+        public string GameTitle { get; set; }
+        public string? GameIconUrl { get; set; }
         public bool IsTradable { get; set; }
     }
 }

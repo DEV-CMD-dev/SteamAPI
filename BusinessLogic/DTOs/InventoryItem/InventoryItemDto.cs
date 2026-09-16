@@ -1,4 +1,5 @@
-﻿using DataAccess.Data.Entities;
+﻿using BusinessLogic.DTOs.Item;
+using DataAccess.Data.Entities;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -13,5 +14,7 @@ namespace BusinessLogic.DTOs.InventoryItem
 
         public DateTime AcquiredAt { get; set; }
         public int Quantity { get; set; }
+
+        public ItemDto Item { get; set; }
     }
 }

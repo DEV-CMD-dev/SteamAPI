@@ -35,7 +35,7 @@ namespace BusinessLogic.Services
             var query = _context.TradeOffers
                 .AsNoTracking()
                 .Where(to => to.SenderId == userId || to.ReceiverId == userId)
-                .OrderBy(to => to.CreatedAt)
+                .OrderByDescending(to => to.CreatedAt)
                 .ProjectTo<TradeOfferDto>(_mapper.ConfigurationProvider);
             return await PaginatedList<TradeOfferDto>.CreateAsync(query, pageNumber, pageSize, _frontendOptions.MaxPaginationPageSize);
         }
@@ -53,6 +53,9 @@ namespace BusinessLogic.Services
                 var senderInventoryItem = await GetUserItemAsync(senderId, dto.SenderInventoryItemId.Value);
                 if (senderInventoryItem == null)
                     throw new HttpException("Your inventory item not found", HttpStatusCode.NotFound);
+
+                if (!senderInventoryItem.Item.IsTradable)
+                    throw new HttpException("Your item is not tradable", HttpStatusCode.BadRequest);
             }
 
             if (dto.ReceiverInventoryItemId.HasValue)
@@ -60,6 +63,9 @@ namespace BusinessLogic.Services
                 var receiverInventoryItem = await GetUserItemAsync(dto.ReceiverId, dto.ReceiverInventoryItemId.Value);
                 if (receiverInventoryItem == null)
                     throw new HttpException("Receiver's inventory item not found", HttpStatusCode.NotFound);
+
+                if (!receiverInventoryItem.Item.IsTradable)
+                    throw new HttpException("Receiver's item is not tradable", HttpStatusCode.BadRequest);
             }
 
             var offer = new TradeOffer
@@ -127,6 +133,7 @@ namespace BusinessLogic.Services
         private async Task<InventoryItem?> GetUserItemAsync(string userId, int itemId)
         {
             return await _context.InventoryItems
+                .Include(i => i.Item)
                 .FirstOrDefaultAsync(i => i.UserId == userId && i.Id == itemId);
         }
 

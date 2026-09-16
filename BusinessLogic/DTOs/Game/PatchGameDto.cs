@@ -14,6 +14,8 @@ namespace BusinessLogic.DTOs.Game
         public string? SystemRequirements { get; set; }
         public string? CoverImageVertical { get; set; }
         public string? CoverImageHorizontal { get; set; }
+        public string? IconUrl { get; set; }
+
         public List<int>? TagIds { get; set; }
     }
 }

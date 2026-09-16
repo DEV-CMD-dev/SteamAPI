@@ -14,8 +14,10 @@ namespace DataAccess.Data.Entities
         public User Receiver { get; set; }
 
         public int? SenderInventoryItemId { get; set; }
+        public InventoryItem? SenderInventoryItem { get; set; }
         public int? ReceiverInventoryItemId { get; set; }
-   
+        public InventoryItem? ReceiverInventoryItem { get; set; }
+
         public TradeOfferStatus Status { get; set; } = TradeOfferStatus.Pending;
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     }

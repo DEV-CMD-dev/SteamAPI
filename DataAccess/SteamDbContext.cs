@@ -182,6 +182,17 @@ namespace DataAccess
                 .WithMany()
                 .HasForeignKey(t => t.ReceiverId)
                 .OnDelete(DeleteBehavior.Restrict);
+            builder.Entity<TradeOffer>()
+                .HasOne(t => t.SenderInventoryItem)
+                .WithMany()
+                .HasForeignKey(t => t.SenderInventoryItemId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.Entity<TradeOffer>()
+                .HasOne(t => t.ReceiverInventoryItem)
+                .WithMany()
+                .HasForeignKey(t => t.ReceiverInventoryItemId)
+                .OnDelete(DeleteBehavior.Restrict);
 
             //Friendship
             builder.Entity<Friendship>()
