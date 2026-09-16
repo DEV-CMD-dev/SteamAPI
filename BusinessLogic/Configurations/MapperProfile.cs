@@ -60,7 +60,13 @@ namespace BusinessLogic.Configurations
             // Review mappings
             CreateMap<Review, ReviewDto>()
                 .ForMember(dest => dest.UserName,
-                    opt => opt.MapFrom(src => src.User!.UserName));
+                    opt => opt.MapFrom(src => src.User!.UserName))
+                .ForMember(dest => dest.UserAvatarUrl,
+                    opt => opt.MapFrom(src => src.User!.Profile != null ? src.User.Profile.Avatar : null))
+                .ForMember(dest => dest.UserGamesOwnedCount,
+                    opt => opt.MapFrom(src => src.User!.UserGames.Count))
+                .ForMember(dest => dest.UserReviewsCount,
+                    opt => opt.MapFrom(src => src.User!.Reviews.Count));
 
             // Achievement mappings
             CreateMap<Achievement, AchievementDto>().ReverseMap();
