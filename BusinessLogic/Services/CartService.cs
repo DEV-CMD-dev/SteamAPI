@@ -44,8 +44,14 @@ namespace BusinessLogic.Services
             var alreadyExists = await _context.Carts
                 .AnyAsync(c => c.UserId == userId && c.GameId == gameId);
 
+            var alreadyExistsinLibrary = await _context.UserGames
+              .AnyAsync(c => c.UserId == userId && c.GameId == gameId);
+
             if (alreadyExists)
                 throw new HttpException($"Game is already in your cart", HttpStatusCode.Conflict);
+
+            if (alreadyExistsinLibrary)
+                throw new HttpException($"Game is already in your library", HttpStatusCode.Conflict);
 
             var cartGame = new Cart
             {

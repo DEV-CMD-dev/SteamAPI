@@ -1,5 +1,7 @@
 ﻿using BusinessLogic.Configurations;
+using BusinessLogic.DTOs.Order;
 using BusinessLogic.Interfaces;
+using DataAccess.Data.Entities;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System.Net;
@@ -83,6 +85,26 @@ namespace BusinessLogic.Services
             template = template.Replace("{{Code}}", code);
 
             await SendEmailAsync(to, "2FA Code", template);
+        }
+
+        public async Task SendOrderReceiptAsync(string to, string userName, Order order, List<OrderItemDto> items)
+        {
+            var template = await File.ReadAllTextAsync("EmailTemplates/OrderReceipt.html");       
+            var itemsHtml = string.Join("", items.Select(i => $@"
+            <tr>
+                <td style='padding:15px 0; color:#bdbdbd; border-top:1px solid rgba(255,255,255,0.05);'>{i.Title}</td>
+                <td style='padding:15px 0; color:#ffffff; font-weight:bold; text-align:right; border-top:1px solid rgba(255,255,255,0.05);'>{i.Price:0.00} $    </td>
+            </tr>"));
+
+            template = template
+                .Replace("{{UserName}}", userName)
+                .Replace("{{UserEmail}}", to) 
+                .Replace("{{OrderId}}", order.Id.ToString())
+                .Replace("{{OrderDate}}", order.OrderDate.ToString("dd MMMM yyyy")) 
+                .Replace("{{TotalAmount}}", order.TotalAmount.ToString("0.00"))
+                .Replace("{{OrderItems}}", itemsHtml);
+
+            await SendEmailAsync(to, $"Invoice ID: {order.Id} - Thank you for your purchase on Nexus!", template);
         }
     }
 }

@@ -3,6 +3,7 @@
     public class ProfileDto
     {
         public string UserId { get; set; }
+        public string UserName { get; set; }
         public string? Avatar { get; set; }
         public string? Bio { get; set; }
         public int Level { get; set; }

@@ -8,7 +8,7 @@ namespace BusinessLogic.Interfaces
 {
     public interface IFriendshipService
     {
-        Task<PaginatedList<ProfileDto>> GetFriends(string userId, int pageNumber, int pageSize);
+        Task<PaginatedList<FriendProfileDto>> GetFriends(string userId, int pageNumber, int pageSize);
         Task<PaginatedList<ProfileDto>> GetIncomingRequests(string userId, int pageNumber, int pageSize);
         Task SendFriendRequest(string userId, string friendId);
         Task AcceptFriendRequest(string userId, string friendId);

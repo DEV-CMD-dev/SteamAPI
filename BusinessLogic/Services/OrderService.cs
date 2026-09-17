@@ -13,13 +13,15 @@ namespace BusinessLogic.Services
     {
         private readonly SteamDbContext _context;
         private readonly IMapper _mapper;
-
         private readonly IPaymentService _paymentService;
-        public OrderService(SteamDbContext context, IMapper mapper, IPaymentService paymentService)
+        private readonly IEmailService _emailService;
+
+        public OrderService(SteamDbContext context, IMapper mapper, IPaymentService paymentService, IEmailService emailService)
         {
             _context = context;
             _mapper = mapper;
             _paymentService = paymentService;
+            _emailService = emailService;
         }
         public async Task<List<OrderDto>> GetOrders(string userId)
         {
@@ -52,6 +54,7 @@ namespace BusinessLogic.Services
                 .Where(u => u.UserId == userId)
                 .Select(c => new CartDto
                 {
+                    Title = c.Game.Title,
                     GameId = c.GameId,
                     Price = c.Game.Price,
                     Discount = c.Game.Discount
@@ -60,6 +63,8 @@ namespace BusinessLogic.Services
 
             if (cartItems == null || !cartItems.Any())
                 throw new HttpException($"Any items in the cart not found", HttpStatusCode.NotFound);
+
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
 
             var totalPrice = cartItems.Sum(c => c.Price * (1 - c.Discount / 100m));
 
@@ -97,6 +102,26 @@ namespace BusinessLogic.Services
                     await _context.Carts.Where(c => c.UserId == userId).ExecuteDeleteAsync();
 
                     await transaction.CommitAsync();
+
+                    try
+                    {
+                        if (user != null && !string.IsNullOrEmpty(user.Email))
+                        {
+                           
+                            var purchasedItemsForEmail = cartItems.Select(c => new OrderItemDto
+                            {
+                                Title = c.Title,
+                                Price = c.Price * (1 - c.Discount / 100m) 
+                            }).ToList();
+
+                  
+                            await _emailService.SendOrderReceiptAsync(user.Email, user.UserName, order, purchasedItemsForEmail);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"Failed to send receipt email to {user?.Email}: {ex.Message}");
+                    }
                 }
                 catch
                 {
