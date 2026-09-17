@@ -35,7 +35,7 @@ namespace BusinessLogic.Services
                 .AsNoTracking()
                 .Where(userGame => userGame.UserId == userId && userGame.Game != null)
                 .OrderByDescending(userGame => userGame.LastPlayDate)
-                .Take(10)
+                .Take(3)
                 .Select(userGame => new RecentGameDto
                 {
                     Id = userGame.GameId,
