@@ -163,10 +163,10 @@ namespace DataAccess.Data
             // 6. Сід версій ігор
             modelBuilder.Entity<GameVersion>().HasData(new List<GameVersion>()
             {
-                new() { Id = 1, GameId = 1, Version = "v1.0", PatchNotes = "Initial release." },
-                new() { Id = 2, GameId = 1, Version = "v1.1", PatchNotes = "Fixed smoke grenades." },
-                new() { Id = 3, GameId = 2, Version = "v0.9", PatchNotes = "Early Access Launch." },
-                new() { Id = 4, GameId = 3, Version = "v1.10", PatchNotes = "Colosseum update." }
+                new() { Id = 1, GameId = 1, Version = "v1.0", PatchNotes = "Initial release.", CreatedAt = new DateTime(2026, 9, 10) },
+                new() { Id = 2, GameId = 1, Version = "v1.1", PatchNotes = "Fixed smoke grenades.", CreatedAt = new DateTime(2026, 9, 13) },
+                new() { Id = 3, GameId = 2, Version = "v0.9", PatchNotes = "Early Access Launch.", CreatedAt = new DateTime(2026, 9, 14) },
+                new() { Id = 4, GameId = 3, Version = "v1.10", PatchNotes = "Colosseum update.", CreatedAt = new DateTime(2026, 9, 16) }
             });
         }
     }

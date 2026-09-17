@@ -118,5 +118,22 @@ namespace BusinessLogic.Services
 
             return gameVersion;
         }
+        public async Task<List<LibraryGameVersionDto>> GetRecent(int take = 10)
+        {
+            return await _context.GameVersions
+                .AsNoTracking()
+                .OrderByDescending(v => v.CreatedAt)
+                .Take(take)
+                .Select(v => new LibraryGameVersionDto
+                {
+                    GameId = v.GameId,
+                    GameTitle = v.Game.Title,
+                    GameImageUrl = v.Game.CoverImageHorizontal ?? string.Empty,
+                    Version = v.Version,
+                    PatchNotes = v.PatchNotes,
+                    CreatedAt = v.CreatedAt
+                })
+                .ToListAsync();
+        }
     }
 }

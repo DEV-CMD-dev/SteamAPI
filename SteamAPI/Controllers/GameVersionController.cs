@@ -76,5 +76,10 @@ namespace SteamAPI.Controllers
 
             return NoContent();
         }
+        [HttpGet("recent")]
+        public async Task<IActionResult> GetRecent([FromQuery] int take = 10)
+        {
+            return Ok(await _gameVersionService.GetRecent(take));
+        }
     }
 }
