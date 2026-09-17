@@ -8,5 +8,6 @@ namespace BusinessLogic.Interfaces
     public interface ILibraryService
     {
         Task<List<LibraryGameDto>> GetUserGames(string userId);
+        Task<FullLibraryGameDto> GetById(int id);
     }
 }

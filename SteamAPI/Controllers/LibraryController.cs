@@ -23,5 +23,12 @@ namespace SteamAPI.Controllers
             var games = await _libraryService.GetUserGames(userId);
             return Ok(games);
         }
+
+        [HttpGet("GetById")]
+        public async Task<IActionResult> GetById(int gameId)
+        {
+            var games = await _libraryService.GetById(gameId);
+            return Ok(games);
+        }
     }
 }

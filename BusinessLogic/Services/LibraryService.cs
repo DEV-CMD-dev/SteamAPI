@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Text;
 
 namespace BusinessLogic.Services
@@ -41,5 +42,33 @@ namespace BusinessLogic.Services
 
             return await query.ToListAsync();
         }
+
+        public async Task<FullLibraryGameDto> GetById(int id)
+        {
+            var game = await _context.UserGames
+                .AsNoTracking()
+                .Where(u => u.GameId == id)
+                .Select(g => new FullLibraryGameDto
+                {
+                    Id = g.GameId,
+                    IconUrl = g.Game.IconUrl,
+                    CoverImageHorizontal = g.Game.CoverImageHorizontal,
+                    CoverImageVertical = g.Game.CoverImageVertical,
+                    LastPlayDate = g.LastPlayDate,
+                    PlayTimeMinutes = g.PlayTimeMinutes,
+                    IsInstalled = g.IsInstalled,
+                    Title = g.Game.Title,
+                    ReleaseDate = g.Game.ReleaseDate,
+                    DeveloperId = g.Game.DeveloperId,
+                    PurchasedAt = g.PurchasedAt
+                })
+                .FirstOrDefaultAsync();
+
+            if (game == null)
+                throw new HttpException($"Game with ID {id} not found", HttpStatusCode.NotFound);
+
+            return game;
+        }
+
     }
 }
