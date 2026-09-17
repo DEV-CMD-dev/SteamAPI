@@ -36,7 +36,11 @@ namespace BusinessLogic.Services
                 {
                     Id = u.GameId,
                     Title = u.Game.Title,
-                    IconUrl = u.Game.IconUrl
+                    IconUrl = u.Game.IconUrl,
+                    CoverImageVertical = u.Game.CoverImageVertical ?? string.Empty,
+                    LastPlayDate = u.LastPlayDate,
+                    PlayTimeMinutes = u.PlayTimeMinutes,
+                    IsInstalled = u.IsInstalled
                 })
                 .OrderBy(t => t.Title);
 
