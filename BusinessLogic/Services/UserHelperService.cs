@@ -93,5 +93,53 @@ namespace BusinessLogic.Services
                 throw new HttpException("Invalid or expired token", HttpStatusCode.BadRequest);
         }
 
+        public async Task RequestSetTwoFactorAuthAsync(RequestSetTwoFactorAuthDto dto, string userId)
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+
+            if (user == null)
+                throw new HttpException("Invalid credentials", HttpStatusCode.Unauthorized);
+            
+            var isValidPassword = await _userManager.CheckPasswordAsync(user, dto.Password);
+            
+            if (!isValidPassword)
+                throw new HttpException("Invalid credentials", HttpStatusCode.Unauthorized);
+
+            var code = await _userManager.GenerateUserTokenAsync(user, TokenOptions.DefaultEmailProvider, "Set2FA");
+
+            var action = user.TwoFactorEnabled ? "Disabling" : "Enabling";
+            
+            await _emailService.SendEmailAsync(user.Email,
+                $"Confirm your 2FA {action}",$"Your 2FA code: {code}");
+        }
+
+        public async Task SetTwoFactorAuthAsync(SetTwoFactorAuthDto dto, string userId)
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+            
+            if (user == null)
+                throw new HttpException("Invalid credentials", HttpStatusCode.Unauthorized);
+            
+            var isValid = await _userManager.VerifyUserTokenAsync(user,
+                TokenOptions.DefaultEmailProvider,
+                "Set2FA",
+                dto.Code
+            );
+
+            if (!isValid)
+                throw new HttpException("Invalid code", HttpStatusCode.BadRequest);
+            
+            await _userManager.SetTwoFactorEnabledAsync(user, !user.TwoFactorEnabled);
+        }
+
+        public async Task<bool> IsTwoFactorAuthEnabledAsync(string userId)
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+
+            if (user == null)
+                throw new HttpException("User not found", HttpStatusCode.NotFound);
+
+            return user.TwoFactorEnabled;
+        }
     }
 }

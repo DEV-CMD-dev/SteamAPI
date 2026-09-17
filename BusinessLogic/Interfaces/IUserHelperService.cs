@@ -9,5 +9,8 @@ namespace BusinessLogic.Interfaces
         Task ResetPasswordAsync(PasswordResetDto dto);
         Task SendEmailConfirmationAsync(User user);
         Task ConfirmEmailAsync(ConfirmEmailDto dto);
+        Task RequestSetTwoFactorAuthAsync(RequestSetTwoFactorAuthDto dto, string userId);
+        Task SetTwoFactorAuthAsync(SetTwoFactorAuthDto dto, string userId);
+        Task<bool> IsTwoFactorAuthEnabledAsync(string userId);
     }
 }
