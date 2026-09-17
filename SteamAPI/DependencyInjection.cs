@@ -52,9 +52,7 @@ namespace SteamAPI
             services.AddScoped<ICartService, CartService>();
             services.AddScoped<IOrderService, OrderService>();
             services.AddScoped<IPaymentService, PaymentService>();
-
-
-
+            services.AddScoped<ILibraryService, LibraryService>();
 
 
             // Configurations
