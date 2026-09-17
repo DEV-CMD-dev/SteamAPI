@@ -7,6 +7,7 @@ namespace BusinessLogic.DTOs.Order
     public class CartDto
     {
         public int GameId { get; set; }
+        public string Title { get; set; }   
         public decimal Price { get; set; }
         public int Discount { get; set; }
 

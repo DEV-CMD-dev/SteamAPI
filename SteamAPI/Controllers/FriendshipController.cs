@@ -18,11 +18,19 @@ namespace SteamAPI.Controllers
         }
 
         [HttpGet("friends")]
-        public async Task<IActionResult> GetFriends(int pageNumber = 1, int pageSize = 10)
+        public async Task<IActionResult> GetFriends(string? userId, int pageNumber = 1, int pageSize = 10)
         {
-            var userId = User.GetRequiredUserId();
-            var friends = await _friendshipService.GetFriends(userId, pageNumber, pageSize);
-            return Ok(friends);
+            if(userId == null)
+            {
+                var userIdFromReq = User.GetRequiredUserId();
+                var friends = await _friendshipService.GetFriends(userIdFromReq, pageNumber, pageSize);
+                return Ok(friends);
+            }
+            else
+            {
+                var friends = await _friendshipService.GetFriends(userId, pageNumber, pageSize);
+                return Ok(friends);
+            }
         }
 
         [HttpGet("incoming-requests")]

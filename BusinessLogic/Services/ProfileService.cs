@@ -26,11 +26,17 @@ namespace BusinessLogic.Services
                 .Select(u => u.Bio)
                 .FirstOrDefaultAsync();
 
+            var userName = await _context.Users.AsNoTracking()
+               .Where(u => userId == u.Id)
+               .Select(u => u.UserName)
+               .FirstOrDefaultAsync();
+
             if (profile == null)
                 throw new HttpException($"Profile with UserId {userId} not found", HttpStatusCode.NotFound);
 
             var result = _mapper.Map<ProfileDto>(profile);
             result.Bio = userBio;
+            result.UserName = userName;
             result.RecentlyPlayedGames = await _context.UserGames
                 .AsNoTracking()
                 .Where(userGame => userGame.UserId == userId && userGame.Game != null)

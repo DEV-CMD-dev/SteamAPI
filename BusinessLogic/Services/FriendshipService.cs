@@ -23,16 +23,22 @@ namespace BusinessLogic.Services
             _mapper = mapper;
             _frontendOptions = frontendOptions.Value;
         }
-        public async Task<PaginatedList<ProfileDto>> GetFriends(string userId, int pageNumber, int pageSize)
+        public async Task<PaginatedList<FriendProfileDto>> GetFriends(string userId, int pageNumber, int pageSize)
         {
             var query = _context.Friendships
                 .AsNoTracking()
                 .Where(f => (f.UserId == userId || f.FriendId == userId) && f.Status == DataAccess.Enums.FriendshipStatus.Accepted)
-                .Select(f => f.UserId == userId ? f.Friend.Profile : f.User.Profile)
-                .ProjectTo<ProfileDto>(_mapper.ConfigurationProvider);
-
-            return await PaginatedList<ProfileDto>.CreateAsync(query, pageNumber, pageSize, _frontendOptions.MaxPaginationPageSize);
+                .Select(f => new FriendProfileDto
+                {
+                    UserId = f.UserId == userId ? f.Friend.Profile.UserId : f.User.Profile.UserId,
+                    Avatar = f.UserId == userId ? f.Friend.Profile.Avatar : f.User.Profile.Avatar,
+                    Name = f.UserId == userId ? f.Friend.UserName : f.User.UserName,
+                    Level = f.UserId == userId ? f.Friend.Profile.Level : f.User.Profile.Level
+                }
+                );
+            return await PaginatedList<FriendProfileDto>.CreateAsync(query, pageNumber, pageSize, _frontendOptions.MaxPaginationPageSize);
         }
+
         public async Task<PaginatedList<ProfileDto>> GetIncomingRequests(string userId, int pageNumber, int pageSize)
         {
             var query = _context.Friendships
@@ -43,7 +49,6 @@ namespace BusinessLogic.Services
             return await PaginatedList<ProfileDto>.CreateAsync(query, pageNumber, pageSize, _frontendOptions.MaxPaginationPageSize);
         }
 
-     
         public async Task SendFriendRequest(string userId, string userName)
         {
             var friend = await _context.Users

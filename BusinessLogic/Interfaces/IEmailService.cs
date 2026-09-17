@@ -1,4 +1,7 @@
-﻿namespace BusinessLogic.Interfaces
+﻿using BusinessLogic.DTOs.Order;
+using DataAccess.Data.Entities;
+
+namespace BusinessLogic.Interfaces
 {
     public interface IEmailService
     {
@@ -6,5 +9,6 @@
         Task SendPasswordResetLink(string to, string link, int expirationTime);
         Task SendConfirmationLink(string to, string link, int expirationTime);
         Task SendTwoFactorCode(string to, string code);
+        Task SendOrderReceiptAsync(string to, string userName, Order order, List<OrderItemDto> items);
     }
 }
