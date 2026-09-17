@@ -8,5 +8,6 @@ namespace DataAccess.Data.Entities
         public Game? Game { get; set; }
         public string Version { get; set; }
         public string? PatchNotes { get; set; }
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     }
 }

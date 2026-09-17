@@ -15,5 +15,6 @@ namespace BusinessLogic.Interfaces
         Task Patch(int id, string userId, PatchGameVersionDto model);
         Task Put(int id, string userId, PutGameVersionDto model);
         Task Delete(string userId, int id);
+        Task<List<LibraryGameVersionDto>> GetRecent(int take = 10);
     }
 }
