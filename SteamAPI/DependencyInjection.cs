@@ -10,6 +10,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Scalar.AspNetCore;
 using SteamApi.Middlewares;
+using SteamAPI.Hubs;
 using System.Text;
 
 
@@ -30,6 +31,7 @@ namespace SteamAPI
             services.AddControllers();
             services.AddOpenApi();
             services.AddAutoMapper(cfg => { }, typeof(MapperProfile));
+            services.AddSignalR();
 
             // BLL services
             services.AddScoped<IJwtService, JwtService>();
@@ -52,6 +54,8 @@ namespace SteamAPI
             services.AddScoped<ICartService, CartService>();
             services.AddScoped<IOrderService, OrderService>();
             services.AddScoped<IPaymentService, PaymentService>();
+            services.AddScoped<IMessageService, MessageService>();
+
 
 
 
@@ -112,6 +116,21 @@ namespace SteamAPI
                         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOpts.Key)),
                         ClockSkew = TimeSpan.Zero
                     };
+
+                    o.Events = new JwtBearerEvents
+                    {
+                        OnMessageReceived = context =>
+                        {
+                            var accessToken = context.Request.Query["access_token"];
+                            var path = context.HttpContext.Request.Path;
+                            if (!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/chat"))
+                            {
+                                context.Token = accessToken;
+                            }
+
+                            return Task.CompletedTask;
+                        }
+                    };
                 });
 
             // CORS
@@ -119,7 +138,10 @@ namespace SteamAPI
             {
                 options.AddPolicy("AllowSteamApp", policy =>
                 {
-                    policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
+                    policy.WithOrigins("http://localhost:5173") 
+                          .AllowAnyHeader()
+                          .AllowAnyMethod()
+                          .AllowCredentials(); 
                 });
             });
 
@@ -135,6 +157,7 @@ namespace SteamAPI
             }
 
             app.UseHttpsRedirection();
+            app.MapHub<ChatHub>("/chat");
             app.UseRouting();
             app.UseCors("AllowSteamApp");
             app.UseErrorHandler();

@@ -29,6 +29,8 @@ namespace DataAccess
         public DbSet<Friendship> Friendships { get; set; }
         public DbSet<Order> Orders { get; set; }
         public DbSet<OrderItem> OrderItems { get; set; }
+        public DbSet<Message> Messages { get; set; }
+
 
 
         protected override void OnModelCreating(ModelBuilder builder)
