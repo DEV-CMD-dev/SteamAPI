@@ -11,6 +11,6 @@ namespace DataAccess.Data.Entities
         public string ReceiverId { get; set; }
         public string Text { get; set; }
         public DateTime CreatedAt { get; set; }
-        public bool IsRead = false;
+        public bool IsRead { get; set; }
     }
 }

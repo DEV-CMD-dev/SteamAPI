@@ -33,10 +33,17 @@ namespace BusinessLogic.Services
                     UserId = f.UserId == userId ? f.Friend.Profile.UserId : f.User.Profile.UserId,
                     Avatar = f.UserId == userId ? f.Friend.Profile.Avatar : f.User.Profile.Avatar,
                     Name = f.UserId == userId ? f.Friend.UserName : f.User.UserName,
-                    Level = f.UserId == userId ? f.Friend.Profile.Level : f.User.Profile.Level
+                    Level = f.UserId == userId ? f.Friend.Profile.Level : f.User.Profile.Level,
                 }
                 );
-            return await PaginatedList<FriendProfileDto>.CreateAsync(query, pageNumber, pageSize, _frontendOptions.MaxPaginationPageSize);
+            var result = await PaginatedList<FriendProfileDto>.CreateAsync(query, pageNumber, pageSize, _frontendOptions.MaxPaginationPageSize);
+
+            foreach(var f in result.Items)
+            {
+                f.IsOnline = OnlineUsersStore.OnlineUsers.ContainsKey(f.UserId);
+            }
+
+            return result;
         }
 
         public async Task<PaginatedList<ProfileDto>> GetIncomingRequests(string userId, int pageNumber, int pageSize)

@@ -28,7 +28,7 @@ namespace BusinessLogic.Services
             var query = _context.Messages
                 .AsNoTracking()
                 .Where(m => m.SenderId == senderId && m.ReceiverId == receiverId || m.SenderId == receiverId && m.ReceiverId == senderId)
-                .OrderBy(m => m.CreatedAt)
+                .OrderByDescending(m => m.CreatedAt)
                 .Select(m => new MessageDto
                 {
                    Id = m.Id,

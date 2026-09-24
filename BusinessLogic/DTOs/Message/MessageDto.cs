@@ -10,7 +10,7 @@ namespace BusinessLogic.DTOs.Message
         public string SenderId { get; set; }
         public string ReceiverId { get; set; }
         public string Text { get; set; }
-        public DateTime CreatedAt = DateTime.UtcNow;
-        public bool IsRead = false;
+        public DateTimeOffset CreatedAt { get; set; }
+        public bool IsRead { get; set; }
     }
 }
