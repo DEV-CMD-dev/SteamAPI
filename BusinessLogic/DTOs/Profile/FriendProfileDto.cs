@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace BusinessLogic.DTOs.Profile
+﻿namespace BusinessLogic.DTOs.Profile
 {
     public class FriendProfileDto
     {
@@ -10,6 +6,6 @@ namespace BusinessLogic.DTOs.Profile
         public string? Avatar { get; set; }
         public string Name { get; set; }
         public int Level { get; set; }
-
+        public bool IsOnline { get; set; }
     }
 }

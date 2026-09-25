@@ -9,5 +9,6 @@ namespace BusinessLogic.Interfaces
         Task Patch(string userId, PatchProfileDto dto);
         Task Put(string userId, PutProfileDto dto);
         Task<List<ProfileSearchResultDto>> SearchByUserName(string query);
+        Task<List<ProfileSearchResultDto>> SearchFriendsByUserName(string query, string currentUserId);
     }
 }

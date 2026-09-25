@@ -33,6 +33,15 @@ namespace SteamAPI.Controllers
             }
         }
 
+        [HttpGet("friends-with-message")]
+        public async Task<IActionResult> GetFriendsWithMessage(int pageNumber = 1, int pageSize = 10)
+        {
+            var userIdFromReq = User.GetRequiredUserId();
+            var friends = await _friendshipService.GetFriendsWithLastMessage(userIdFromReq, pageNumber, pageSize);
+            return Ok(friends);
+        }
+
+
         [HttpGet("incoming-requests")]
         public async Task<IActionResult> GetIncomingRequests(int pageNumber = 1, int pageSize = 10)
         {

@@ -58,5 +58,15 @@ namespace SteamAPI.Controllers
 
             return Ok(result);
         }
+
+        [HttpGet("search-friends")]
+        [Authorize]
+        public async Task<IActionResult> SearchFriends([FromQuery] string query)
+        {
+            var user = User.GetRequiredUserId();
+            var result = await _profileService.SearchFriendsByUserName(query, user);
+
+            return Ok(result);
+        }
     }
 }
