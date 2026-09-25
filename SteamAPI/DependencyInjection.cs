@@ -154,12 +154,15 @@ namespace SteamAPI
             }
 
             app.UseHttpsRedirection();
-            app.MapHub<ChatHub>("/chat");
             app.UseRouting();
+            
             app.UseCors("AllowSteamApp");
             app.UseErrorHandler();
+            
             app.UseAuthentication();
             app.UseAuthorization();
+            
+            app.MapHub<ChatHub>("/chat");
             app.MapControllers();
 
             return app;
