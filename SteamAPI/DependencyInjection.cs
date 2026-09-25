@@ -135,7 +135,7 @@ namespace SteamAPI
             {
                 options.AddPolicy("AllowSteamApp", policy =>
                 {
-                    policy.WithOrigins("http://localhost:5173") 
+                    policy.WithOrigins("https://steam-i2zxp67ux-dev-cmd-devs-projects.vercel.app") 
                           .AllowAnyHeader()
                           .AllowAnyMethod()
                           .AllowCredentials(); 
