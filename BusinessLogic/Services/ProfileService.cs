@@ -136,5 +136,29 @@ namespace BusinessLogic.Services
                 })
                 .ToListAsync();
         }
+
+        public async Task<List<ProfileSearchResultDto>> SearchFriendsByUserName(string query, string currentUserId)
+        {
+            if (string.IsNullOrWhiteSpace(query))
+                return new List<ProfileSearchResultDto>();
+
+            return await _context.Profiles
+                .AsNoTracking()
+                .Where(p => p.User != null
+                         && p.UserId != currentUserId 
+                         && EF.Functions.Like(p.User.UserName, $"%{query}%")
+                         && !_context.Friendships.Any(f =>
+                             (f.UserId == currentUserId && f.FriendId == p.UserId) ||
+                             (f.FriendId == currentUserId && f.UserId == p.UserId)))
+                .OrderBy(p => p.User!.UserName)
+                .Take(10)
+                .Select(p => new ProfileSearchResultDto
+                {
+                    UserId = p.UserId,
+                    UserName = p.User!.UserName,
+                    Avatar = p.Avatar
+                })
+                .ToListAsync();
+        }
     }
 }

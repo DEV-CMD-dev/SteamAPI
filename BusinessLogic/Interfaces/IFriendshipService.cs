@@ -1,4 +1,5 @@
-﻿using BusinessLogic.DTOs.Profile;
+﻿using BusinessLogic.DTOs.Message;
+using BusinessLogic.DTOs.Profile;
 using BusinessLogic.Helpers;
 using System;
 using System.Collections.Generic;
@@ -9,6 +10,7 @@ namespace BusinessLogic.Interfaces
     public interface IFriendshipService
     {
         Task<PaginatedList<FriendProfileDto>> GetFriends(string userId, int pageNumber, int pageSize);
+        Task<PaginatedList<FriendMessageDto>> GetFriendsWithLastMessage(string userId, int pageNumber, int pageSize);
         Task<PaginatedList<ProfileDto>> GetIncomingRequests(string userId, int pageNumber, int pageSize);
         Task SendFriendRequest(string userId, string friendId);
         Task AcceptFriendRequest(string userId, string friendId);

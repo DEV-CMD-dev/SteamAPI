@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using BusinessLogic.Configurations;
+using BusinessLogic.DTOs.Message;
 using BusinessLogic.DTOs.Profile;
 using BusinessLogic.Helpers;
 using BusinessLogic.Interfaces;
@@ -46,16 +47,59 @@ namespace BusinessLogic.Services
             return result;
         }
 
+        public async Task<PaginatedList<FriendMessageDto>> GetFriendsWithLastMessage(string userId, int pageNumber, int pageSize)
+        {
+            var query = _context.Friendships
+                .AsNoTracking()
+                .Where(f => (f.UserId == userId || f.FriendId == userId) && f.Status == DataAccess.Enums.FriendshipStatus.Accepted)
+                .Select(f => new FriendMessageDto
+                {
+                    UserId = f.UserId == userId ? f.Friend.Profile.UserId : f.User.Profile.UserId,
+                    Avatar = f.UserId == userId ? f.Friend.Profile.Avatar : f.User.Profile.Avatar,
+                    Name = f.UserId == userId ? f.Friend.UserName : f.User.UserName,
+                    Level = f.UserId == userId ? f.Friend.Profile.Level : f.User.Profile.Level,
+                    LastMessage = _context.Messages
+                        .Where(m => (m.SenderId == userId && m.ReceiverId == (f.UserId == userId ? f.FriendId : f.UserId)) ||
+                                    (m.SenderId == (f.UserId == userId ? f.FriendId : f.UserId) && m.ReceiverId == userId))
+                        .OrderByDescending(m => m.CreatedAt)
+                        .Select(m => m.Text)
+                        .FirstOrDefault() ?? string.Empty,
+                    UnreadMessageCounter = _context.Messages.Count(m => m.IsRead == false && m.SenderId == (f.UserId == userId ? f.FriendId : f.UserId) && m.ReceiverId == userId)
+                }
+                );
+            var result = await PaginatedList<FriendMessageDto>.CreateAsync(query, pageNumber, pageSize, _frontendOptions.MaxPaginationPageSize);
+
+            foreach (var f in result.Items)
+            {
+                f.IsOnline = OnlineUsersStore.OnlineUsers.ContainsKey(f.UserId);
+            }
+
+            return result;
+        }
+
+
         public async Task<PaginatedList<ProfileDto>> GetIncomingRequests(string userId, int pageNumber, int pageSize)
         {
             var query = _context.Friendships
-                 .AsNoTracking()
-                 .Where(f => f.FriendId == userId && f.Status == DataAccess.Enums.FriendshipStatus.Pending)
-                 .Select(f => f.User.Profile)
-                 .ProjectTo<ProfileDto>(_mapper.ConfigurationProvider);
+                .AsNoTracking()
+                .Where(f => f.FriendId == userId && f.Status == DataAccess.Enums.FriendshipStatus.Pending)
+                .Join(_context.Profiles,
+                    f => f.UserId,
+                    p => p.UserId,
+                    (f, p) => new ProfileDto
+                    {
+                        UserId = p.UserId,
+                        UserName = p.User != null ? p.User.UserName : string.Empty,
+                        Avatar = p.Avatar,
+                        Level = p.Level,
+                        XP = p.XP,
+                        Badges = p.Badges,
+                        Showcase = p.Showcase,
+                        RecentlyPlayedGames = new List<RecentGameDto>()
+                    });
+
             return await PaginatedList<ProfileDto>.CreateAsync(query, pageNumber, pageSize, _frontendOptions.MaxPaginationPageSize);
         }
-
         public async Task SendFriendRequest(string userId, string userName)
         {
             var friend = await _context.Users
