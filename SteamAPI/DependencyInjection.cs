@@ -130,14 +130,16 @@ namespace SteamAPI
                     };
                 });
 
-            // CORS
-            //services.AddCors(options =>
-            //{
-            //    options.AddPolicy("AllowSteamApp", policy =>
-            //    {
-            //        policy.AllowAnyOrigin(); 
-            //    });
-            //});
+            services.AddCors(options =>
+            {
+                options.AddPolicy("AllowSteamApp", policy =>
+                {
+                    policy.WithOrigins("https://steam-app-iota.vercel.app") 
+                        .AllowAnyHeader()
+                        .AllowAnyMethod()
+                        .AllowCredentials(); 
+                });
+            });
 
             return services;
         }
@@ -150,11 +152,8 @@ namespace SteamAPI
                 app.MapScalarApiReference("", options => options.WithTitle("Steam API"));
             }
 
-            app.UseCors(policy => policy
-                .AllowAnyOrigin()
-                .AllowAnyHeader()
-                .AllowAnyMethod());
 
+            app.UseCors("AllowSteamApp");
             app.UseHttpsRedirection();
             app.MapHub<ChatHub>("/chat");
             app.UseRouting();
