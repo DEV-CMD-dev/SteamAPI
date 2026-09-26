@@ -36,6 +36,7 @@ namespace BusinessLogic.Services
                 UserRole = DataAccess.Enums.UserRole.User,
                 UserVisibility = DataAccess.Enums.UserVisibility.Offline,
                 CreatedAt = DateTime.UtcNow,
+                WalletBalance = 100,
                 Profile = new Profile
                 {
                     Level = 0,
